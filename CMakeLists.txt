@@ -10,6 +10,12 @@ set(BUILD_LVGL_SIMULATOR OFF CACHE BOOL "Build as lvgl simulator")
 
 find_path(LVGL_PATH lvgl.h PATHS ${CMAKE_CURRENT_SOURCE_DIR}/deps PATH_SUFFIXES lvgl)
 
+if (MSVC)
+    set(CMAKE_CXX_STANDARD 23)
+else()
+    set(CMAKE_CXX_STANDARD 14)
+endif()
+
 add_executable(lvgljs
     src/engine/engine.cpp
     src/engine/hal/framebuffer32_to_rgba.c
@@ -78,8 +84,13 @@ add_executable(lvgljs
 )
 
 if(BUILD_LVGL_SIMULATOR)
-    add_compile_options(-Wno-error=unused-but-set-variable)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -std=c++14")
+    if (MSVC)
+        add_compile_options("/utf-8")
+        target_compile_definitions(lvgljs PRIVATE WIN32_LEAN_AND_MEAN)
+    else()
+        add_compile_options(-Wno-error=unused-but-set-variable)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb")
+    endif()
     set(BUILD_WITH_MIMALLOC OFF) # TODO: SDL and mimalloc don't play well together
     add_definitions(-DIS_SIM)
     target_sources(lvgljs PRIVATE
@@ -87,7 +98,7 @@ if(BUILD_LVGL_SIMULATOR)
         src/engine/hal/simulator/mouse_cursor_icon.c
     )
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
     add_definitions(-DIS_DEVICE)
     target_sources(lvgljs PRIVATE
         src/engine/hal/device/device.cpp
