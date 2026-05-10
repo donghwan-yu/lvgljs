@@ -285,9 +285,6 @@ static JSClassDef AnimateClass = {
     .finalizer = AnimateFinalizer,
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
-
 void NativeAnimateInit (JSContext* ctx, JSValue ns) {
     JS_NewClassID(JS_GetRuntime(ctx), &AnimateClassID);
     JS_NewClass(JS_GetRuntime(ctx), AnimateClassID, &AnimateClass);
@@ -297,6 +294,5 @@ void NativeAnimateInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, AnimateConstructor, "Animate", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
     JS_DefinePropertyValueStr(ctx, ns, "Animate", obj, JS_PROP_C_W_E);
 };

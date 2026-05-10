@@ -51,9 +51,6 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("close", 0, NativeCompCloseComponent),
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
-
 static JSValue KeyboardConstructor(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
     JSValue proto;
     JSValue obj;
@@ -124,7 +121,6 @@ void NativeComponentKeyboardInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, KeyboardConstructor, "Keyboard", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
     JS_DefinePropertyValueStr(ctx, ns, "Keyboard", obj, JS_PROP_C_W_E);
 };
 
