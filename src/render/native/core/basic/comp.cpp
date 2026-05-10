@@ -129,7 +129,7 @@ bool BasicComponent::ensureStyle (int32_t type) {
     lv_style_t* style;
     bool is_new;
     if (this->style_map.find(type) != this->style_map.end()) {
-        
+        is_new = false;
     } else {
         style = static_cast<lv_style_t*>(style_pool.allocate());
         style_map[type] = style;
