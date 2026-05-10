@@ -21,9 +21,6 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("close", 0, NativeCompCloseComponent),
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
-
 static JSValue MaskConstructor(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
     JSValue proto;
     JSValue obj;
@@ -94,7 +91,6 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, MaskConstructor, "Mask", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
     JS_DefinePropertyValueStr(ctx, ns, "Mask", obj, JS_PROP_C_W_E);
 };
 
