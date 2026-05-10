@@ -152,9 +152,64 @@ jobs:
           path: _screenshots/capture/
           retention-days: 90
 
+  windows:
+    name: Windows
+    runs-on: windows-2025
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\vcpkg-binary-cache
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Resolve vcpkg revision
+        id: vcpkg
+        shell: pwsh
+        run: |
+          $rev = git -C "$env:VCPKG_INSTALLATION_ROOT" rev-parse HEAD
+          "rev=$rev" >> $env:GITHUB_OUTPUT
+      - name: Prepare vcpkg binary cache directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force -Path "$env:VCPKG_DEFAULT_BINARY_CACHE" | Out-Null
+      - name: Cache vcpkg binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-${{ runner.os }}-${{ steps.vcpkg.outputs.rev }}-${{ hashFiles('.github/workflows/build.yml') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ steps.vcpkg.outputs.rev }}-
+            vcpkg-${{ runner.os }}-
+      - name: Install vcpkg dependencies
+        run: vcpkg install curl:x64-windows-static zlib:x64-windows-static libffi:x64-windows-static sdl2:x64-windows-static
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Bundle the React UI bindings, demos and tests
+        run: yarn bundle
+      - name: Configure
+        run: >
+          cmake -B build
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>
+          -DBUILD_LVGL_SIMULATOR=ON
+      - name: Build lvgljs
+        run: cmake --build build --config Release
+      - name: Run tests
+        run: yarn capture:screenshots
+      - name: Upload test screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lvgljs-test-screenshots-windows
+          path: _screenshots/capture/
+          retention-days: 90
+
   collect-screenshots:
     name: Collect test screenshots
-    needs: [linux-device, linux, macos]
+    needs: [linux-device, linux, macos, windows]
     if: always() && !cancelled()
     runs-on: ubuntu-24.04
     steps:
