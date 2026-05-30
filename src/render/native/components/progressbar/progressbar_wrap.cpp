@@ -14,7 +14,7 @@ WRAPPED_SCROLL_INTO_VIEW(ProgressBar, "ProgressBar")
 WRAPPED_JS_CLOSE_COMPONENT(ProgressBar, "ProgressBar")
 
 static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsNumber(argv[0]) && JS_IsBool(argv[1])) {
+    if (argc >= 2 && JS_IsNumber(argv[0]) && JS_IsBool(argv[1])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ProgressBarClassID);
         int32_t value;
         JS_ToInt32(ctx, &value, argv[0]);
@@ -27,7 +27,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
 };
 
 static JSValue NativeCompSetRange(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
+    if (argc >= 2 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ProgressBarClassID);
         int32_t start;
         JS_ToInt32(ctx, &start, argv[0]);

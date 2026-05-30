@@ -13,7 +13,7 @@ WRAPPED_SCROLL_INTO_VIEW(Calendar, "Calendar")
 WRAPPED_JS_CLOSE_COMPONENT(Calendar, "Calendar")
 
 static JSValue NativeCompSetHightLights(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsArray(ctx, argv[0]) && JS_IsNumber(argv[1])) {
+    if (argc >= 2 && JS_IsArray(ctx, argv[0]) && JS_IsNumber(argv[1])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, CalendarClassID);
 
         int32_t len;
@@ -57,7 +57,7 @@ static JSValue NativeCompSetHightLights(JSContext *ctx, JSValueConst this_val, i
 };
 
 static JSValue NativeCompSetToday (JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1]) && JS_IsNumber(argv[2])) {
+    if (argc >= 3 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1]) && JS_IsNumber(argv[2])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, CalendarClassID);
 
         int32_t year;
@@ -74,7 +74,7 @@ static JSValue NativeCompSetToday (JSContext *ctx, JSValueConst this_val, int ar
 };
 
 static JSValue NativeCompSetShownMonth (JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
+    if (argc >= 2 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, CalendarClassID);
 
         int32_t year;
