@@ -50,7 +50,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
 };
 
 static JSValue NativeCompSetArcImage(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-  if (argc >= 1 && (JS_IsObject(argv[0]) || JS_IsNull(argv[0])) && JS_IsNumber(argv[1])) {
+  if (argc >= 3 && (JS_IsObject(argv[0]) || JS_IsNull(argv[0])) && JS_IsNumber(argv[1])) {
     COMP_REF* s = (COMP_REF*)JS_GetOpaque(this_val, ArcClassID);
     size_t size;
     int32_t type;
