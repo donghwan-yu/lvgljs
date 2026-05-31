@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 #include "./png/png.hpp"
 #include "./gif/gif.hpp"
 

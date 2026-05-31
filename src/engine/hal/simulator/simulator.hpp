@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include "lvgl/lvgl.h"
+#include <lvgl.h>
 #include "lv_drivers/sdl/sdl.h"
 
 static void* buf;
