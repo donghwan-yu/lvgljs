@@ -11,29 +11,29 @@ bool hal_capture_display_png(const char * path)
 {
     if(!path || path[0] == '\0') return false;
 
-    lv_obj_t * scr = lv_scr_act();
+    lv_obj_t * scr = lv_screen_active();
     if(!scr) return false;
 
-    lv_img_dsc_t * snapshot = lv_snapshot_take(scr, LV_IMG_CF_TRUE_COLOR_ALPHA);
+    lv_draw_buf_t * snapshot = lv_snapshot_take(scr, LV_COLOR_FORMAT_ARGB8888);
     if(!snapshot) return false;
 
     const int w = snapshot->header.w;
     const int h = snapshot->header.h;
     if(w <= 0 || h <= 0) {
-        lv_snapshot_free(snapshot);
+        lv_draw_buf_destroy(snapshot);
         return false;
     }
 
     const size_t rgba_size = (size_t)w * (size_t)h * 4;
     unsigned char * rgba = (unsigned char *)malloc(rgba_size);
     if(!rgba) {
-        lv_snapshot_free(snapshot);
+        lv_draw_buf_destroy(snapshot);
         return false;
     }
 
-    const uint32_t stride = (uint32_t)w * sizeof(uint32_t);
+    const uint32_t stride = snapshot->header.stride;
     bool converted = framebuffer32_to_rgba((const uint32_t *)snapshot->data, rgba, w, h, stride);
-    lv_snapshot_free(snapshot);
+    lv_draw_buf_destroy(snapshot);
 
     if(!converted) {
         free(rgba);
