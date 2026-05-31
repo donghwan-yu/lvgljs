@@ -303,7 +303,7 @@ static void CompSetPosition (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, 
     value.resize(len);
 
     lv_obj_clear_flag(comp, LV_OBJ_FLAG_FLOATING);
-    BasicComponent* instance = static_cast<BasicComponent*>(comp->user_data);
+    BasicComponent* instance = static_cast<BasicComponent*>(lv_obj_get_user_data(comp));
     instance->is_fixed = false;
     if (instance->parent_instance != nullptr) {
         lv_obj_set_parent(comp, instance->parent_instance);
@@ -313,7 +313,7 @@ static void CompSetPosition (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, 
         lv_obj_add_flag(comp, LV_OBJ_FLAG_FLOATING);
     } else if (value == "fixed") {
         instance->is_fixed = true;
-        lv_obj_set_parent(comp, lv_scr_act());
+        lv_obj_set_parent(comp, lv_screen_active());
     }
 
     JS_FreeCString(ctx, str);

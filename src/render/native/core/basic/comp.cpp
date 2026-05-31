@@ -17,9 +17,9 @@ void BasicComponent::addEventListener (int eventType) {
 };
 
 void BasicComponent::EventCallback (lv_event_t * event) {
-    BasicComponent* instance = static_cast<BasicComponent*>(event->user_data);
+    BasicComponent* instance = static_cast<BasicComponent*>(lv_event_get_user_data(event));
     std::string uid = instance->uid;
-    lv_event_code_t code = event->code;
+    lv_event_code_t code = lv_event_get_code(event);
     if (instance->isEventRegist(static_cast<int>(code))) {
         FireEventToJS(event, uid, code);
     }
