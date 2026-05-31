@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(lvgljs LANGUAGES C CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(LV_CONF_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/lv_conf.h CACHE INTERNAL "LV_CONF_PATH")
+set(LV_CONF_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lv_conf.h CACHE INTERNAL "LV_CONF_PATH")
 
 set(BUILD_NATIVE OFF CACHE BOOL "Build wasm3 with native support")
 set(BUILD_LVGL_SIMULATOR OFF CACHE BOOL "Build as lvgl simulator")
@@ -96,6 +96,9 @@ if(BUILD_LVGL_SIMULATOR)
     endif()
     set(BUILD_WITH_MIMALLOC OFF) # TODO: SDL and mimalloc don't play well together
     add_definitions(-DIS_SIM)
+    # LVGL v9 ships its own SDL drivers, so the lvgl target needs the SDL2
+    # headers too. Find SDL2 before adding the lvgl subdirectory.
+    find_package(SDL2 REQUIRED)
     target_sources(lvgljs PRIVATE
         src/engine/hal/simulator/simulator.cpp
         src/engine/hal/simulator/mouse_cursor_icon.c
@@ -110,10 +113,13 @@ endif()
 
 add_subdirectory(deps/txiki EXCLUDE_FROM_ALL)
 add_subdirectory(deps/lvgl EXCLUDE_FROM_ALL)
-add_subdirectory(deps/lv_drivers EXCLUDE_FROM_ALL)
+
+if(BUILD_LVGL_SIMULATOR)
+    target_include_directories(lvgl PRIVATE ${SDL2_INCLUDE_DIRS})
+endif()
 
 target_include_directories(lvgljs PUBLIC
-    deps
+    ${LVGL_PATH}
     src/
     src/engine
     src/engine/hal
@@ -128,11 +134,8 @@ target_include_directories(lvgljs PUBLIC
 target_link_libraries(lvgljs PUBLIC
     tjs
     lvgl
-    lv_drivers
 )
 
 if(BUILD_LVGL_SIMULATOR)
-    find_package(SDL2 REQUIRED)
-    target_include_directories(lv_drivers PUBLIC ${SDL2_INCLUDE_DIRS})
     target_link_libraries(lvgljs PUBLIC ${SDL2_LIBRARIES})
 endif()

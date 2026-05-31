@@ -5,9 +5,9 @@
 
 /* clang-format off */
 #if IS_SIM
-#include "lv_conf_sim.h"
+#include "deps/lv_conf_sim.h"
 #elif IS_DEVICE
-#include "lv_conf_device.h"
+#include "deps/lv_conf_device.h"
 #else
 #error "Define IS_SIM or IS_DEVICE"
 #endif
