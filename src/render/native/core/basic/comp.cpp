@@ -186,7 +186,7 @@ void BasicComponent::setBackgroundImage (uint8_t* buf, size_t buf_len, int32_t s
             old_img_desc = this->image_desc_map.at(style_type);
         }
         if (old_img_desc != nullptr) {
-            prev_buf = old_img_desc->data;
+            prev_buf = old_img_desc->dsc.data;
         }
         img_desc = static_cast<lv_img_dsc_t_1*>(malloc(sizeof(lv_img_dsc_t_1)));
         image_desc_map[style_type] = img_desc;
@@ -194,7 +194,6 @@ void BasicComponent::setBackgroundImage (uint8_t* buf, size_t buf_len, int32_t s
         if (buf != nullptr) {
             uint8_t* img_data = GetImgDesc(buf, buf_len, img_desc);
             if (img_data != nullptr) {
-                img_desc->data = img_data;
                 lv_style_set_bg_img_src(style, img_desc);
             }
         } else {
@@ -229,7 +228,7 @@ BasicComponent::~BasicComponent () {
     
     for(auto& desc : this->image_desc_map) {
         if (desc.second != nullptr) {
-            const uint8_t* buf = (static_cast<lv_img_dsc_t_1*>(desc.second))->data;
+            const uint8_t* buf = (static_cast<lv_img_dsc_t_1*>(desc.second))->dsc.data;
             if (buf != nullptr) {
                 free((void*)(buf));
             }
