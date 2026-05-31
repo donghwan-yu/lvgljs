@@ -1,5 +1,4 @@
 #include "arc.hpp"
-#include "src/widgets/lv_arc.h"
 
 Arc::Arc(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_ARC;
@@ -66,7 +65,7 @@ void Arc::setArcImage (uint8_t* buf, size_t buf_len, int32_t style_type, std::st
             old_img_desc = this->image_desc_map.at(style_type);
         }
         if (old_img_desc != nullptr) {
-            prev_buf = old_img_desc->data;
+            prev_buf = old_img_desc->dsc.data;
         }
         img_desc = static_cast<lv_img_dsc_t_1*>(malloc(sizeof(lv_img_dsc_t_1)));
         image_desc_map[style_type] = img_desc;
@@ -74,11 +73,10 @@ void Arc::setArcImage (uint8_t* buf, size_t buf_len, int32_t style_type, std::st
         if (buf != nullptr) {
             uint8_t* img_data = GetImgDesc(buf, buf_len, img_desc);
             if (img_data != nullptr) {
-                img_desc->data = img_data;
-                lv_style_set_arc_img_src(style, img_desc);
+                lv_style_set_arc_image_src(style, img_desc);
             }
         } else {
-            lv_style_set_arc_img_src(style, NULL);
+            lv_style_set_arc_image_src(style, NULL);
         }
 
         this->image_desc_map[style_type] = img_desc;
@@ -95,7 +93,7 @@ void Arc::setArcImage (uint8_t* buf, size_t buf_len, int32_t style_type, std::st
         }
         this->symbol_map[style_type] = symbol;
 
-        lv_style_set_arc_img_src(style, this->symbol_map[style_type].c_str());
+        lv_style_set_arc_image_src(style, this->symbol_map[style_type].c_str());
     }
 
     lv_obj_invalidate(this->instance);
