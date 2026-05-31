@@ -98,7 +98,6 @@ add_subdirectory(deps/lvgl EXCLUDE_FROM_ALL)
 add_subdirectory(deps/lv_drivers EXCLUDE_FROM_ALL)
 
 target_include_directories(lvgljs PUBLIC
-    ${LVGL_PATH}
     deps
     src/
     src/engine
