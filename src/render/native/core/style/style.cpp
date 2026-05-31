@@ -562,8 +562,8 @@ void CompSetAnimation (
 
     dura_value = JS_GetPropertyStr(ctx, obj, "duration");
     if (JS_IsNumber(dura_value)) {
-        lv_anim_set_time(animate, duration);
         JS_ToInt32(ctx, &duration, dura_value);
+        lv_anim_set_time(animate, duration);
     }
     JS_FreeValue(ctx, dura_value);
 
