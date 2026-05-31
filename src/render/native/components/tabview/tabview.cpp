@@ -5,7 +5,9 @@ TabView::TabView(std::string uid, uint32_t pos, uint32_t size, lv_obj_t* parent)
     this->type = COMP_TYPE_TABVIEW;
 
     this->uid = uid;
-    this->instance = lv_tabview_create(parent != nullptr ? parent : GetWindowInstance(), pos, size);
+    this->instance = lv_tabview_create(parent != nullptr ? parent : GetWindowInstance());
+    lv_tabview_set_tab_bar_position(this->instance, (lv_dir_t)pos);
+    lv_tabview_set_tab_bar_size(this->instance, (int32_t)size);
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
     lv_obj_clear_flag(this->instance, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
