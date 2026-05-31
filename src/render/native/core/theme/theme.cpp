@@ -3,7 +3,10 @@
 static void ThemeDefaultInit () {
     if (theme_default_init == false) {
         theme_default_init = true;
-        memcpy(&theme_default, lv_theme_default_get(), sizeof(lv_theme_t));
+        lv_obj_t * scr = lv_screen_active();
+        theme_default.color_primary = lv_theme_get_color_primary(scr);
+        theme_default.color_secondary = lv_theme_get_color_secondary(scr);
+        theme_default.font_normal = lv_theme_get_font_normal(scr);
     }
 };
 
