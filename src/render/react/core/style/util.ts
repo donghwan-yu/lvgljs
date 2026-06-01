@@ -1,4 +1,5 @@
 import { colorTransform } from "./color";
+import { LV_SIZE_CONTENT } from "../lv_conf_macros";
 
 export function NormalizePx(value) {
   if (value == void 0) return null;
@@ -37,7 +38,7 @@ export type PixelOrPercent = number | `${number}%` | "auto";
 
 export function ProcessPxOrPercent(key, value, result) {
   if (value === "auto") {
-    return (result[key] = 2001 | (1 << 13));
+    return (result[key] = LV_SIZE_CONTENT);
   }
   if (!isNaN(value)) {
     return (result[key] = value);
