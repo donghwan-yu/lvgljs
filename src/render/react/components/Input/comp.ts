@@ -68,7 +68,7 @@ function setInputProps(comp, newProps: InputProps, oldProps: Partial<InputProps>
       setStyle({
         comp,
         compName: "Input",
-        styleType: 0x0002,
+        styleType: STYLE_TYPE.STATE_FOCUSED,
         oldStyleSheet: oldProps.onFocusStyle,
         styleSheet,
       });

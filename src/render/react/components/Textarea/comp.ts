@@ -48,7 +48,7 @@ function setTextareaProps(comp, newProps: TextAreaProps, oldProps: Partial<TextA
         comp,
         styleSheet,
         compName: "Textarea",
-        styleType: 0x0002,
+        styleType: STYLE_TYPE.STATE_FOCUSED,
         oldStyleSheet: oldProps.onFocusStyle,
       });
     },
