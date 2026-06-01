@@ -12,7 +12,7 @@
  */
 
 /* clang-format off */
-#if 0 /*Set it to "1" to enable content*/
+#if IS_SIM /*Set it to "1" to enable content*/
 
 #ifndef LV_CONF_H
 #define LV_CONF_H
@@ -24,7 +24,7 @@
  *====================*/
 
 /*Color depth: 1 (1 byte per pixel), 8 (RGB332), 16 (RGB565), 32 (ARGB8888)*/
-#define LV_COLOR_DEPTH 16
+#define LV_COLOR_DEPTH 32
 
 /*Swap the 2 bytes of RGB565 color. Useful if the display has an 8-bit interface (e.g. SPI)*/
 #define LV_COLOR_16_SWAP 0
@@ -49,7 +49,7 @@
 #define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
     /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
-    #define LV_MEM_SIZE (48U * 1024U)          /*[bytes]*/
+    #define LV_MEM_SIZE (4096 * 4096U)          /*[bytes]*/
 
     /*Set an address for the memory pool instead of allocating it as a normal array. Can be in external SRAM too.*/
     #define LV_MEM_ADR 0     /*0: unused*/
@@ -125,7 +125,7 @@
  *With complex image decoders (e.g. PNG or JPG) caching can save the continuous open/decode of images.
  *However the opened images might consume additional RAM.
  *0: to disable caching*/
-#define LV_IMG_CACHE_DEF_SIZE   0
+#define LV_IMG_CACHE_DEF_SIZE   8
 
 /*Number of stops allowed per gradient. Increase this to allow more stops.
  *This adds (sizeof(lv_color_t) + 1) bytes per additional stop*/
@@ -141,17 +141,17 @@
 /*Allow dithering the gradients (to achieve visual smooth color gradients on limited color depth display)
  *LV_DITHER_GRADIENT implies allocating one or two more lines of the object's rendering surface
  *The increase in memory consumption is (32 bits * object width) plus 24 bits * object width if using error diffusion */
-#define LV_DITHER_GRADIENT      0
+#define LV_DITHER_GRADIENT      1
 #if LV_DITHER_GRADIENT
     /*Add support for error diffusion dithering.
      *Error diffusion dithering gets a much better visual result, but implies more CPU consumption and memory when drawing.
      *The increase in memory consumption is (24 bits * object's width)*/
-    #define LV_DITHER_ERROR_DIFFUSION   0
+    #define LV_DITHER_ERROR_DIFFUSION   1
 #endif
 
 /*Maximum buffer size to allocate for rotation.
  *Only used if software rotation is enabled in the display driver.*/
-#define LV_DISP_ROT_MAX_BUF (10*1024)
+#define LV_DISP_ROT_MAX_BUF (32*1024)
 
 /*-------------
  * GPU
@@ -194,7 +194,7 @@
  *-----------*/
 
 /*Enable the log module*/
-#define LV_USE_LOG 0
+#define LV_USE_LOG 1
 #if LV_USE_LOG
 
     /*How important log should be added:
@@ -204,11 +204,11 @@
     *LV_LOG_LEVEL_ERROR       Only critical issue, when the system may fail
     *LV_LOG_LEVEL_USER        Only logs added by the user
     *LV_LOG_LEVEL_NONE        Do not log anything*/
-    #define LV_LOG_LEVEL LV_LOG_LEVEL_WARN
+    #define LV_LOG_LEVEL LV_LOG_LEVEL_USER
 
     /*1: Print the log with 'printf';
     *0: User need to register a callback with `lv_log_register_print_cb()`*/
-    #define LV_LOG_PRINTF 0
+    #define LV_LOG_PRINTF 1
 
     /*Enable/disable LV_LOG_TRACE in modules that produces a huge number of logs*/
     #define LV_LOG_TRACE_MEM        1
@@ -230,9 +230,9 @@
  *If LV_USE_LOG is enabled an error message will be printed on failure*/
 #define LV_USE_ASSERT_NULL          1   /*Check if the parameter is NULL. (Very fast, recommended)*/
 #define LV_USE_ASSERT_MALLOC        1   /*Checks is the memory is successfully allocated or no. (Very fast, recommended)*/
-#define LV_USE_ASSERT_STYLE         0   /*Check if the styles are properly initialized. (Very fast, recommended)*/
-#define LV_USE_ASSERT_MEM_INTEGRITY 0   /*Check the integrity of `lv_mem` after critical operations. (Slow)*/
-#define LV_USE_ASSERT_OBJ           0   /*Check the object's type and existence (e.g. not deleted). (Slow)*/
+#define LV_USE_ASSERT_STYLE         1   /*Check if the styles are properly initialized. (Very fast, recommended)*/
+#define LV_USE_ASSERT_MEM_INTEGRITY 1   /*Check the integrity of `lv_mem` after critical operations. (Slow)*/
+#define LV_USE_ASSERT_OBJ           1   /*Check the object's type and existence (e.g. not deleted). (Slow)*/
 
 /*Add a custom handler when assert happens e.g. to restart the MCU*/
 #define LV_ASSERT_HANDLER_INCLUDE <stdint.h>
@@ -243,14 +243,14 @@
  *-----------*/
 
 /*1: Show CPU usage and FPS count*/
-#define LV_USE_PERF_MONITOR 0
+#define LV_USE_PERF_MONITOR 1
 #if LV_USE_PERF_MONITOR
     #define LV_USE_PERF_MONITOR_POS LV_ALIGN_BOTTOM_RIGHT
 #endif
 
 /*1: Show the used memory and the memory fragmentation
  * Requires LV_MEM_CUSTOM = 0*/
-#define LV_USE_MEM_MONITOR 0
+#define LV_USE_MEM_MONITOR 1
 #if LV_USE_MEM_MONITOR
     #define LV_USE_MEM_MONITOR_POS LV_ALIGN_BOTTOM_LEFT
 #endif
@@ -325,37 +325,37 @@
 
 /*Montserrat fonts with ASCII range and some symbols using bpp = 4
  *https://fonts.google.com/specimen/Montserrat*/
-#define LV_FONT_MONTSERRAT_8  0
-#define LV_FONT_MONTSERRAT_10 0
-#define LV_FONT_MONTSERRAT_12 0
+#define LV_FONT_MONTSERRAT_8  1
+#define LV_FONT_MONTSERRAT_10 1
+#define LV_FONT_MONTSERRAT_12 1
 #define LV_FONT_MONTSERRAT_14 1
-#define LV_FONT_MONTSERRAT_16 0
-#define LV_FONT_MONTSERRAT_18 0
-#define LV_FONT_MONTSERRAT_20 0
-#define LV_FONT_MONTSERRAT_22 0
-#define LV_FONT_MONTSERRAT_24 0
-#define LV_FONT_MONTSERRAT_26 0
-#define LV_FONT_MONTSERRAT_28 0
-#define LV_FONT_MONTSERRAT_30 0
-#define LV_FONT_MONTSERRAT_32 0
-#define LV_FONT_MONTSERRAT_34 0
-#define LV_FONT_MONTSERRAT_36 0
-#define LV_FONT_MONTSERRAT_38 0
-#define LV_FONT_MONTSERRAT_40 0
-#define LV_FONT_MONTSERRAT_42 0
-#define LV_FONT_MONTSERRAT_44 0
-#define LV_FONT_MONTSERRAT_46 0
-#define LV_FONT_MONTSERRAT_48 0
+#define LV_FONT_MONTSERRAT_16 1
+#define LV_FONT_MONTSERRAT_18 1
+#define LV_FONT_MONTSERRAT_20 1
+#define LV_FONT_MONTSERRAT_22 1
+#define LV_FONT_MONTSERRAT_24 1
+#define LV_FONT_MONTSERRAT_26 1
+#define LV_FONT_MONTSERRAT_28 1
+#define LV_FONT_MONTSERRAT_30 1
+#define LV_FONT_MONTSERRAT_32 1
+#define LV_FONT_MONTSERRAT_34 1
+#define LV_FONT_MONTSERRAT_36 1
+#define LV_FONT_MONTSERRAT_38 1
+#define LV_FONT_MONTSERRAT_40 1
+#define LV_FONT_MONTSERRAT_42 1
+#define LV_FONT_MONTSERRAT_44 1
+#define LV_FONT_MONTSERRAT_46 1
+#define LV_FONT_MONTSERRAT_48 1
 
 /*Demonstrate special features*/
-#define LV_FONT_MONTSERRAT_12_SUBPX      0
-#define LV_FONT_MONTSERRAT_28_COMPRESSED 0  /*bpp = 3*/
-#define LV_FONT_DEJAVU_16_PERSIAN_HEBREW 0  /*Hebrew, Arabic, Persian letters and all their forms*/
-#define LV_FONT_SIMSUN_16_CJK            0  /*1000 most common CJK radicals*/
+#define LV_FONT_MONTSERRAT_12_SUBPX      1
+#define LV_FONT_MONTSERRAT_28_COMPRESSED 1  /*bpp = 3*/
+#define LV_FONT_DEJAVU_16_PERSIAN_HEBREW 1  /*Hebrew, Arabic, Persian letters and all their forms*/
+#define LV_FONT_SIMSUN_16_CJK            1  /*1000 most common CJK radicals*/
 
 /*Pixel perfect monospace fonts*/
-#define LV_FONT_UNSCII_8  0
-#define LV_FONT_UNSCII_16 0
+#define LV_FONT_UNSCII_8  1
+#define LV_FONT_UNSCII_16 1
 
 /*Optionally declare custom fonts here.
  *You can use these fonts as default font too and they will be available globally.
@@ -368,13 +368,13 @@
 /*Enable handling large font and/or fonts with a lot of characters.
  *The limit depends on the font size, font face and bpp.
  *Compiler error will be triggered if a font needs it.*/
-#define LV_FONT_FMT_TXT_LARGE 0
+#define LV_FONT_FMT_TXT_LARGE 1
 
 /*Enables/disables support for compressed fonts.*/
-#define LV_USE_FONT_COMPRESSED 0
+#define LV_USE_FONT_COMPRESSED 1
 
 /*Enable subpixel rendering*/
-#define LV_USE_FONT_SUBPX 0
+#define LV_USE_FONT_SUBPX 1
 #if LV_USE_FONT_SUBPX
     /*Set the pixel order of the display. Physical order of RGB channels. Doesn't matter with "normal" fonts.*/
     #define LV_FONT_SUBPX_BGR 0  /*0: RGB; 1:BGR order*/
@@ -413,7 +413,7 @@
 /*Support bidirectional texts. Allows mixing Left-to-Right and Right-to-Left texts.
  *The direction will be processed according to the Unicode Bidirectional Algorithm:
  *https://www.w3.org/International/articles/inline-bidi-markup/uba-basics*/
-#define LV_USE_BIDI 0
+#define LV_USE_BIDI 1
 #if LV_USE_BIDI
     /*Set the default direction. Supported values:
     *`LV_BASE_DIR_LTR` Left-to-Right
@@ -424,7 +424,7 @@
 
 /*Enable Arabic/Persian processing
  *In these languages characters should be replaced with an other form based on their position in the text*/
-#define LV_USE_ARABIC_PERSIAN_CHARS 0
+#define LV_USE_ARABIC_PERSIAN_CHARS 1
 
 /*==================
  *  WIDGET USAGE
@@ -570,9 +570,9 @@
 /*File system interfaces for common APIs */
 
 /*API for fopen, fread, etc*/
-#define LV_USE_FS_STDIO 0
+#define LV_USE_FS_STDIO 1
 #if LV_USE_FS_STDIO
-    #define LV_FS_STDIO_LETTER '\0'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
+    #define LV_FS_STDIO_LETTER 'A'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
     #define LV_FS_STDIO_PATH ""         /*Set the working directory. File/directory paths will be appended to it.*/
     #define LV_FS_STDIO_CACHE_SIZE  0   /*>0 to cache this number of bytes in lv_fs_read()*/
 #endif
@@ -611,7 +611,7 @@
 #define LV_USE_SJPG 0
 
 /*GIF decoder library*/
-#define LV_USE_GIF 0
+#define LV_USE_GIF 1
 
 /*QR code library*/
 #define LV_USE_QRCODE 0
@@ -649,13 +649,13 @@
  *----------*/
 
 /*1: Enable API to take snapshot for object*/
-#define LV_USE_SNAPSHOT 0
+#define LV_USE_SNAPSHOT 1
 
 /*1: Enable Monkey test*/
-#define LV_USE_MONKEY   0
+#define LV_USE_MONKEY   1
 
 /*1: Enable grid navigation*/
-#define LV_USE_GRIDNAV  0
+#define LV_USE_GRIDNAV  1
 
 /*==================
 * EXAMPLES
@@ -669,22 +669,22 @@
  ====================*/
 
 /*Show some widget. It might be required to increase `LV_MEM_SIZE` */
-#define LV_USE_DEMO_WIDGETS        0
+#define LV_USE_DEMO_WIDGETS        1
 #if LV_USE_DEMO_WIDGETS
 #define LV_DEMO_WIDGETS_SLIDESHOW  0
 #endif
 
 /*Demonstrate the usage of encoder and keyboard*/
-#define LV_USE_DEMO_KEYPAD_AND_ENCODER     0
+#define LV_USE_DEMO_KEYPAD_AND_ENCODER     1
 
 /*Benchmark your system*/
-#define LV_USE_DEMO_BENCHMARK   0
+#define LV_USE_DEMO_BENCHMARK   1
 
 /*Stress test for LVGL*/
-#define LV_USE_DEMO_STRESS      0
+#define LV_USE_DEMO_STRESS      1
 
 /*Music player demo*/
-#define LV_USE_DEMO_MUSIC       0
+#define LV_USE_DEMO_MUSIC       1
 #if LV_USE_DEMO_MUSIC
 # define LV_DEMO_MUSIC_SQUARE       0
 # define LV_DEMO_MUSIC_LANDSCAPE    0
