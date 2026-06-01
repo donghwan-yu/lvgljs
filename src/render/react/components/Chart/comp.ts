@@ -1,3 +1,4 @@
+import * as lv_conf from "../../core/lv_conf";
 import { StyleProps } from "../../core/style";
 import { colorTransform } from "../../core/style/color";
 import { CommonComponentApi, CommonProps } from "../common/index";
@@ -15,10 +16,10 @@ const bridge = GetBridge();
 const NativeChart = bridge.NativeRender.NativeComponents.Chart;
 
 const chartType = {
-  none: 0,
-  line: 1,
-  bar: 2,
-  scatter: 3,
+  none: lv_conf.LV_CHART_TYPE_NONE,
+  line: lv_conf.LV_CHART_TYPE_LINE,
+  bar: lv_conf.LV_CHART_TYPE_BAR,
+  scatter: lv_conf.LV_CHART_TYPE_SCATTER,
 };
 
 export type ChartProps = CommonProps & {
