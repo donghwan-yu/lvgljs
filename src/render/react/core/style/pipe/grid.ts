@@ -1,6 +1,6 @@
 import { NormalizePx } from "../util";
+import { LV_GRID_CONTENT, LV_GRID_FR } from "../../lv_conf_macros";
 
-const GRID_CONTENT = (1 << 13) - 1 - 101;
 const FR_REG = /([\d]+)fr$/;
 
 const gridChildJustifySelfObj = {
@@ -60,21 +60,21 @@ export function GridStyle(style: GridStyleType, result) {
 
     columns = columns.map((column) => {
       if (column === "auto") {
-        return GRID_CONTENT;
+        return LV_GRID_CONTENT;
       }
       const arr = column?.match(FR_REG);
       if (arr?.[1] != null && !isNaN(Number(arr[1]))) {
-        return (1 << 13) - 1 - 100 + Number(arr[1]);
+        return LV_GRID_FR(Number(arr[1]));
       }
       return NormalizePx(column);
     });
     rows = rows.map((row) => {
       if (row === "auto") {
-        return GRID_CONTENT;
+        return LV_GRID_CONTENT;
       }
       const arr = row?.match(FR_REG);
       if (arr?.[1] != null && !isNaN(Number(arr[1]))) {
-        return (1 << 13) - 1 - 100 + Number(arr[1]);
+        return LV_GRID_FR(Number(arr[1]));
       }
       return NormalizePx(row);
     });
