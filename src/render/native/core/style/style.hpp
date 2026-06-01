@@ -1,10 +1,6 @@
 #pragma once
 
-extern "C" {
-    #include "lvgl.h"
-
-    #include "private.h"
-};
+#include "lv_bindings_js.h"
 
 #include <unordered_map>
 #include <string>

@@ -1,10 +1,6 @@
 #pragma once
 
-extern "C" {
-    #include "lvgl.h"
-    #include "private.h"
-    #include "utils.h"
-};
+#include "lv_bindings_js.h"
 
 #include <map>
 #include <stdlib.h>
