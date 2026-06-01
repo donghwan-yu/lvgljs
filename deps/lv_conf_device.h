@@ -748,7 +748,7 @@
 
 /** Enable Arabic/Persian processing
  *  In these languages characters should be replaced with another form based on their position in the text */
-#define LV_USE_ARABIC_PERSIAN_CHARS 0
+#define LV_USE_ARABIC_PERSIAN_CHARS 1
 
 /*The control character to use for signaling text recoloring*/
 #define LV_TXT_COLOR_CMD "#"
@@ -1257,7 +1257,7 @@
 #endif /*LV_USE_TEST*/
 
 /** 1: Enable text translation support */
-#define LV_USE_TRANSLATION 0
+#define LV_USE_TRANSLATION 1
 
 /*1: Enable color filter style*/
 #define LV_USE_COLOR_FILTER     0
@@ -1296,7 +1296,7 @@
 #endif
 
 /** Driver for /dev/fb */
-#define LV_USE_LINUX_FBDEV      0
+#define LV_USE_LINUX_FBDEV      1
 #if LV_USE_LINUX_FBDEV
     #define LV_LINUX_FBDEV_BSD           0
     #define LV_LINUX_FBDEV_RENDER_MODE   LV_DISPLAY_RENDER_MODE_PARTIAL
@@ -1370,7 +1370,7 @@
 #endif /*LV_USE_LOVYAN_GFX*/
 
 /** Driver for evdev input devices */
-#define LV_USE_EVDEV    0
+#define LV_USE_EVDEV    1
 
 /** Driver for libinput input devices */
 #define LV_USE_LIBINPUT    0
