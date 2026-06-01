@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(LV_CONF_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/lv_conf.h CACHE INTERNAL "LV_CONF_PATH")
 
 set(BUILD_NATIVE OFF CACHE BOOL "Build wasm3 with native support")
+set(BUILD_LVGL_SIMULATOR OFF CACHE BOOL "Build as lvgl simulator")
 
 find_path(LVGL_PATH lvgl.h PATHS ${CMAKE_CURRENT_SOURCE_DIR}/deps PATH_SUFFIXES lvgl)
 
@@ -74,7 +75,7 @@ add_executable(lvgljs
     src/render/native/bootstrap/render_bootstrap.cpp
 )
 
-if(${CMAKE_BUILD_TYPE} MATCHES Simulator)
+if(BUILD_LVGL_SIMULATOR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -std=c++14")
     set(BUILD_WITH_MIMALLOC OFF) # TODO: SDL and mimalloc don't play well together
     add_definitions(-DIS_SIM)
@@ -114,7 +115,7 @@ target_link_libraries(lvgljs PUBLIC
     lv_drivers
 )
 
-if(${CMAKE_BUILD_TYPE} MATCHES Simulator)
+if(BUILD_LVGL_SIMULATOR)
     find_package(SDL2 REQUIRED)
     target_include_directories(lv_drivers PUBLIC ${SDL2_INCLUDE_DIRS})
     target_link_libraries(lvgljs PUBLIC ${SDL2_LIBRARIES})
