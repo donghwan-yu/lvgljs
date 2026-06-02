@@ -35,6 +35,26 @@ void GIF::setGIFBinary(uint8_t* buf, size_t len) {
     }
 };
 
+void GIF::pause() {
+#if LV_USE_GIF
+    if (this->instance == nullptr) {
+        return;
+    }
+
+    lv_gif_pause(this->instance);
+#endif
+};
+
+void GIF::resume() {
+#if LV_USE_GIF
+    if (this->instance == nullptr) {
+        return;
+    }
+
+    lv_gif_resume(this->instance);
+#endif
+};
+
 GIF::~GIF () {
     if (this->gif_buf != nullptr) {
         free(this->gif_buf);

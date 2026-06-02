@@ -31,10 +31,34 @@ static JSValue NativeCompSetGIFBinary(JSContext *ctx, JSValueConst this_val, int
     return JS_UNDEFINED;
 };
 
+static JSValue NativeCompPause(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    COMP_REF* s = (COMP_REF*)JS_GetOpaque(this_val, GIFClassID);
+    if (s == nullptr) {
+        return JS_UNDEFINED;
+    }
+
+    ((GIF*)(s->comp))->pause();
+    LV_LOG_USER("GIF %s pause", s->uid);
+    return JS_UNDEFINED;
+};
+
+static JSValue NativeCompResume(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    COMP_REF* s = (COMP_REF*)JS_GetOpaque(this_val, GIFClassID);
+    if (s == nullptr) {
+        return JS_UNDEFINED;
+    }
+
+    ((GIF*)(s->comp))->resume();
+    LV_LOG_USER("GIF %s resume", s->uid);
+    return JS_UNDEFINED;
+};
+
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
     TJS_CFUNC_DEF("setGIFBinary", 0, NativeCompSetGIFBinary),
+    TJS_CFUNC_DEF("pause", 0, NativeCompPause),
+    TJS_CFUNC_DEF("resume", 0, NativeCompResume),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     JS_OBJECT_DEF("style", style_funcs, countof(style_funcs), JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE),
