@@ -14,7 +14,7 @@ function App () {
                 }}
                 paused={captureMode}
                 style={style.gif}
-                src="http://p0.itc.cn/q_70/images03/20200807/9405b7432e34421b866f35a087812b6f.gif"
+                src={"./sample.gif"}
             />
         </View>
     )
