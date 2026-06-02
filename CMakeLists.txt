@@ -12,6 +12,8 @@ find_path(LVGL_PATH lvgl.h PATHS ${CMAKE_CURRENT_SOURCE_DIR}/deps PATH_SUFFIXES 
 
 add_executable(lvgljs
     src/engine/engine.cpp
+    src/engine/hal/framebuffer32_to_rgba.c
+    src/engine/hal/screenshot.cpp
     src/render/native/core/style/style.cpp
     src/render/native/core/style/font/font.cpp
     src/render/native/core/event/value_change/value_change.cpp
