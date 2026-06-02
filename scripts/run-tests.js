@@ -90,24 +90,8 @@ const FAILURE_MARKERS = [
     /Segmentation fault/i,
 ];
 
-async function slurpStdio(stream) {
-    const decoder = new TextDecoder();
-    const chunks = [];
-    const buf = new Uint8Array(4096);
-
-    while (true) {
-        const nread = await stream.read(buf);
-        if (nread === null) {
-            break;
-        }
-        chunks.push(buf.slice(0, nread));
-    }
-
-    return chunks.map((chunk) => decoder.decode(chunk)).join('');
-}
-
 async function listDir(dir) {
-    const iter = await tjs.readdir(dir);
+    const iter = await tjs.readDir(dir);
     const entries = [];
     for await (const entry of iter) {
         entries.push(entry);
@@ -205,17 +189,14 @@ async function runTest(absPath, relPath, screenshotPath = '', isRuntimeTest = fa
     }
 
     const spawnArgs = isRuntimeTest
-        ? [ tjs.exepath, 'run', cliRunnerRel, relPath ]
-        : [ tjs.exepath, 'run', guiRunnerRel, relPath ];
+        ? [ tjs.exePath, 'run', cliRunnerRel, relPath ]
+        : [ tjs.exePath, 'run', guiRunnerRel, relPath ];
 
     const proc = tjs.spawn(spawnArgs, {
         cwd: repoRoot,
         stdout: 'pipe',
         stderr: 'pipe',
     });
-
-    const stdoutPromise = slurpStdio(proc.stdout);
-    const stderrPromise = slurpStdio(proc.stderr);
 
     let killed = false;
     const killer = setTimeout(() => {
@@ -231,8 +212,8 @@ async function runTest(absPath, relPath, screenshotPath = '', isRuntimeTest = fa
     try {
         [ status, stdout, stderr ] = await Promise.all([
             proc.wait(),
-            stdoutPromise,
-            stderrPromise,
+            proc.stdout.text(),
+            proc.stderr.text(),
         ]);
     } finally {
         clearTimeout(killer);
@@ -281,7 +262,7 @@ async function main() {
       .sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
 
     if (captureMode) {
-        await tjs.mkdir(screenshotOut, { recursive: true });
+        await tjs.makeDir(screenshotOut, { recursive: true });
     }
 
     const modeLabel = captureMode ? `capture -> ${toRelative(screenshotOut)}` : 'test';
