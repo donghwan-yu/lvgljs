@@ -90,7 +90,6 @@ jobs:
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_LVGL_SIMULATOR=ON \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DUSE_EXTERNAL_FFI=ON
       - name: Build lvgljs
         run: cmake --build build -j
@@ -139,7 +138,6 @@ jobs:
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_LVGL_SIMULATOR=ON \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DUSE_EXTERNAL_FFI=ON \
             -DCMAKE_PREFIX_PATH="$(brew --prefix sdl2);$(brew --prefix libffi);$(brew --prefix curl)"
       - name: Build lvgljs
