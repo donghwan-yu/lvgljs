@@ -16,6 +16,19 @@ const NativeGIF = bridge.NativeRender.NativeComponents.GIF;
 
 export type GIFProps = CommonProps & {
   src: string;
+  /** When true, pause animation; when false, resume (also applied after the GIF loads). */
+  paused?: boolean;
+}
+
+function applyGIF(comp, buffer?: ArrayBuffer, paused?: boolean) {
+  if (buffer != null) {
+    comp.setGIFBinary(buffer);
+  }
+  if (paused) {
+    comp.pause();
+  } else if (paused === false) {
+    comp.resume();
+  }
 }
 
 function setGIFProps(comp, newProps: GIFProps, oldProps: Partial<GIFProps>) {
@@ -32,13 +45,16 @@ function setGIFProps(comp, newProps: GIFProps, oldProps: Partial<GIFProps>) {
         }
         if (!isValidUrl(url)) {
           loadLocalAsset(url, "setGIF error", (buffer) =>
-            comp.setGIFBinary(buffer));
+            applyGIF(comp, buffer, newProps.paused));
         } else {
           fetchAssetBinary(url)
-            .then((buffer) => comp.setGIFBinary(buffer))
+            .then((buffer) => applyGIF(comp, buffer, newProps.paused))
             .catch(console.warn);
         }
       }
+    },
+    paused(shouldPause) {
+      applyGIF(comp, undefined, shouldPause);
     },
   };
   Object.keys(setter).forEach((key) => {
@@ -99,5 +115,11 @@ export class GIFComp extends NativeGIF {
   }
   scrollIntoView() {
     super.scrollIntoView();
+  }
+  pause() {
+    super.pause();
+  }
+  resume() {
+    super.resume();
   }
 }
