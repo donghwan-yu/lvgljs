@@ -1,5 +1,5 @@
 import { colorTransform } from "./color";
-import { LV_SIZE_CONTENT } from "../lv_conf_macros";
+import { LV_SIZE_CONTENT, lv_pct } from "../lv_conf_macros";
 
 export function NormalizePx(value) {
   if (value == void 0) return null;
@@ -54,7 +54,7 @@ export function ProcessPxOrPercent(key, value, result) {
 
   const value1 = value.match(reg1)?.[1];
   if (!isNaN(value1)) {
-    return (result[`${key}_pct`] = value1);
+    return (result[key] = lv_pct(Number(value1)));
   }
 }
 

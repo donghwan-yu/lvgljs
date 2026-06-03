@@ -29,34 +29,10 @@ static void CompSetMinWidth (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, 
     lv_style_set_min_width(style, static_cast<lv_coord_t>(width));
 };
 
-static void CompSetMaxWidthPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int width;
-    JS_ToInt32(ctx, &width, obj);
-    lv_style_set_max_width(style, lv_pct(static_cast<lv_coord_t>(width)));
-};
-
-static void CompSetMinWidthPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int width;
-    JS_ToInt32(ctx, &width, obj);
-    lv_style_set_min_width(style, lv_pct(static_cast<lv_coord_t>(width)));
-};
-
-static void CompSetWidthPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int width;
-    JS_ToInt32(ctx, &width, obj);
-    lv_style_set_width(style, lv_pct(static_cast<lv_coord_t>(width)));
-};
-
 static void CompSetHeight (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int height;
     JS_ToInt32(ctx, &height, obj);
     lv_style_set_height(style, static_cast<lv_coord_t>(height));
-};
-
-static void CompSetHeightPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int height;
-    JS_ToInt32(ctx, &height, obj);
-    lv_style_set_height(style, lv_pct(static_cast<lv_coord_t>(height)));
 };
 
 static void CompSetMaxHeight (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
@@ -65,22 +41,10 @@ static void CompSetMaxHeight (lv_obj_t* comp, lv_style_t* style, JSContext* ctx,
     lv_style_set_max_height(style, static_cast<lv_coord_t>(height));
 };
 
-static void CompSetMaxHeightPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int height;
-    JS_ToInt32(ctx, &height, obj);
-    lv_style_set_max_height(style, lv_pct(static_cast<lv_coord_t>(height)));
-};
-
 static void CompSetMinHeight (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int height;
     JS_ToInt32(ctx, &height, obj);
     lv_style_set_min_height(style, static_cast<lv_coord_t>(height));
-};
-
-static void CompSetMinHeightPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int height;
-    JS_ToInt32(ctx, &height, obj);
-    lv_style_set_min_height(style, lv_pct(static_cast<lv_coord_t>(height)));
 };
 
 static void CompSetX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
@@ -89,22 +53,10 @@ static void CompSetX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue
     lv_style_set_x(style, static_cast<lv_coord_t>(x));
 };
 
-static void CompSetXPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int x;
-    JS_ToInt32(ctx, &x, obj);
-    lv_style_set_x(style, lv_pct(static_cast<lv_coord_t>(x)));
-};
-
 static void CompSetY (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int y;
     JS_ToInt32(ctx, &y, obj);
     lv_style_set_y(style, static_cast<lv_coord_t>(y));
-};
-
-static void CompSetYPch (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int y;
-    JS_ToInt32(ctx, &y, obj);
-    lv_style_set_y(style, lv_pct(static_cast<lv_coord_t>(y)));
 };
 
 static void CompSetBackgroundColor (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
@@ -805,20 +757,12 @@ std::unordered_map<std::string, CompSetStyle*> StyleManager::styles {
     /* size && position */
     {"width", &CompSetWidth},
     {"max-width", &CompSetMaxWidth},
-    {"max-width_pct", &CompSetMaxWidthPch},
     {"min-width", &CompSetMinWidth},
-    {"min-width_pct", &CompSetMinWidthPch},
     {"height", &CompSetHeight},
     {"max-height", &CompSetMaxHeight},
-    {"max-height_pct", &CompSetMaxHeightPch},
     {"min-height", &CompSetMinHeight},
-    {"min-height_pct", &CompSetMinHeightPch},
     {"left", &CompSetX},
     {"top", &CompSetY},
-    {"width_pct", &CompSetWidthPch},
-    {"height_pct", &CompSetHeightPch},
-    {"left_pct", &CompSetXPch},
-    {"top_pct", &CompSetYPch},
 
     /* background */
     {"background-color", &CompSetBackgroundColor},
