@@ -35,7 +35,7 @@ export type InputProps = CommonProps & {
   autoKeyBoard: boolean;
 };
 
-function setInputProps(comp, newProps: InputProps, oldProps: InputProps) {
+function setInputProps(comp, newProps: InputProps, oldProps: Partial<InputProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Input", comp, newProps, oldProps }),
     placeholder(str) {
@@ -116,7 +116,7 @@ export class InputComp extends NativeView {
       },
     });
   }
-  setProps(newProps: InputProps, oldProps: InputProps) {
+  setProps(newProps: InputProps, oldProps: Partial<InputProps>) {
     setInputProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

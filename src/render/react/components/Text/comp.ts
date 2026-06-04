@@ -16,7 +16,7 @@ export type TextProps = CommonProps & {
   children: string | number | (string | number)[];
 };
 
-function setTextProps(comp, newProps: TextProps, oldProps: TextProps) {
+function setTextProps(comp, newProps: TextProps, oldProps: Partial<TextProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Text", comp, newProps, oldProps }),
     children(str) {
@@ -62,7 +62,7 @@ export class TextComp extends NativeText {
       },
     });
   }
-  setProps(newProps: TextProps, oldProps: TextProps) {
+  setProps(newProps: TextProps, oldProps: Partial<TextProps>) {
     setTextProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

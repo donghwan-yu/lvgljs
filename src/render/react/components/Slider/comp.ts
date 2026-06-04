@@ -24,7 +24,7 @@ export type SliderProps = CommonProps & {
   value: number;
 };
 
-function setSliderProps(comp, newProps: SliderProps, oldProps: SliderProps) {
+function setSliderProps(comp, newProps: SliderProps, oldProps: Partial<SliderProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Slider", comp, newProps, oldProps }),
     indicatorStyle(styleSheet) {
@@ -117,7 +117,7 @@ export class SliderComp extends NativeSlider {
       },
     });
   }
-  setProps(newProps: SliderProps, oldProps: SliderProps) {
+  setProps(newProps: SliderProps, oldProps: Partial<SliderProps>) {
     setSliderProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

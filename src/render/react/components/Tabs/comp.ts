@@ -18,7 +18,7 @@ export type TabsProps = CommonProps & {
   tabSize?: number;
 };
 
-function setTabsProps(comp, newProps: TabsProps, oldProps: TabsProps) {
+function setTabsProps(comp, newProps: TabsProps, oldProps: Partial<TabsProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Tabs", comp, newProps, oldProps }),
     onClick(fn) {
@@ -72,7 +72,7 @@ export class TabsComp extends NativeTabs {
     });
     this.currentAppendIndex = 0;
   }
-  setProps(newProps: TabsProps, oldProps: TabsProps) {
+  setProps(newProps: TabsProps, oldProps: Partial<TabsProps>) {
     this.tabs = newProps.tabs;
     setTabsProps(this, newProps, oldProps);
   }

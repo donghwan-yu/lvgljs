@@ -19,7 +19,7 @@ export type ImageProps = CommonProps & {
   src: string;
 };
 
-function setImageProps(comp, newProps: ImageProps, oldProps: ImageProps) {
+function setImageProps(comp, newProps: ImageProps, oldProps: Partial<ImageProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Image", comp, newProps, oldProps }),
     onClick(fn) {
@@ -71,7 +71,7 @@ export class ImageComp extends NativeImage {
       },
     });
   }
-  setProps(newProps: ImageProps, oldProps: ImageProps) {
+  setProps(newProps: ImageProps, oldProps: Partial<ImageProps>) {
     setImageProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

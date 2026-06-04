@@ -18,7 +18,7 @@ export type GIFProps = CommonProps & {
   src: string;
 }
 
-function setGIFProps(comp, newProps: GIFProps, oldProps: GIFProps) {
+function setGIFProps(comp, newProps: GIFProps, oldProps: Partial<GIFProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "GIF", comp, newProps, oldProps }),
     onClick(fn) {
@@ -70,7 +70,7 @@ export class GIFComp extends NativeGIF {
       },
     });
   }
-  setProps(newProps: GIFProps, oldProps: GIFProps) {
+  setProps(newProps: GIFProps, oldProps: Partial<GIFProps>) {
     setGIFProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

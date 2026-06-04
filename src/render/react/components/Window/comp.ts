@@ -15,7 +15,7 @@ export type WindowProps = CommonProps & {
   title: string;
 };
 
-function setWindowProps(comp, newProps: WindowProps, oldProps: WindowProps) {
+function setWindowProps(comp, newProps: WindowProps, oldProps: Partial<WindowProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Window", comp, newProps, oldProps }),
     title(title) {
@@ -53,7 +53,7 @@ export class Window extends NativeComp {
       },
     });
   }
-  setProps(newProps: WindowProps, oldProps: WindowProps) {
+  setProps(newProps: WindowProps, oldProps: Partial<WindowProps>) {
     setWindowProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

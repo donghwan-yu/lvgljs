@@ -15,7 +15,7 @@ export type ProgressBarProps = CommonProps & {
   indicatorStyle?: StyleProps;
 };
 
-function setProgressBarProps(comp, newProps: ProgressBarProps, oldProps: ProgressBarProps) {
+function setProgressBarProps(comp, newProps: ProgressBarProps, oldProps: Partial<ProgressBarProps>) {
   const setter = {
     ...CommonComponentApi({
       compName: "ProgressBar",
@@ -84,7 +84,7 @@ export class ProgressBarComp extends NativeProgressBar {
       },
     });
   }
-  setProps(newProps: ProgressBarProps, oldProps: ProgressBarProps) {
+  setProps(newProps: ProgressBarProps, oldProps: Partial<ProgressBarProps>) {
     setProgressBarProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

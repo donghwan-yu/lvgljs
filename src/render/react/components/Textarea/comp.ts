@@ -28,7 +28,7 @@ export type TextAreaProps = CommonProps & {
   autoKeyBoard: boolean;
 };
 
-function setTextareaProps(comp, newProps: TextAreaProps, oldProps: TextAreaProps) {
+function setTextareaProps(comp, newProps: TextAreaProps, oldProps: Partial<TextAreaProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Textarea", comp, newProps, oldProps }),
     placeholder(str) {
@@ -100,7 +100,7 @@ export class TextareaComp extends NativeView {
       },
     });
   }
-  setProps(newProps: TextAreaProps, oldProps: TextAreaProps) {
+  setProps(newProps: TextAreaProps, oldProps: Partial<TextAreaProps>) {
     setTextareaProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

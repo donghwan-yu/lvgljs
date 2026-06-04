@@ -15,7 +15,7 @@ export type LineProps = CommonProps & {
   points: [number, number][];
 };
 
-function setLineProps(comp, newProps, oldProps) {
+function setLineProps(comp, newProps: LineProps, oldProps: Partial<LineProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Keyboard", comp, newProps, oldProps }),
     points(points) {
@@ -56,7 +56,7 @@ export class LineComp extends NativeLine {
       },
     });
   }
-  setProps(newProps: LineProps, oldProps: LineProps) {
+  setProps(newProps: LineProps, oldProps: Partial<LineProps>) {
     setLineProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

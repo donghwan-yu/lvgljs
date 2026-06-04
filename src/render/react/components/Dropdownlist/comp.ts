@@ -25,7 +25,7 @@ export type DropdownListProps = CommonProps & {
   onChange?: (event: OnChangeEvent) => void;
 };
 
-function setListProps(comp, newProps: DropdownListProps, oldProps: DropdownListProps) {
+function setListProps(comp, newProps: DropdownListProps, oldProps: Partial<DropdownListProps>) {
   const setter = {
     ...CommonComponentApi({
       compName: "Dropdownlist",
@@ -96,7 +96,7 @@ export class DropdownlistComp extends NativeDropdownlist {
       },
     });
   }
-  setProps(newProps: DropdownListProps, oldProps: DropdownListProps) {
+  setProps(newProps: DropdownListProps, oldProps: Partial<DropdownListProps>) {
     setListProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

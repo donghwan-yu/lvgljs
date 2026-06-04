@@ -23,7 +23,7 @@ export type RollerProps = CommonProps & {
   onChange?: (event: OnChangeEvent) => void;
 };
 
-function setRollerProps(comp, newProps: RollerProps, oldProps: RollerProps) {
+function setRollerProps(comp, newProps: RollerProps, oldProps: Partial<RollerProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Roller", comp, newProps, oldProps }),
     selectedStyle(styleSheet) {
@@ -83,7 +83,7 @@ export class RollerComp extends NativeRoller {
       },
     });
   }
-  setProps(newProps: RollerProps, oldProps: RollerProps) {
+  setProps(newProps: RollerProps, oldProps: Partial<RollerProps>) {
     setRollerProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}

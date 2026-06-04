@@ -32,7 +32,7 @@ export type KeyboardProps = CommonProps & {
   onOk?: () => void;
 };
 
-function setKeyboardProps(comp, newProps: KeyboardProps, oldProps: KeyboardProps) {
+function setKeyboardProps(comp, newProps: KeyboardProps, oldProps: Partial<KeyboardProps>) {
   const setter = {
     ...CommonComponentApi({ compName: "Keyboard", comp, newProps, oldProps }),
     mode(mode) {
@@ -81,7 +81,7 @@ export class KeyboardComp extends NativeView {
       },
     });
   }
-  setProps(newProps: KeyboardProps, oldProps: KeyboardProps) {
+  setProps(newProps: KeyboardProps, oldProps: Partial<KeyboardProps>) {
     setKeyboardProps(this, newProps, oldProps);
   }
   insertBefore(child, beforeChild) {}
