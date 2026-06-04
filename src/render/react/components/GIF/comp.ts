@@ -1,5 +1,6 @@
 import { BUILT_IN_SYMBOL } from "../../core/style/symbol";
 import { isValidUrl } from "../../utils/helpers";
+import { fetchAssetBinary, loadLocalAsset } from "../../utils/assets";
 import { CommonComponentApi, CommonProps } from "../common/index";
 import {
   EVENTTYPE_MAP,
@@ -10,16 +11,6 @@ import {
 
 const bridge = globalThis[Symbol.for('lvgljs')];
 const NativeGIF = bridge.NativeRender.NativeComponents.GIF;
-
-async function getGIFBinary(url) {
-  const resp = await fetch(url, {
-    headers: {
-      "Content-Type": "application/octet-stream",
-    },
-  });
-  const GIFBuffer = await resp.arrayBuffer();
-  return GIFBuffer;
-}
 
 export type GIFProps = CommonProps & {
   src: string;
@@ -38,19 +29,11 @@ function setGIFProps(comp, newProps: GIFProps, oldProps: GIFProps) {
           return;
         }
         if (!isValidUrl(url)) {
-          if (!path.isAbsolute(url)) {
-            url = path.resolve(__dirname, url);
-          }
-          fs.readFile(url, { encoding: "binary" })
-            .then((data) => {
-              comp.setGIFBinary(data.buffer);
-            })
-            .catch((e) => {
-              console.log("setGIF error", e);
-            });
+          loadLocalAsset(url, "setGIF error", (buffer) =>
+            comp.setGIFBinary(buffer));
         } else {
-          getGIFBinary(url)
-            .then((buffer) => comp.setGIFBinary(Buffer.from(buffer).buffer))
+          fetchAssetBinary(url)
+            .then((buffer) => comp.setGIFBinary(buffer))
             .catch(console.warn);
         }
       }
