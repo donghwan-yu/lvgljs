@@ -11,8 +11,8 @@ WRAPPED_INSERT_CHILD(Window,"Window")
 WRAPPED_JS_CLOSE_COMPONENT(Window, "Window")
 
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
-    TJS_CFUNC_DEF("nativeSetStyle", 4, NativeCompSetStyle),
-    TJS_CFUNC_DEF("addEventListener", 4, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
+    TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
