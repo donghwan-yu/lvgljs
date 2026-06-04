@@ -2,6 +2,7 @@ import { StyleProps } from "../../core/style";
 import { CommonComponentApi, CommonProps, OnChangeEvent } from "../common/index";
 import {
   EVENTTYPE_MAP,
+  STYLE_TYPE,
   handleEvent,
   setStyle,
   styleGetterProp,
@@ -126,7 +127,7 @@ export class InputComp extends NativeView {
   close() {
     super.close();
   }
-  setStyle(style, type = 0x0000) {
+  setStyle(style, type = STYLE_TYPE.PART_MAIN) {
     setStyle({
       comp: this,
       styleSheet: style,

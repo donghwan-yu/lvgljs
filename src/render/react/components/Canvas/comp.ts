@@ -1,6 +1,7 @@
 import { CommonProps, OnClickEvent } from "../common";
 import {
   EVENTTYPE_MAP,
+  STYLE_TYPE,
   handleEvent,
   setStyle,
   styleGetterProp,
@@ -25,7 +26,7 @@ function setCanvasProps(comp, newProps: CanvasProps, oldProps: CanvasProps) {
         comp,
         styleSheet,
         compName: "Canvas",
-        styleType: 0x0000,
+        styleType: STYLE_TYPE.PART_MAIN,
         oldStyleSheet: oldProps.style,
       });
     },
@@ -94,7 +95,7 @@ export class CanvasComp extends NativeButton {
   close() {
     super.close();
   }
-  setStyle(style, type = 0x0000) {
+  setStyle(style, type = STYLE_TYPE.PART_MAIN) {
     setStyle({
       comp: this,
       styleSheet: style,

@@ -94,7 +94,7 @@ export class RollerComp extends NativeRoller {
   close() {
     super.close();
   }
-  setStyle(style, type = 0x0000) {
+  setStyle(style, type = STYLE_TYPE.PART_MAIN) {
     setStyle({
       comp: this,
       styleSheet: style,

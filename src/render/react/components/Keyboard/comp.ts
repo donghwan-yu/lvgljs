@@ -2,6 +2,7 @@ import * as lv_conf from "../../core/lv_conf";
 import { CommonComponentApi, CommonProps } from "../common/index";
 import {
   EVENTTYPE_MAP,
+  STYLE_TYPE,
   handleEvent,
   setStyle,
   styleGetterProp,
@@ -92,7 +93,7 @@ export class KeyboardComp extends NativeView {
   close() {
     super.close();
   }
-  setStyle(style, type = 0x0000) {
+  setStyle(style, type = STYLE_TYPE.PART_MAIN) {
     setStyle({
       comp: this,
       styleSheet: style,
