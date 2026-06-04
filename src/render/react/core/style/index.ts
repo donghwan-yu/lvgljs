@@ -10,7 +10,7 @@ import { OpacityStyle, OpacityStyleProp } from "./pipe/opacity";
 import { OutlineStyle, OutlineStyleType } from "./pipe/outline";
 import { PaddingStyle, PaddingStyleType } from "./pipe/padding";
 import { PosStyle, PosStyleType } from "./pipe/pos";
-import { ScrollStyle, ScrollStyleType } from "./pipe/scoll";
+import { ScrollStyle, ScrollStyleType } from "./pipe/scroll";
 import { ShadowStyle, ShadowStyleType } from "./pipe/shadow";
 import { TextStyle, TextStyleType } from "./pipe/text";
 import { TransStyle, TransStyleType } from "./pipe/trans";
