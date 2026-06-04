@@ -56,6 +56,9 @@ void NativeComponentChartInit (JSContext* ctx, JSValue ns);
 
 void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
 
+/* TJS_CFUNC_DEF(name, length, func): use length 0 for all lvgljs bindings; validate argc in handlers.
+ * See doc/wiki/Native-JS-Bindings.md */
+
 #define WRAPPED_INT32_VALUE(COMPONENT,COMPONENT_NAME,PROPERTY_NAME) \
     static JSValue NativeCompSet##PROPERTY_NAME(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) { \
         if (argc >= 1 && JS_IsNumber(argv[0])) { \

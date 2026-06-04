@@ -8,6 +8,9 @@ static void ThemeDefaultInit () {
 };
 
 static JSValue SetTheme(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+    if (argc < 1 || !JS_IsObject(argv[0]))
+        return JS_UNDEFINED;
+
     ThemeDefaultInit();
 
     JSValue primary_color_value = JS_GetPropertyStr(ctx, argv[0], "primaryColor");
@@ -47,6 +50,10 @@ static JSValue SetTheme(JSContext* ctx, JSValueConst this_val, int argc, JSValue
         font_size
     );
 
+    JS_FreeValue(ctx, primary_color_value);
+    JS_FreeValue(ctx, second_primary_value);
+    JS_FreeValue(ctx, font_size_value);
+
     return JS_UNDEFINED;
 };
 
@@ -64,7 +71,7 @@ static JSValue ResetTheme(JSContext* ctx, JSValueConst this_val, int argc, JSVal
 };
 
 static const JSCFunctionListEntry theme_funcs[] = {
-    TJS_CFUNC_DEF("setTheme", 1, SetTheme),
+    TJS_CFUNC_DEF("setTheme", 0, SetTheme),
     TJS_CFUNC_DEF("resetTheme", 0, ResetTheme),
 };
 
