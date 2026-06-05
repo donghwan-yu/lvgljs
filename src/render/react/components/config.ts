@@ -98,7 +98,7 @@ export const EDropdownListArrowDirection = {
   left: 3,
 };
 
-export const styleGetterProp = ["height", "width", "left", "top"];
+export const styleGetterProp: readonly (string | symbol)[] = ["height", "width", "left", "top"] as const;
 
 export type LvgljsComponentConfig<ComponentProps, ComponentInstance> = Pick<
   HostConfig<any, ComponentProps, any, ComponentInstance, any, any, any, any, any, any, any, any>,
