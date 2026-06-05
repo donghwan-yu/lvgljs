@@ -44,6 +44,7 @@ class StyleSheet {
           } else {
             obj.__dirty = value;
           }
+          return true;
         },
       },
     );

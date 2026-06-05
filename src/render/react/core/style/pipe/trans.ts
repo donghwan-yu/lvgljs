@@ -271,17 +271,17 @@ export function TransStyle(style: TransStyleType, result, compName) {
   }
 
   if (style["transform"]) {
-    let value = style["transform"];
-    value = value.match(/[a-zA-Z\-]+\([^\(]+\)/g);
+    const value = style["transform"];
+    const matches = value.match(/[a-zA-Z\-]+\([^\(]+\)/g);
     const reg = /^([a-zA-Z\-]+)\((.+)\)$/;
-    value &&
-      value.forEach((item) => {
+    matches &&
+      matches.forEach((item) => {
         let [_, prop, val] = item.match(reg);
         if (transformSupportKeys.includes(prop) && val) {
           if (prop == "translate") {
-            val = val.split(",");
-            ProcessPx("translateX", val[0], result);
-            ProcessPx("translateY", val[1], result);
+            const parts = val.split(",");
+            ProcessPx("translateX", parts[0], result);
+            ProcessPx("translateY", parts[1], result);
           } else if (prop == "scale") {
             if (compName === "Image") {
               prop = `img-${prop}`;

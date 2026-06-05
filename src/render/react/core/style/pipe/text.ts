@@ -54,7 +54,7 @@ export function TextStyle(style: TextStyleType, result, compName) {
 
     if (typeof size == "string") {
       const reg = /(\d+\.?\d*)(px)?$/;
-      size = size.replace(/(^\s*)|(\s*$)/g, "").match(reg)?.[1];
+      size = Number(size.replace(/(^\s*)|(\s*$)/g, "").match(reg)?.[1]);
     }
 
     if (isNaN(size)) return result;

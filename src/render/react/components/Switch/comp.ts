@@ -37,7 +37,7 @@ function setSwitchProps(comp, newProps: SwitchProps, oldProps: SwitchProps) {
     },
     checked(val) {
       if (isNaN(val)) return;
-      if (val == oldProps.value) return;
+      if (val == oldProps.checked) return;
       comp.setChecked(val);
     },
     disabled(val) {

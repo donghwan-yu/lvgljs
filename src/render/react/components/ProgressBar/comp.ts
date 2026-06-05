@@ -50,7 +50,7 @@ function setProgressBarProps(comp, newProps: ProgressBarProps, oldProps: Partial
       }
     },
     range(arr) {
-      if (arr?.[0] !== oldProps?.arr?.[0] || arr?.[1] !== oldProps?.arr?.[1]) {
+      if (arr?.[0] !== oldProps?.range?.[0] || arr?.[1] !== oldProps?.range?.[1]) {
         comp.setRange(arr[0], arr[1]);
       }
     },

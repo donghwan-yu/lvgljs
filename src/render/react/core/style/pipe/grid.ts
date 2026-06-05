@@ -63,7 +63,7 @@ export function GridStyle(style: GridStyleType, result) {
         return GRID_CONTENT;
       }
       const arr = column?.match(FR_REG);
-      if (!isNaN(arr?.[1])) {
+      if (arr?.[1] != null && !isNaN(Number(arr[1]))) {
         return (1 << 13) - 1 - 100 + Number(arr[1]);
       }
       return NormalizePx(column);
@@ -73,7 +73,7 @@ export function GridStyle(style: GridStyleType, result) {
         return GRID_CONTENT;
       }
       const arr = row?.match(FR_REG);
-      if (!isNaN(arr?.[1])) {
+      if (arr?.[1] != null && !isNaN(Number(arr[1]))) {
         return (1 << 13) - 1 - 100 + Number(arr[1]);
       }
       return NormalizePx(row);
