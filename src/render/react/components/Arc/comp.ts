@@ -171,12 +171,8 @@ export class ArcComp extends NativeArc {
   insertBefore(child, beforeChild) {}
   static tagName = "Arc";
   appendInitialChild(child) {}
-  appendChild(child) {
-    super.appendChild(child);
-  }
-  removeChild(child) {
-    super.removeChild(child);
-  }
+  appendChild(child) {}
+  removeChild(child) {}
   close() {
     super.close();
   }

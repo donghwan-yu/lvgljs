@@ -123,12 +123,8 @@ export class SliderComp extends NativeSlider {
   insertBefore(child, beforeChild) {}
   static tagName = "Slider";
   appendInitialChild(child) {}
-  appendChild(child) {
-    super.appendChild(child);
-  }
-  removeChild(child) {
-    super.removeChild(child);
-  }
+  appendChild(child) {}
+  removeChild(child) {}
   close() {
     super.close();
   }
