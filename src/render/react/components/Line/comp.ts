@@ -6,7 +6,9 @@ import {
   styleGetterProp,
 } from "../config";
 
-const bridge = globalThis[Symbol.for('lvgljs')];
+import { GetBridge } from "../../core/bridge";
+
+const bridge = GetBridge();
 const NativeLine = bridge.NativeRender.NativeComponents.Line;
 
 export type LineProps = CommonProps & {
