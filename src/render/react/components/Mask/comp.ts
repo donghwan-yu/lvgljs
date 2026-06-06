@@ -112,13 +112,7 @@ export class MaskComp extends NativeMask {
       isInit: false,
     });
   }
-  moveToFront() {
-    super.moveToFront();
-  }
-  moveToBackground() {
-    super.moveToBackground();
-  }
-  scrollIntoView() {
-    super.scrollIntoView();
-  }
+  moveToFront() {}
+  moveToBackground() {}
+  scrollIntoView() {}
 }

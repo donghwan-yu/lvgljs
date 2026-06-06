@@ -104,18 +104,10 @@ export class CheckboxComp extends NativeView {
   setProps(newProps: CheckboxProps, oldProps: CheckboxProps) {
     setCheckboxProps(this, newProps, oldProps);
   }
-  insertBefore(child, beforeChild) {
-    this.insertChildBefore(child, beforeChild);
-  }
-  appendInitialChild(child) {
-    this.appendChild(child);
-  }
-  appendChild(child) {
-    super.appendChild(child);
-  }
-  removeChild(child) {
-    super.removeChild(child);
-  }
+  insertBefore(child, beforeChild) {}
+  appendInitialChild(child) {}
+  appendChild(child) {}
+  removeChild(child) {}
   close() {
     super.close();
   }
