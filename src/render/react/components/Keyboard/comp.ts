@@ -7,7 +7,9 @@ import {
 } from "../config";
 import { InputComp } from "../Input/comp";
 
-const bridge = globalThis[Symbol.for('lvgljs')];
+import { GetBridge } from "../../core/bridge";
+
+const bridge = GetBridge();
 const NativeView = bridge.NativeRender.NativeComponents.Keyboard;
 
 const modes = {

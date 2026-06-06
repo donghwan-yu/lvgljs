@@ -6,7 +6,9 @@ import {
   styleGetterProp,
 } from "../config";
 
-const bridge = globalThis[Symbol.for('lvgljs')];
+import { GetBridge } from "../../core/bridge";
+
+const bridge = GetBridge();
 const NativeCalendar = bridge.NativeRender.NativeComponents.Calendar;
 
 export type CalendarProps = CommonProps & {

@@ -2,7 +2,9 @@ import { StyleProps } from "../../core/style";
 import { CommonComponentApi, CommonProps } from "../common/index";
 import { STYLE_TYPE, handleEvent, setStyle, styleGetterProp } from "../config";
 
-const bridge = globalThis[Symbol.for('lvgljs')];
+import { GetBridge } from "../../core/bridge";
+
+const bridge = GetBridge();
 const NativeProgressBar = bridge.NativeRender.NativeComponents.ProgressBar;
 
 export type ProgressBarProps = CommonProps & {
