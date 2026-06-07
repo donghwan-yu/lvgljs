@@ -292,7 +292,7 @@ void CompSetTransition (
     if (func_idx >= 0 && static_cast<size_t>(func_idx) < LV_ANIM_PATH_COUNT) {
         func = lv_anim_path_funcs[func_idx];
     }
-    lv_style_transition_dsc_init(trans, props, func, time, 0, NULL);
+    lv_style_transition_dsc_init(trans, props, func, time, delay, NULL);
     lv_style_set_transition(style, trans);
 };
 
