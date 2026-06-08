@@ -243,15 +243,17 @@ const transformSupportKeys = [
 ];
 
 export type TransStyleType = {
-  transition?: string;
+  "transition-property"?: string;
+  "transition-duration"?: string | number;
+  "transition-timing-function"?: string;
+  "transition-delay"?: string | number;
   transform?: string;
   "transform-origin"?: string;
 };
 
 export function TransStyle(style: TransStyleType, result, compName) {
   if (style["transition-property"]) {
-    let properties = style["transition-property"];
-    properties = properties
+    const properties = style["transition-property"]
       .split(",")
       .map((item) => item.replace(/\s/, ""))
       .map((item) => transitionProperty[item])
