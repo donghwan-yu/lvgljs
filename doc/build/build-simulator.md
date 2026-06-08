@@ -10,7 +10,7 @@ You'll need to install these dependencies:
 
 | Mac | Linux |
 | ------- | ------- |
-| `brew install cmake sdl2 node` | `sudo apt install cmake nodejs libsdl2-dev` |
+| `brew install cmake sdl2 libffi curl node` | `sudo apt install cmake nodejs libsdl2-dev libffi-dev libcurl4-openssl-dev` |
 
 
 Then run `make setup`. This will initialize the git submodules and install the necessary npm packages

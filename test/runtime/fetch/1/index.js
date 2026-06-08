@@ -1,7 +1,15 @@
-const assert = require('assert')
+import assert from 'tjs:assert'
+import path from 'tjs:path'
+
+const { TEST_EXIT_OK } = await import(path.join(import.meta.dirname, '../../../../scripts/lib/harness-codes.js'))
+const { createEchoServer } = await import(path.join(import.meta.dirname, '../../../../scripts/lib/echo-server.js'))
+
+// const baseUrl = 'https://httpbin.org'
+const baseUrl = 'https://httpbun.com'
+const BINARY_SIZE = 90
 
 async function basicFetch() {
-    const r = await fetch('https://httpbin.org/get');
+    const r = await fetch(`${baseUrl}/get`);
     assert.eq(r.status, 200, 'status is 200');
 };
 
@@ -12,7 +20,7 @@ async function abortFetch() {
         controller.abort();
     }, 500);
     try {
-        await fetch('https://httpbin.org/delay/3', { signal });
+        await fetch(`${baseUrl}/delay/3`, { signal });
     } catch (e) {
         assert.eq(e.name, 'AbortError', 'fetch was aborted');
     }
@@ -20,7 +28,7 @@ async function abortFetch() {
 
 async function fetchWithPostAndBody() {
     const data = JSON.stringify({ foo: 'bar', bar: 'baz' });
-    const r = await fetch('https://httpbin.org/post', {
+    const r = await fetch(`${baseUrl}/post`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -32,9 +40,33 @@ async function fetchWithPostAndBody() {
     assert.eq(json.data, data, 'sent and received data match');
 };
 
+async function fetchBinaryWithArrayBuffer() {
+    const url = `${baseUrl}/bytes/${BINARY_SIZE}`;
+    // const url ="http://p0.itc.cn/q_70/images03/20200807/9405b7432e34421b866f35a087812b6f.gif"
+    const resp = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/octet-stream',
+        },
+    });
+    assert.eq(resp.status, 200, 'status is 200');
+    const imageBuffer = await resp.arrayBuffer();
+    assert.eq(imageBuffer.byteLength, BINARY_SIZE, 'arrayBuffer has expected length');
+};
 
-(async () => {
+async function runTests() {
     await basicFetch();
     await abortFetch();
     await fetchWithPostAndBody();
+    await fetchBinaryWithArrayBuffer();
+}
+
+(async () => {
+    let exitCode = TEST_EXIT_OK;
+    try {
+        await runTests();
+    } catch (e) {
+        console.error(e && e.stack ? e.stack : e);
+        exitCode = 1;
+    }
+    tjs.exit(exitCode);
 })();
