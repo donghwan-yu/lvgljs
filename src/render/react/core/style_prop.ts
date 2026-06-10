@@ -307,7 +307,6 @@ export const NATIVE_STYLE_PROP_INTM = {
   "outline-color": LvStyleProp.LV_STYLE_OUTLINE_COLOR,
   "outline-padding": LvStyleProp.LV_STYLE_OUTLINE_PAD,
   "font-size": LvStyleProp.LV_STYLE_TEXT_FONT,
-  "font-size-1": LvStyleProp.LV_STYLE_TEXT_FONT,
   "text-overflow": LvStyleProp.LV_STYLE_CSS_TEXT_OVERFLOW,
   "letter-spacing": LvStyleProp.LV_STYLE_TEXT_LETTER_SPACE,
   "text-align": LvStyleProp.LV_STYLE_TEXT_ALIGN,

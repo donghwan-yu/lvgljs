@@ -30,5 +30,3 @@ static const lv_font_t builtin_font_list[] = {
 };
 
 void CompSetFontSize (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj);
-
-void CompSetFontSize1 (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj);

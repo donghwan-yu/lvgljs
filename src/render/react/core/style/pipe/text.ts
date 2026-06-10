@@ -68,10 +68,6 @@ export function TextStyle(style: TextStyleType, result, compName) {
       Math.max(builtInFontList[0], size),
     );
 
-    if (compName === "Text") {
-      result["font-size"] = builtInFontList.indexOf(size);
-    } else {
-      result["font-size-1"] = builtInFontList.indexOf(size);
-    }
+    result["font-size"] = builtInFontList.indexOf(size);
   }
 }

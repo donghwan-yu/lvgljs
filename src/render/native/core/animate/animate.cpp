@@ -3,6 +3,8 @@
 #include "engine.hpp"
 #include "native/core/lv_conf/lv_anim_path.h"
 
+#include <unordered_map>
+
 static JSClassID AnimateClassID;
 
 static MemoryPool<sizeof(lv_anim_t), 30> animate_pool;

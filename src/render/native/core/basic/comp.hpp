@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <unordered_map>
 
 
 #include "lv_bindings_js.h"

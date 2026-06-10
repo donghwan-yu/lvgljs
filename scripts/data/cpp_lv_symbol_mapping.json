@@ -632,20 +632,6 @@
       "cpp_lv_symbol": "LV_STYLE_TEXT_FONT"
     },
     {
-      "cpp_key": "font-size-1",
-      "handler": "CompSetFontSize1",
-      "setter_count": 1,
-      "slots": [
-        {
-          "lv_symbol": "LV_STYLE_TEXT_FONT",
-          "value_kind": "Ptr"
-        }
-      ],
-      "status": "REAL",
-      "value_kind": "Ptr",
-      "cpp_lv_symbol": "LV_STYLE_TEXT_FONT"
-    },
-    {
       "cpp_key": "text-overflow",
       "handler": "CompSetTextOverFLow",
       "setter_count": 0,
