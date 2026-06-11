@@ -1,16 +1,9 @@
 #include "style.hpp"
 #include "lv_bindings_js.h"
 
-static std::unordered_map<std::string, lv_anim_path_cb_t> transition_funcs = {
-    { "linear", &lv_anim_path_linear },
-    { "ease-in", &lv_anim_path_ease_in },
-    { "ease-out", &lv_anim_path_ease_out },
-    { "ease-in-out", &lv_anim_path_ease_in_out },
-    { "overshoot", &lv_anim_path_overshoot },
-    { "bounce", &lv_anim_path_bounce },
-    { "step", &lv_anim_path_step },
-};
-
+#include "native/core/basic/style_prop_value_kind.hpp"
+#include "native/core/lv_conf/lv_anim_path.h"
+#include "native/core/lv_conf/lv_style_prop_extend.h"
 static void CompSetWidth (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int width;
     JS_ToInt32(ctx, &width, obj);
@@ -478,13 +471,13 @@ void CompSetTransition (
     lv_style_t* style,
     lv_style_transition_dsc_t* trans, 
     lv_style_prop_t props[],
-    std::string func_str,
+    int32_t func_idx,
     int32_t time,
     int32_t delay
 ) {
-    lv_anim_path_cb_t func = &lv_anim_path_linear;
-    if (transition_funcs.find(func_str) != transition_funcs.end()) {
-        func = transition_funcs.at(func_str);
+    lv_anim_path_cb_t func = lv_anim_path_funcs[0];
+    if (func_idx >= 0 && static_cast<size_t>(func_idx) < LV_ANIM_PATH_COUNT) {
+        func = lv_anim_path_funcs[func_idx];
     }
     lv_style_transition_dsc_init(trans, props, func, time, 0, NULL);
     lv_style_set_transition(style, trans);

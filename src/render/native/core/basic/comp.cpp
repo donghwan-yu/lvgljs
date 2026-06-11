@@ -101,24 +101,21 @@ void BasicComponent::setTransition (JSContext* ctx, JSValue obj, lv_style_t* sty
     JSValue dura_value = JS_GetPropertyUint32(ctx, obj, 2);
     JS_ToInt32(ctx, &dura, dura_value);
 
+    int32_t func_idx = 0;
     JSValue func_value = JS_GetPropertyUint32(ctx, obj, 3);
-    size_t func_str_len;
-    const char* func_str = JS_ToCStringLen(ctx, &func_str_len, func_value);
-    std::string func_str_1 = func_str;
-    func_str_1.resize(func_str_len);
+    JS_ToInt32(ctx, &func_idx, func_value);
 
     int32_t delay;
     JSValue delay_value = JS_GetPropertyUint32(ctx, obj, 4);
     JS_ToInt32(ctx, &delay, delay_value);
 
-    CompSetTransition(style, &this->trans, this->trans_props_map[type], func_str_1, dura, delay);
+    CompSetTransition(style, &this->trans, this->trans_props_map[type], func_idx, dura, delay);
 
     JS_FreeValue(ctx, value_len);
     JS_FreeValue(ctx, props);
     JS_FreeValue(ctx, func_value);
     JS_FreeValue(ctx, dura_value);
     JS_FreeValue(ctx, delay_value);
-    JS_FreeCString(ctx, func_str);
 
     if (old_transProps != nullptr) {
         free(old_transProps);
