@@ -147,32 +147,16 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
 
 #define WRAPPED_JS_SETSTYLE(COMPONENT,COMPONENT_NAME)                                                                       \
     static JSValue NativeCompSetStyle(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                \
-        if (argc >= 5 && JS_IsObject(argv[0]) && JS_IsArray(argv[1]) && JS_IsNumber(argv[2]) && JS_IsNumber(argv[3]) && JS_IsBool(argv[4])) {       \
-            int len;                                                                                                        \
-            std::vector<std::string> keys;                                                                                  \
-            std::string key;                                                                                                \
-            size_t keylen;                                                                                                  \
-            JSValue value;                                                                                                  \
-            const char* ori_str;                                                                                            \
+        if (argc >= 3 && JS_IsObject(argv[0]) && JS_IsNumber(argv[1]) && JS_IsBool(argv[2])) {                              \
             int32_t type;                                                                                                   \
             bool isinit;                                                                                                    \
                                                                                                                             \
             COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                          \
-            JS_ToInt32(ctx, &len, argv[2]);                                                                                 \
-            for (int i=0; i<len; i++) {                                                                                     \
-                value = JS_GetPropertyUint32(ctx, argv[1], i);                                                              \
-                ori_str = JS_ToCStringLen(ctx, &keylen, value);                                                             \
-                key = ori_str;                                                                                              \
-                JS_FreeCString(ctx, ori_str);                                                                               \
-                key.resize(keylen);                                                                                         \
-                keys.push_back(key);                                                                                        \
-                JS_FreeValue(ctx, value);                                                                                   \
-            }                                                                                                               \
-            JS_ToInt32(ctx, &type, argv[3]);                                                                                \
-            isinit = JS_ToBool(ctx, argv[4]);                                                                               \
+            JS_ToInt32(ctx, &type, argv[1]);                                                                                \
+            isinit = JS_ToBool(ctx, argv[2]);                                                                               \
                                                                                                                             \
-            static_cast<COMPONENT*>(ref->comp)->BasicComponent::setStyle(ctx, argv[0], keys, type, isinit);                 \
-            LV_LOG_USER("%s %s setStyle type %d", COMPONENT_NAME, ref->uid, type);                                                        \
+            static_cast<COMPONENT*>(ref->comp)->BasicComponent::setStyle(ctx, argv[0], type, isinit);                       \
+            LV_LOG_USER("%s %s setStyle type %d", COMPONENT_NAME, ref->uid, type);                                          \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
     }                                                                                                                       \

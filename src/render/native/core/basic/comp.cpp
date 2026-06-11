@@ -135,7 +135,7 @@ bool BasicComponent::ensureStyle (int32_t type) {
     return is_new;
 };
 
-void BasicComponent::setStyle(JSContext* ctx, JSValue& obj, std::vector<std::string>& keys, int32_t type, bool isinit) {
+void BasicComponent::setStyle(JSContext* ctx, JSValue& nativeStyle, int32_t type, bool isinit) {
 
     lv_style_t* style;
     bool is_new = false;
@@ -153,25 +153,17 @@ void BasicComponent::setStyle(JSContext* ctx, JSValue& obj, std::vector<std::str
     //     this->initStyle(type);
     // }
 
-    for(int i=0; i < keys.size(); i++) {
-        std::string key = keys[i];
-
-        if (StyleManager::styles.count(key) > 0) {
-            CompSetStyle* func = StyleManager::styles.at(key);
-            JSValue value = JS_GetPropertyStr(ctx, obj, key.c_str());
-            func(this->instance, style, ctx, value);
-            JS_FreeValue(ctx, value);
-        }
+    JSValue batch = JS_GetPropertyStr(ctx, nativeStyle, "batch");
+    if (JS_IsObject(batch)) {
+        apply_style_props_batch(ctx, this->instance, style, batch, type);
     }
+    JS_FreeValue(ctx, batch);
 
-    for(int i=0; i < keys.size(); i++) {
-        std::string key = keys[i];
-        if (key == "transition") {
-            JSValue value = JS_GetPropertyStr(ctx, obj, key.c_str());
-            this->setTransition(ctx, value, style, type);
-            JS_FreeValue(ctx, value);
-        }
+    JSValue transition = JS_GetPropertyStr(ctx, nativeStyle, "transition");
+    if (JS_IsArray(transition)) {
+        this->setTransition(ctx, transition, style, type);
     }
+    JS_FreeValue(ctx, transition);
 
     if (is_new) {
         lv_obj_add_style(this->instance, style, type);

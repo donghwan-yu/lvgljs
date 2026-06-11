@@ -16,6 +16,9 @@ import { TextStyle, TextStyleType } from "./pipe/text";
 import { TransStyle, TransStyleType } from "./pipe/trans";
 import { PostProcessStyle } from "./post";
 
+import { NativeStylePropIntmKey } from "../style_prop";
+import { StyleBatch } from "./batch";
+
 class StyleSheet {
   static transformStyle: (style, compName) => {};
 
@@ -25,29 +28,6 @@ class StyleSheet {
       args.reduce((_, func) => func(style, result, compName), null);
       return result;
     };
-  }
-
-  static transform(style, compName) {
-    const result = StyleSheet.transformStyle(style, compName);
-
-    return result;
-  }
-
-  static create() {
-    return new Proxy(
-      { __dirty: true },
-      {
-        set(obj, prop, value) {
-          if (prop !== "__dirty") {
-            obj[prop] = value;
-            obj.__dirty = true;
-          } else {
-            obj.__dirty = value;
-          }
-          return true;
-        },
-      },
-    );
   }
 }
 
@@ -70,6 +50,22 @@ StyleSheet.pipeline([
   ArcStyle,
 ]);
 
+function transformStyle(
+  style: StyleType,
+  compName: string,
+): NativeStylePayload {
+    const result = StyleSheet.transformStyle(style, compName) as any;
+    const transition = result.transition as NativeStylePropTransition | undefined;
+    delete result.transition;
+    const batch = new StyleBatch();
+    for (const cppStyleKey of Object.keys(result) as NativeStylePropIntmKey[]) {
+      if (!batch.pushKeyValue(cppStyleKey, result[cppStyleKey])) {
+        break;
+      }
+    }
+    return { batch: batch.get(), transition };
+}
+
 export function setStyle({
   comp,
   styleSheet,
@@ -83,23 +79,27 @@ export function setStyle({
   styleSheet: StyleProps;
   compName: string;
   styleType: number;
-  oldStyleSheet: StyleProps| null;
+  oldStyleSheet: StyleProps | null;
   isInit?: boolean;
-  defaultStyle?: any;
+  defaultStyle?: Record<string, unknown>;
 }) {
   if (!styleSheet) return;
   styleSheet = Array.isArray(styleSheet) ? styleSheet : [styleSheet];
   oldStyleSheet = Array.isArray(oldStyleSheet)
     ? oldStyleSheet
-    : [oldStyleSheet];
+    : oldStyleSheet
+      ? [oldStyleSheet]
+      : [];
   const maybeChange = styleSheet.some((item, i) => item !== oldStyleSheet[i]);
 
   if (!maybeChange) return;
-  styleSheet = Object.assign({}, defaultStyle, ...styleSheet);
-  const result = StyleSheet.transform(styleSheet, compName);
-
-  const keys = Object.keys(result);
-  comp.nativeSetStyle(result, keys, keys.length, styleType, isInit);
+  const mergedStyle = Object.assign(
+    {},
+    defaultStyle,
+    ...styleSheet,
+  ) as StyleType;
+  const nativeStyle = transformStyle(mergedStyle, compName);
+  comp.nativeSetStyle(nativeStyle, styleType, isInit);
   PostProcessStyle({ comp, styleSheet, styleType });
 }
 

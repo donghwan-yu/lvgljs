@@ -4,6 +4,135 @@
 #include "native/core/basic/style_prop_value_kind.hpp"
 #include "native/core/lv_conf/lv_anim_path.h"
 #include "native/core/lv_conf/lv_style_prop_extend.h"
+
+static std::unordered_map<lv_style_prop_t, CompSetStyle*> g_native_style_prop_handlers;
+
+JSValue JS_AcquireTypedArray(JSContext *ctx, JSValueConst val, void **parray_ptr, size_t *parray_length, size_t *pbytes_per_element) {
+  size_t byte_offset = 0;
+  size_t byte_length = 0;
+  size_t buffer_size = 0;
+
+  *parray_ptr = nullptr;
+  *parray_length = 0;
+  *pbytes_per_element = 0;
+
+  // 1. Get the underlying ArrayBuffer, offset, and length
+  JSValue array_buffer = JS_GetTypedArrayBuffer(ctx, val, &byte_offset, &byte_length,
+                                                pbytes_per_element);
+
+  if (JS_IsException(array_buffer)) {
+    // Handle the error (val was not a TypedArray)
+    return JS_UNDEFINED;
+  }
+
+  // 2. Get the raw pointer to the buffer's data
+  uint8_t *buffer_ptr = JS_GetArrayBuffer(ctx, &buffer_size, array_buffer);
+
+  if (buffer_ptr && *pbytes_per_element > 0) {
+    // 3. Offset the pointer to match the Uint32Array's start
+    *parray_ptr = (void*)(buffer_ptr + byte_offset);
+    *parray_length = byte_length / *pbytes_per_element;
+  } else {
+    JS_FreeValue(ctx, array_buffer);
+    return JS_UNDEFINED;
+  }
+  return array_buffer;
+}
+
+void JS_ReleaseTypedArray(JSContext *ctx, const JSValue &array_buffer) {
+    // 4. Free the ArrayBuffer JSValue
+    JS_FreeValue(ctx, array_buffer);
+}
+
+static void apply_style_props_single_value(JSContext *ctx, lv_obj_t *instance,
+                                    lv_style_t *style, uint32_t key,
+                                    JSValue value, int32_t style_type) {
+    const auto prop = StylePropKeyUnpackId(key);
+    const auto kind = StylePropKeyUnpackKind(key);
+    switch (kind) {
+        case StylePropValueKindNum: {
+            lv_style_value_t lv_v{};
+            int32_t num = 0;
+            JS_ToInt32(ctx, &num, value);
+            lv_v.num = num;
+            lv_style_set_prop(style, prop, lv_v);
+            break;
+        }
+        case StylePropValueKindColor: {
+            lv_style_value_t lv_v{};
+            int32_t num = 0;
+            JS_ToInt32(ctx, &num, value);
+            lv_v.color = lv_color_hex(static_cast<uint32_t>(num));
+            lv_style_set_prop(style, prop, lv_v);
+            break;
+        }
+        case StylePropValueKindPtr:
+        case StylePropValueKindCSS: {
+            const auto it = g_native_style_prop_handlers.find(prop);
+            if (it == g_native_style_prop_handlers.end() || it->second == nullptr) {
+                LV_LOG_USER("style batch: no CSS/PTR handler for prop %d, kind:%d, skip", prop, kind);
+            } else {
+                it->second(instance, style, ctx, value);
+            }
+            break;
+        }
+    }
+}
+
+void apply_style_props_batch(
+    JSContext* ctx,
+    lv_obj_t* instance,
+    lv_style_t* style,
+    JSValue batch,
+    int32_t style_type
+) {
+    if (!JS_IsObject(batch)) {
+        return;
+    }
+
+    JSValue keys = JS_GetPropertyStr(ctx, batch, "keys");
+    JSValue values = JS_GetPropertyStr(ctx, batch, "values");
+    if (!JS_IsArray(values)) {
+        LV_LOG_USER("style batch: values is not an array, skip");
+        JS_FreeValue(ctx, values);
+        JS_FreeValue(ctx, keys);
+        return;
+    }
+
+    int32_t values_len = 0;
+    JSValue values_len_v = JS_GetPropertyStr(ctx, values, "length");
+    JS_ToInt32(ctx, &values_len, values_len_v);
+    JS_FreeValue(ctx, values_len_v);
+
+    size_t array_size = 0;
+    size_t array_bytes_per_element = 0;
+    uint32_t* keys_uint32 = nullptr;
+    JSValue keys_array_buffer = JS_AcquireTypedArray(
+        ctx, keys, (void**)&keys_uint32, &array_size, &array_bytes_per_element);
+
+    if (!JS_IsUndefined(keys_array_buffer) && keys_uint32 != nullptr
+        && array_bytes_per_element == 4 && values_len > 0) {
+        size_t count = array_size;
+        if (static_cast<int32_t>(array_size) > values_len) {
+            count = static_cast<size_t>(values_len);
+        }
+        for (size_t i = 0; i < count; i++) {
+            JSValue value = JS_GetPropertyUint32(ctx, values, static_cast<uint32_t>(i));
+            apply_style_props_single_value(
+                ctx, instance, style, keys_uint32[i], value, style_type);
+            JS_FreeValue(ctx, value);
+        }
+    } else {
+        LV_LOG_USER("style batch: keys is not a Uint32Array or values empty, skip");
+    }
+
+    if (!JS_IsUndefined(keys_array_buffer)) {
+        JS_ReleaseTypedArray(ctx, keys_array_buffer);
+    }
+    JS_FreeValue(ctx, values);
+    JS_FreeValue(ctx, keys);
+}
+
 static void CompSetWidth (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int width;
     JS_ToInt32(ctx, &width, obj);
@@ -863,3 +992,33 @@ std::unordered_map<std::string, CompSetStyle*> StyleManager::styles {
     {"grid-child", &CompSetGridChild},
     {"grid-align", &CompsetGridAlign},
 };
+
+void NativeStyleInit(JSContext* ctx) {
+    (void)ctx;
+    if (!g_native_style_prop_handlers.empty()) {
+        return;
+    }
+    // NativeStylePropValueKindPtr
+    // Currently for lv_style_prop_t that use pointer still needs to have the handler.
+    // TODO: In future, we can remove the handler by passing pointer with BigInt.
+    g_native_style_prop_handlers[LV_STYLE_TEXT_FONT] = &CompSetFontSize;
+
+    // NativeStylePropValueKindCSS
+    g_native_style_prop_handlers[LV_STYLE_CSS_CHART_SCALE_X] = &CompSetChartScaleX;
+    g_native_style_prop_handlers[LV_STYLE_CSS_CHART_SCALE_Y] = &CompSetChartScaleY;
+    g_native_style_prop_handlers[LV_STYLE_CSS_DISPLAY] = &CompSetDisplay;
+    g_native_style_prop_handlers[LV_STYLE_CSS_FLEX_ALIGN] = &CompSetFlexAlign;
+    g_native_style_prop_handlers[LV_STYLE_CSS_GRID_ALIGN] = &CompsetGridAlign;
+    g_native_style_prop_handlers[LV_STYLE_CSS_GRID_CHILD] = &CompSetGridChild;
+    g_native_style_prop_handlers[LV_STYLE_CSS_GRID_TEMPLATE] = &CompGridColumnRow;
+    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_ORIGIN] = &CompSetTransformOrigin;
+    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_ROTATE] = &CompSetImgRotate;
+    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_SCALE] = &CompSetImgScale;
+    g_native_style_prop_handlers[LV_STYLE_CSS_OVERFLOW] = &CompSetOverflow;
+    g_native_style_prop_handlers[LV_STYLE_CSS_OVERFLOW_SCROLLING] = &CompSetOverFlowScrolling;
+    g_native_style_prop_handlers[LV_STYLE_CSS_POSITION] = &CompSetPosition;
+    g_native_style_prop_handlers[LV_STYLE_CSS_SCROLL_ENABLE_SNAP] = &CompScrollEnableSnap;
+    g_native_style_prop_handlers[LV_STYLE_CSS_SCROLL_SNAP_X] = &CompSetScrollSnapX;
+    g_native_style_prop_handlers[LV_STYLE_CSS_SCROLL_SNAP_Y] = &CompSetScrollSnapY;
+    g_native_style_prop_handlers[LV_STYLE_CSS_TEXT_OVERFLOW] = &CompSetTextOverFLow;
+}

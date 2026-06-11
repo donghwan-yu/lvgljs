@@ -4,6 +4,7 @@
 #include "native/core/animate/animate.hpp"
 #include "native/core/lv_conf/lv_conf.hpp"
 #include "native/core/lv_conf/lv_style_prop_extend.h"
+#include "native/core/style/style.hpp"
 #include "native/core/dimensions/dimensions.hpp"
 #include "native/core/refresh/refresh.hpp"
 #include "native/core/theme/theme.hpp"
@@ -40,6 +41,9 @@ void NativeRenderInit (JSContext* ctx, JSValue ns) {
     lvgljs_style_css_prop_init();
 
     Native_lv_conf_Init(ctx, obj);
+
+    /* css handler unordered_map; after lvgljs_style_css_prop_init/Native_lv_conf_Init for LV_STYLE_CSS_* ids */
+    NativeStyleInit(ctx);
 };
 
 lv_style_prop_t lvjs_style_register_prop(void)
