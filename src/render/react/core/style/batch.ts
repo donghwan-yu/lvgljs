@@ -5,6 +5,7 @@ import {
   NativeStylePropIntmKey,
 } from "../style_prop";
 import { StylePropKeyPack, StylePropValueKind } from "../style_prop_value_kind";
+import { NormalizeEnum } from "./util";
 export { STYLE_PROP };
 
 export const BATCH_DEFAULT_CAPACITY = 512;
@@ -69,6 +70,17 @@ export class StyleBatch {
     normalize: (value: S[K]) => StylePropValue,
   ): boolean {
     return this.push(STYLE_PROP[key], normalize(style[key]));
+  }
+
+  /** Like pushStyle, but normalizes via NormalizeEnum(map, style[key]). */
+  pushStyleEnum<
+    S,
+    K extends NativeStylePropIntmKey & keyof S,
+    M extends Record<string, number | string>,
+  >(style: S, key: K, map: M): boolean {
+    return this.pushStyle(style, key, (v) =>
+      NormalizeEnum(map, v as keyof M | string | null | undefined),
+    );
   }
 
   get(): NativeStyleBatch {

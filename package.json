@@ -18,10 +18,13 @@
     "bundle": "node ./build.js",
     "bundle:watch": "nodemon --watch 'demo/**/*.jsx' --watch 'test/**/*.jsx' --ext 'jsx' --exec 'npm run bundle'",
     "fmt": "prettier -w src/render/react",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "yarn run typecheck:base && yarn run typecheck:react && yarn run test:unit",
+    "typecheck:base": "tsc --noEmit",
+    "typecheck:react": "tsc -p src/render/react/core --noEmit",
     "gen:all": "python scripts/codegen.py",
     "gen:all:check": "python scripts/codegen.py --check",
-    "test:wiki": "python -m unittest discover -s doc/wiki -p \"test_*.py\""
+    "test:wiki": "python -m unittest discover -s doc/wiki -p \"test_*.py\"",
+    "test:unit": "node scripts/run-specs.js"
   },
   "dependencies": {
     "buffer": "^6.0.3",
