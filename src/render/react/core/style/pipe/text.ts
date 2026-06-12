@@ -1,6 +1,7 @@
 import { ColorType } from "../color";
 import { ProcessColor, ProcessEnum, ProcessPx } from "../util";
 
+/** Pixel sizes; index order must match builtin_font_list[] in native/core/style/font/font.hpp. */
 const builtInFontList = [
   8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46,
   48,
