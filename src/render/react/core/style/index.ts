@@ -1,37 +1,34 @@
-import { ArcStyle, ArcStyleType } from "./pipe/arc";
-import { BackgroundStyle, BackgroundStyleType } from "./pipe/background";
-import { BorderStyle, BorderStyleType } from "./pipe/border";
-import { DisplayStyle, DisplayStyleType } from "./pipe/display";
-import { FlexStyle, FlexStyleType } from "./pipe/flex";
-import { GridStyle, GridStyleType } from "./pipe/grid";
-import { LineStyle, LineStyleType } from "./pipe/line";
-import { MiscStyle, MiscStyleType } from "./pipe/misc";
-import { OpacityStyle, OpacityStyleProp } from "./pipe/opacity";
-import { OutlineStyle, OutlineStyleType } from "./pipe/outline";
-import { PaddingStyle, PaddingStyleType } from "./pipe/padding";
-import { PosStyle, PosStyleType } from "./pipe/pos";
-import { ScrollStyle, ScrollStyleType } from "./pipe/scroll";
-import { ShadowStyle, ShadowStyleType } from "./pipe/shadow";
-import { TextStyle, TextStyleType } from "./pipe/text";
-import { TransStyle, TransStyleType } from "./pipe/trans";
+import { ArcStyle } from "./pipe/arc";
+import { BackgroundStyle } from "./pipe/background";
+import { BorderStyle } from "./pipe/border";
+import { DisplayStyle } from "./pipe/display";
+import { FlexStyle } from "./pipe/flex";
+import { GridStyle } from "./pipe/grid";
+import { LineStyle } from "./pipe/line";
+import { MiscStyle } from "./pipe/misc";
+import { OpacityStyle } from "./pipe/opacity";
+import { OutlineStyle } from "./pipe/outline";
+import { PaddingStyle } from "./pipe/padding";
+import { PosStyle } from "./pipe/pos";
+import { ScrollStyle } from "./pipe/scroll";
+import { ShadowStyle } from "./pipe/shadow";
+import { TextStyle } from "./pipe/text";
+import { TransStyle } from "./pipe/trans";
 import { PostProcessStyle } from "./post";
 
-import { NativeStylePropIntmKey } from "../style_prop";
-import { StyleBatch } from "./batch";
+import type { StyleProps, StyleType } from "./type";
+import { StyleBatch, StyleTransformResult } from "./batch";
 
-class StyleSheet {
-  static transformStyle: (style, compName) => {};
+/** Stage function in the style transform pipeline. */
+export type StylePipelineFn = (
+  style: StyleType,
+  result: StyleTransformResult,
+  compName?: string,
+) => void;
 
-  static pipeline(args: any[]) {
-    StyleSheet.transformStyle = (style, compName) => {
-      const result = {};
-      args.reduce((_, func) => func(style, result, compName), null);
-      return result;
-    };
-  }
-}
-
-StyleSheet.pipeline([
+// FlexStyle/GridStyle declare the display-narrowed slice of StyleType as their
+// parameter; the merged runtime style is a plain dict, so widen them here.
+const StylePipelineList = [
   FlexStyle,
   GridStyle,
   TextStyle,
@@ -48,22 +45,20 @@ StyleSheet.pipeline([
   ShadowStyle,
   DisplayStyle,
   ArcStyle,
-]);
+] as readonly StylePipelineFn[];
 
 function transformStyle(
   style: StyleType,
   compName: string,
 ): NativeStylePayload {
-    const result = StyleSheet.transformStyle(style, compName) as any;
-    const transition = result.transition as NativeStylePropTransition | undefined;
-    delete result.transition;
-    const batch = new StyleBatch();
-    for (const cppStyleKey of Object.keys(result) as NativeStylePropIntmKey[]) {
-      if (!batch.pushKeyValue(cppStyleKey, result[cppStyleKey])) {
-        break;
-      }
-    }
-    return { batch: batch.get(), transition };
+  const result: StyleTransformResult = {
+    batch: new StyleBatch(),
+    transition: undefined,
+  };
+  for (const func of StylePipelineList) {
+    func(style, result, compName);
+  }
+  return { batch: result.batch.get(), transition: result.transition };
 }
 
 export function setStyle({
@@ -103,20 +98,4 @@ export function setStyle({
   PostProcessStyle({ comp, styleSheet, styleType });
 }
 
-type StyleType = 
-& ArcStyleType
-& BackgroundStyleType
-& BorderStyleType
-& (DisplayStyleType | FlexStyleType | GridStyleType)
-& LineStyleType
-& MiscStyleType
-& OpacityStyleProp
-& OutlineStyleType
-& PaddingStyleType
-& PosStyleType
-& ScrollStyleType
-& ShadowStyleType
-& TextStyleType
-& TransStyleType;
-
-export type StyleProps =  StyleType | StyleType[];
+export type { StyleProps } from "./type";
