@@ -25,14 +25,8 @@ DEFAULT_LV_CONF_TS = ROOT / "src/render/react/core/lv_conf.ts"
 DEFAULT_LV_CONF_STUB_TS = ROOT / "src/render/react/core/lv_conf.stub.ts"
 DEFAULT_CPP_LV_SYMBOL_MAP_JSON = SCRIPTS_DATA / "cpp_lv_symbol_mapping.json"
 TRANSITION_COMPARE_JSON = SCRIPTS_DATA / "transition_lvgl_compare.json"
-LV_STYLE_SETTER_C_SOURCES = (
-    ROOT / "deps/lvgl/src/misc/lv_style_gen.c",
-    ROOT / "deps/lvgl/src/extra/layouts/flex/lv_flex.c",
-    ROOT / "deps/lvgl/src/extra/layouts/grid/lv_grid.c",
-)
+LV_STYLE_SETTER_C_SOURCES = (ROOT / "deps/lvgl/src/misc/lv_style_gen.c",)
 LV_STYLE_REGISTER_PROP_SOURCES = (
-    ROOT / "deps/lvgl/src/extra/layouts/flex/lv_flex.c",
-    ROOT / "deps/lvgl/src/extra/layouts/grid/lv_grid.c",
     ROOT / "src/render/native/core/lv_conf/lv_style_prop_extend.cpp",
 )
 REG_STYLE_PROP_ASSIGN_RE = re.compile(
@@ -567,7 +561,7 @@ def build_lv_style_prop_literal_map(sections: list[Section]) -> dict[str, int]:
     last_built_in: int | None = None
     sec = section_by_name(sections, "lv_style_prop_t")
     for entry in sec.entries:
-        if entry.c_name in ("_LV_STYLE_LAST_BUILT_IN_PROP", "LV_STYLE_LAST_BUILT_IN_PROP"):
+        if entry.c_name in ("LV_STYLE_LAST_BUILT_IN_PROP",):
             if entry.ts_literal is not None:
                 last_built_in = entry.ts_literal
         if entry.ts_literal is None or entry.js_name not in lv_prop_names:
@@ -1393,15 +1387,11 @@ def validate_transition_aliases(
 
 LV_STYLE_PROP_SECTION_NAMES = (
     "lv_style_prop_t",
-    "lv_style_prop_t_extend_flow",
-    "lv_style_prop_t_extend_grid",
     "lv_style_prop_t_extend_css",
 )
 
-# Flex/grid/CSS props: fake literal types from lv_style_register_prop simulation.
+# CSS props: fake literal types from lv_style_register_prop simulation.
 LV_STYLE_PROP_RUNTIME_SECTION_NAMES = frozenset({
-    "lv_style_prop_t_extend_flow",
-    "lv_style_prop_t_extend_grid",
     "lv_style_prop_t_extend_css",
 })
 
@@ -1409,6 +1399,7 @@ LV_STYLE_PROP_RUNTIME_SECTION_NAMES = frozenset({
 LV_STYLE_PROP_REGISTRY_EXCLUDE = frozenset({
     "LV_STYLE_PROP_INV",
     "LV_STYLE_PROP_ANY",
+    "LV_STYLE_PROP_CONST",
     "LV_STYLE_LAST_BUILT_IN_PROP",
     "LV_STYLE_NUM_BUILT_IN_PROPS",
 })

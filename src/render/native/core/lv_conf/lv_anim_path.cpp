@@ -11,6 +11,7 @@ extern const lv_anim_path_cb_t lv_anim_path_funcs[] = {
     &lv_anim_path_overshoot,
     &lv_anim_path_bounce,
     &lv_anim_path_step,
+    &lv_anim_path_custom_bezier3,
 };
 
 extern const size_t LV_ANIM_PATH_COUNT = sizeof(lv_anim_path_funcs) / sizeof(lv_anim_path_funcs[0]);
