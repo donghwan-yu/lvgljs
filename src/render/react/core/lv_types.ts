@@ -3,7 +3,7 @@
 
 import * as lv_conf from "./lv_conf";
 
-// PART_TYPE - deps/lvgl/src/core/lv_obj.h
+// PART_TYPE - deps/lvgl/src/core/lv_obj_style.h
 /** LVGL lv_part_t with LV_ prefix stripped. */
 export const PART_TYPE = {
   PART_MAIN: lv_conf.LV_PART_MAIN,
@@ -12,14 +12,14 @@ export const PART_TYPE = {
   PART_KNOB: lv_conf.LV_PART_KNOB,
   PART_SELECTED: lv_conf.LV_PART_SELECTED,
   PART_ITEMS: lv_conf.LV_PART_ITEMS,
-  PART_TICKS: lv_conf.LV_PART_TICKS,
   PART_CURSOR: lv_conf.LV_PART_CURSOR,
 } as const;
 
-// STATE_TYPE - deps/lvgl/src/core/lv_obj.h
+// STATE_TYPE - deps/lvgl/src/core/lv_obj_style.h
 /** LVGL lv_state_t with LV_ prefix stripped. */
 export const STATE_TYPE = {
   STATE_DEFAULT: lv_conf.LV_STATE_DEFAULT,
+  STATE_ALT: lv_conf.LV_STATE_ALT,
   STATE_CHECKED: lv_conf.LV_STATE_CHECKED,
   STATE_FOCUSED: lv_conf.LV_STATE_FOCUSED,
   STATE_FOCUS_KEY: lv_conf.LV_STATE_FOCUS_KEY,
@@ -72,7 +72,7 @@ export const LV_DIR_MAP = {
 
 export type DirMapKey = keyof typeof LV_DIR_MAP;
 
-// LV_FLEX_FLOW_MAP - deps/lvgl/src/extra/layouts/flex/lv_flex.h
+// LV_FLEX_FLOW_MAP - deps/lvgl/src/layouts/flex/lv_flex.h
 /** flex-direction + flex-wrap composite key -> LVGL lv_flex_flow_t */
 export const LV_FLEX_FLOW_MAP = {
   row: lv_conf.LV_FLEX_FLOW_ROW,
@@ -87,7 +87,7 @@ export const LV_FLEX_FLOW_MAP = {
 
 export type FlexFlowMapKey = keyof typeof LV_FLEX_FLOW_MAP;
 
-// LV_FLEX_ALIGN_MAP - deps/lvgl/src/extra/layouts/flex/lv_flex.h
+// LV_FLEX_ALIGN_MAP - deps/lvgl/src/layouts/flex/lv_flex.h
 /** CSS flex alignment keyword -> LVGL lv_flex_align_t */
 export const LV_FLEX_ALIGN_MAP = {
   "flex-start": lv_conf.LV_FLEX_ALIGN_START,
@@ -100,7 +100,7 @@ export const LV_FLEX_ALIGN_MAP = {
 
 export type FlexAlignMapKey = keyof typeof LV_FLEX_ALIGN_MAP;
 
-// LV_GRID_ALIGN_MAP - deps/lvgl/src/extra/layouts/grid/lv_grid.h
+// LV_GRID_ALIGN_MAP - deps/lvgl/src/layouts/grid/lv_grid.h
 /** CSS grid alignment keyword -> LVGL lv_grid_align_t */
 export const LV_GRID_ALIGN_MAP = {
   start: lv_conf.LV_GRID_ALIGN_START,
@@ -125,7 +125,7 @@ export const LV_SCROLL_SNAP_MAP = {
 
 export type ScrollSnapMapKey = keyof typeof LV_SCROLL_SNAP_MAP;
 
-// LV_TEXT_ALIGN_MAP - deps/lvgl/src/misc/lv_txt.h
+// LV_TEXT_ALIGN_MAP - deps/lvgl/src/misc/lv_text.h
 /** text-align keyword -> LVGL lv_text_align_t */
 export const LV_TEXT_ALIGN_MAP = {
   auto: lv_conf.LV_TEXT_ALIGN_AUTO,
@@ -146,73 +146,91 @@ export const LV_TEXT_DECOR_MAP = {
 
 export type TextDecorMapKey = keyof typeof LV_TEXT_DECOR_MAP;
 
-// LV_GRAD_DIR_MAP - deps/lvgl/src/misc/lv_style.h
+// LV_GRAD_DIR_MAP - deps/lvgl/src/misc/lv_grad.h
 /** background-grad-color-dir keyword -> LVGL lv_grad_dir_t */
 export const LV_GRAD_DIR_MAP = {
   none: lv_conf.LV_GRAD_DIR_NONE,
   vertical: lv_conf.LV_GRAD_DIR_VER,
   horizontal: lv_conf.LV_GRAD_DIR_HOR,
+  linear: lv_conf.LV_GRAD_DIR_LINEAR,
+  radial: lv_conf.LV_GRAD_DIR_RADIAL,
+  conical: lv_conf.LV_GRAD_DIR_CONICAL,
 } as const;
 
 export type GradDirMapKey = keyof typeof LV_GRAD_DIR_MAP;
 
-// LV_LABEL_LONG_MODE_MAP - deps/lvgl/src/widgets/lv_label.h
+// LV_LABEL_LONG_MODE_MAP - deps/lvgl/src/widgets/label/lv_label.h
 /** text-overflow keyword -> LVGL lv_label_long_mode_t */
 export const LV_LABEL_LONG_MODE_MAP = {
-  auto: lv_conf.LV_LABEL_LONG_WRAP,
-  ellipsis: lv_conf.LV_LABEL_LONG_DOT,
-  scroll: lv_conf.LV_LABEL_LONG_SCROLL,
-  circular: lv_conf.LV_LABEL_LONG_SCROLL_CIRCULAR,
-  clip: lv_conf.LV_LABEL_LONG_CLIP,
+  auto: lv_conf.LV_LABEL_LONG_MODE_WRAP,
+  ellipsis: lv_conf.LV_LABEL_LONG_MODE_DOTS,
+  mode_scroll: lv_conf.LV_LABEL_LONG_MODE_SCROLL,
+  circular: lv_conf.LV_LABEL_LONG_MODE_SCROLL_CIRCULAR,
+  mode_clip: lv_conf.LV_LABEL_LONG_MODE_CLIP,
 } as const;
 
 export type LabelLongModeMapKey = keyof typeof LV_LABEL_LONG_MODE_MAP;
 
-// EVENT_TYPE_MAP - deps/lvgl/src/core/lv_event.h
+// EVENT_TYPE_MAP - deps/lvgl/src/misc/lv_event.h
 /** EVENT_* names mapped to cached NativeRender.lv_conf values. */
 export const EVENT_TYPE_MAP = {
   EVENT_ALL: lv_conf.LV_EVENT_ALL,
 
   /** Input device events */
-  /** The object has been pressed */
+  /** Widget has been pressed */
   EVENT_PRESSED: lv_conf.LV_EVENT_PRESSED,
-  /** The object is being pressed (called continuously while pressing) */
+  /** Widget is being pressed (sent continuously while pressing) */
   EVENT_PRESSING: lv_conf.LV_EVENT_PRESSING,
-  /** The object is still being pressed but slid cursor/finger off of the object */
+  /** Widget is still being pressed but slid cursor/finger off Widget */
   EVENT_PRESS_LOST: lv_conf.LV_EVENT_PRESS_LOST,
-  /** The object was pressed for a short period of time, then released it. Not called if scrolled. */
+  /** Widget was pressed for a short period of time, then released. Not sent if scrolled. */
   EVENT_SHORT_CLICKED: lv_conf.LV_EVENT_SHORT_CLICKED,
-  /** Object has been pressed for at least `long_press_time`.  Not called if scrolled. */
+  /** Sent for first short click within a small distance and short time */
+  EVENT_SINGLE_CLICKED: lv_conf.LV_EVENT_SINGLE_CLICKED,
+  /** Sent for second short click within small distance and short time */
+  EVENT_DOUBLE_CLICKED: lv_conf.LV_EVENT_DOUBLE_CLICKED,
+  /** Sent for third short click within small distance and short time */
+  EVENT_TRIPLE_CLICKED: lv_conf.LV_EVENT_TRIPLE_CLICKED,
+  /** Object has been pressed for at least `long_press_time`.  Not sent if scrolled. */
   EVENT_LONG_PRESSED: lv_conf.LV_EVENT_LONG_PRESSED,
-  /** Called after `long_press_time` in every `long_press_repeat_time` ms.  Not called if scrolled. */
+  /** Sent after `long_press_time` in every `long_press_repeat_time` ms.  Not sent if scrolled. */
   EVENT_LONG_PRESSED_REPEAT: lv_conf.LV_EVENT_LONG_PRESSED_REPEAT,
-  /** Called on release if not scrolled (regardless to long press) */
+  /** Sent on release if not scrolled (regardless to long press) */
   EVENT_CLICKED: lv_conf.LV_EVENT_CLICKED,
-  /** Called in every cases when the object has been released */
+  /** Sent in every cases when Widget has been released */
   EVENT_RELEASED: lv_conf.LV_EVENT_RELEASED,
-  /** Scrolling begins */
+  /** Scrolling begins. The event parameter is a pointer to the animation of the scroll. Can be modified */
   EVENT_SCROLL_BEGIN: lv_conf.LV_EVENT_SCROLL_BEGIN,
+  EVENT_SCROLL_THROW_BEGIN: lv_conf.LV_EVENT_SCROLL_THROW_BEGIN,
   /** Scrolling ends */
   EVENT_SCROLL_END: lv_conf.LV_EVENT_SCROLL_END,
   /** Scrolling */
   EVENT_SCROLL: lv_conf.LV_EVENT_SCROLL,
-  /** A gesture is detected. Get the gesture with `lv_indev_get_gesture_dir(lv_indev_get_act());` */
+  /** A gesture is detected. Get gesture with `lv_indev_get_gesture_dir(lv_indev_active());` */
   EVENT_GESTURE: lv_conf.LV_EVENT_GESTURE,
-  /** A key is sent to the object. Get the key with `lv_indev_get_key(lv_indev_get_act());` */
+  /** A key is sent to Widget. Get key with `lv_indev_get_key(lv_indev_active());` */
   EVENT_KEY: lv_conf.LV_EVENT_KEY,
-  /** The object is focused */
+  /** An encoder or wheel was rotated. Get rotation count with `lv_event_get_rotary_diff(e);` */
+  EVENT_ROTARY: lv_conf.LV_EVENT_ROTARY,
+  /** Widget received focus */
   EVENT_FOCUSED: lv_conf.LV_EVENT_FOCUSED,
-  /** The object is defocused */
+  /** Widget's focus has been lost */
   EVENT_DEFOCUSED: lv_conf.LV_EVENT_DEFOCUSED,
-  /** The object is defocused but still selected */
+  /** Widget's focus has been lost but is still selected */
   EVENT_LEAVE: lv_conf.LV_EVENT_LEAVE,
   /** Perform advanced hit-testing */
   EVENT_HIT_TEST: lv_conf.LV_EVENT_HIT_TEST,
+  /** Indev has been reset */
+  EVENT_INDEV_RESET: lv_conf.LV_EVENT_INDEV_RESET,
+  /** Indev hover over object */
+  EVENT_HOVER_OVER: lv_conf.LV_EVENT_HOVER_OVER,
+  /** Indev hover leave object */
+  EVENT_HOVER_LEAVE: lv_conf.LV_EVENT_HOVER_LEAVE,
 
   /** Drawing events */
-  /** Check if the object fully covers an area. The event parameter is `lv_cover_check_info_t *`. */
+  /** Check if Widget fully covers an area. The event parameter is `lv_cover_check_info_t *`. */
   EVENT_COVER_CHECK: lv_conf.LV_EVENT_COVER_CHECK,
-  /** Get the required extra draw area around the object (e.g. for shadow). The event parameter is `lv_coord_t *` to store the size. */
+  /** Get required extra draw area around Widget (e.g. for shadow). The event parameter is `int32_t *` to store the size. */
   EVENT_REFR_EXT_DRAW_SIZE: lv_conf.LV_EVENT_REFR_EXT_DRAW_SIZE,
   /** Starting the main drawing phase */
   EVENT_DRAW_MAIN_BEGIN: lv_conf.LV_EVENT_DRAW_MAIN_BEGIN,
@@ -226,24 +244,26 @@ export const EVENT_TYPE_MAP = {
   EVENT_DRAW_POST: lv_conf.LV_EVENT_DRAW_POST,
   /** Finishing the post draw phase (when all children are drawn) */
   EVENT_DRAW_POST_END: lv_conf.LV_EVENT_DRAW_POST_END,
-  /** Starting to draw a part. The event parameter is `lv_obj_draw_dsc_t *`. */
-  EVENT_DRAW_PART_BEGIN: lv_conf.LV_EVENT_DRAW_PART_BEGIN,
-  /** Finishing to draw a part. The event parameter is `lv_obj_draw_dsc_t *`. */
-  EVENT_DRAW_PART_END: lv_conf.LV_EVENT_DRAW_PART_END,
+  /** Adding a draw task. The `LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS` flag needs to be set */
+  EVENT_DRAW_TASK_ADDED: lv_conf.LV_EVENT_DRAW_TASK_ADDED,
 
   /** Special events */
-  /** The object's value has changed (i.e. slider moved) */
+  /** Widget's value has changed (i.e. slider moved) */
   EVENT_VALUE_CHANGED: lv_conf.LV_EVENT_VALUE_CHANGED,
-  /** A text is inserted to the object. The event data is `char *` being inserted. */
+  /** Text has been inserted into Widget. The event data is `char *` being inserted. */
   EVENT_INSERT: lv_conf.LV_EVENT_INSERT,
-  /** Notify the object to refresh something on it (for the user) */
+  /** Notify Widget to refresh something on it (for user) */
   EVENT_REFRESH: lv_conf.LV_EVENT_REFRESH,
   /** A process has finished */
   EVENT_READY: lv_conf.LV_EVENT_READY,
   /** A process has been cancelled */
   EVENT_CANCEL: lv_conf.LV_EVENT_CANCEL,
+  /** The state of the widget changed */
+  EVENT_STATE_CHANGED: lv_conf.LV_EVENT_STATE_CHANGED,
 
   /** Other events */
+  /** Object is being created */
+  EVENT_CREATE: lv_conf.LV_EVENT_CREATE,
   /** Object is being deleted */
   EVENT_DELETE: lv_conf.LV_EVENT_DELETE,
   /** Child was removed, added, or its size, position were changed */
@@ -264,10 +284,49 @@ export const EVENT_TYPE_MAP = {
   EVENT_SIZE_CHANGED: lv_conf.LV_EVENT_SIZE_CHANGED,
   /** Object's style has changed */
   EVENT_STYLE_CHANGED: lv_conf.LV_EVENT_STYLE_CHANGED,
-  /** The children position has changed due to a layout recalculation */
+  /** A child's position position has changed due to a layout recalculation */
   EVENT_LAYOUT_CHANGED: lv_conf.LV_EVENT_LAYOUT_CHANGED,
-  /** Get the internal size of a widget */
+  /** Get internal size of a widget */
   EVENT_GET_SELF_SIZE: lv_conf.LV_EVENT_GET_SELF_SIZE,
+
+  /** Events of optional LVGL components */
+  /**
+   * An area is invalidated (marked for redraw). `lv_event_get_param(e)`
+   * returns a pointer to an `lv_area_t` object with the coordinates of the
+   * area to be invalidated.  The area can be freely modified if needed to
+   * adapt it a special requirement of the display. Usually needed with
+   * monochrome displays to invalidate `N x 8` rows or columns in one pass.
+   */
+  EVENT_INVALIDATE_AREA: lv_conf.LV_EVENT_INVALIDATE_AREA,
+  /** Sent when the resolution changes due to `lv_display_set_resolution()` or `lv_display_set_rotation()`. */
+  EVENT_RESOLUTION_CHANGED: lv_conf.LV_EVENT_RESOLUTION_CHANGED,
+  /** Sent as a result of any call to `lv_display_set_color_format()`. */
+  EVENT_COLOR_FORMAT_CHANGED: lv_conf.LV_EVENT_COLOR_FORMAT_CHANGED,
+  /** Sent when something happened that requires redraw. */
+  EVENT_REFR_REQUEST: lv_conf.LV_EVENT_REFR_REQUEST,
+  /** Sent before a refreshing cycle starts. Sent even if there is nothing to redraw. */
+  EVENT_REFR_START: lv_conf.LV_EVENT_REFR_START,
+  /** Sent when refreshing has been completed (after rendering and calling flush callback). Sent even if no redraw happened. */
+  EVENT_REFR_READY: lv_conf.LV_EVENT_REFR_READY,
+  /** Sent just before rendering begins. */
+  EVENT_RENDER_START: lv_conf.LV_EVENT_RENDER_START,
+  /** Sent after rendering has been completed. */
+  EVENT_RENDER_READY: lv_conf.LV_EVENT_RENDER_READY,
+  /** Sent before flush callback is called. */
+  EVENT_FLUSH_START: lv_conf.LV_EVENT_FLUSH_START,
+  /** Sent after flush callback call has returned. */
+  EVENT_FLUSH_FINISH: lv_conf.LV_EVENT_FLUSH_FINISH,
+  /** Sent before flush wait callback is called. */
+  EVENT_FLUSH_WAIT_START: lv_conf.LV_EVENT_FLUSH_WAIT_START,
+  /** Sent after flush wait callback call has returned. */
+  EVENT_FLUSH_WAIT_FINISH: lv_conf.LV_EVENT_FLUSH_WAIT_FINISH,
+  /** Sent after layout update completes */
+  EVENT_UPDATE_LAYOUT_COMPLETED: lv_conf.LV_EVENT_UPDATE_LAYOUT_COMPLETED,
+
+  EVENT_VSYNC: lv_conf.LV_EVENT_VSYNC,
+  EVENT_VSYNC_REQUEST: lv_conf.LV_EVENT_VSYNC_REQUEST,
+  /** Sent when the translation language changed. */
+  EVENT_TRANSLATION_LANGUAGE_CHANGED: lv_conf.LV_EVENT_TRANSLATION_LANGUAGE_CHANGED,
 
   /** Number of default events */
   EVENT_LAST: lv_conf.LV_EVENT_LAST,
@@ -277,6 +336,7 @@ export const EVENT_TYPE_MAP = {
    * before the class default event processing
    */
   EVENT_PREPROCESS: lv_conf.LV_EVENT_PREPROCESS,
+  EVENT_MARKED_DELETING: lv_conf.LV_EVENT_MARKED_DELETING,
 } as const;
 
 // ANIM_PATH - deps/lvgl/src/misc/lv_anim.h
@@ -289,6 +349,7 @@ export const ANIM_PATH = {
   overshoot: 4,
   bounce: 5,
   step: 6,
+  "custom-bezier3": 7,
 } as const;
 
 export type AnimPathKey = keyof typeof ANIM_PATH;

@@ -13,7 +13,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_COORD_MAX", LV_COORD_MAX);
     /* coord constants end - deps/lvgl/src/misc/lv_area.h */
 
-    /* lv_part_t begin - deps/lvgl/src/core/lv_obj.h */
+    /* lv_part_t begin - deps/lvgl/src/core/lv_obj_style.h */
     /* A background like rectangle */
     set_int_prop(ctx, obj, "LV_PART_MAIN", LV_PART_MAIN);
     /* The scrollbar(s) */
@@ -26,8 +26,6 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_PART_SELECTED", LV_PART_SELECTED);
     /* Used if the widget has multiple similar elements (e.g. table cells) */
     set_int_prop(ctx, obj, "LV_PART_ITEMS", LV_PART_ITEMS);
-    /* Ticks on scale e.g. for a chart or meter */
-    set_int_prop(ctx, obj, "LV_PART_TICKS", LV_PART_TICKS);
     /* Mark a specific place e.g. for text area's cursor or on a chart */
     set_int_prop(ctx, obj, "LV_PART_CURSOR", LV_PART_CURSOR);
 
@@ -36,10 +34,13 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
 
     /* Special value can be used in some functions to target all parts */
     set_int_prop(ctx, obj, "LV_PART_ANY", LV_PART_ANY);
-    /* lv_part_t end - deps/lvgl/src/core/lv_obj.h */
+    /* lv_part_t end - deps/lvgl/src/core/lv_obj_style.h */
 
-    /* lv_state_t begin - deps/lvgl/src/core/lv_obj.h */
+    /* lv_state_t begin - deps/lvgl/src/core/lv_obj_style.h */
     set_int_prop(ctx, obj, "LV_STATE_DEFAULT", LV_STATE_DEFAULT);
+    set_int_prop(ctx, obj, "LV_STATE_ALT", LV_STATE_ALT);
+
+    /* 1 reserved */
     set_int_prop(ctx, obj, "LV_STATE_CHECKED", LV_STATE_CHECKED);
     set_int_prop(ctx, obj, "LV_STATE_FOCUSED", LV_STATE_FOCUSED);
     set_int_prop(ctx, obj, "LV_STATE_FOCUS_KEY", LV_STATE_FOCUS_KEY);
@@ -49,6 +50,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_STATE_SCROLLED", LV_STATE_SCROLLED);
     set_int_prop(ctx, obj, "LV_STATE_DISABLED", LV_STATE_DISABLED);
 
+    /* 2 reserved */
     set_int_prop(ctx, obj, "LV_STATE_USER_1", LV_STATE_USER_1);
     set_int_prop(ctx, obj, "LV_STATE_USER_2", LV_STATE_USER_2);
     set_int_prop(ctx, obj, "LV_STATE_USER_3", LV_STATE_USER_3);
@@ -56,7 +58,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
 
     /* Special value can be used in some functions to target all states */
     set_int_prop(ctx, obj, "LV_STATE_ANY", LV_STATE_ANY);
-    /* lv_state_t end - deps/lvgl/src/core/lv_obj.h */
+    /* lv_state_t end - deps/lvgl/src/core/lv_obj_style.h */
 
     /* lv_align_t begin - deps/lvgl/src/misc/lv_area.h */
     set_int_prop(ctx, obj, "LV_ALIGN_DEFAULT", LV_ALIGN_DEFAULT);
@@ -95,7 +97,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_DIR_ALL", LV_DIR_ALL);
     /* lv_dir_t end - deps/lvgl/src/misc/lv_area.h */
 
-    /* lv_flex_flow_t begin - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
+    /* lv_flex_flow_t begin - deps/lvgl/src/layouts/flex/lv_flex.h */
 #if LV_USE_FLEX
     set_int_prop(ctx, obj, "LV_FLEX_FLOW_ROW", LV_FLEX_FLOW_ROW);
     set_int_prop(ctx, obj, "LV_FLEX_FLOW_COLUMN", LV_FLEX_FLOW_COLUMN);
@@ -106,9 +108,9 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_FLEX_FLOW_COLUMN_REVERSE", LV_FLEX_FLOW_COLUMN_REVERSE);
     set_int_prop(ctx, obj, "LV_FLEX_FLOW_COLUMN_WRAP_REVERSE", LV_FLEX_FLOW_COLUMN_WRAP_REVERSE);
 #endif
-    /* lv_flex_flow_t end - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
+    /* lv_flex_flow_t end - deps/lvgl/src/layouts/flex/lv_flex.h */
 
-    /* lv_flex_align_t begin - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
+    /* lv_flex_align_t begin - deps/lvgl/src/layouts/flex/lv_flex.h */
 #if LV_USE_FLEX
     set_int_prop(ctx, obj, "LV_FLEX_ALIGN_START", LV_FLEX_ALIGN_START);
     set_int_prop(ctx, obj, "LV_FLEX_ALIGN_END", LV_FLEX_ALIGN_END);
@@ -117,21 +119,19 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_FLEX_ALIGN_SPACE_AROUND", LV_FLEX_ALIGN_SPACE_AROUND);
     set_int_prop(ctx, obj, "LV_FLEX_ALIGN_SPACE_BETWEEN", LV_FLEX_ALIGN_SPACE_BETWEEN);
 #endif
-    /* lv_flex_align_t end - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
+    /* lv_flex_align_t end - deps/lvgl/src/layouts/flex/lv_flex.h */
 
-    /* lv_layout_flex begin - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
-#if LV_USE_FLEX
+    /* lv_layout_t begin - deps/lvgl/src/layouts/lv_layout.h */
+    set_int_prop(ctx, obj, "LV_LAYOUT_NONE", LV_LAYOUT_NONE);
+
     set_int_prop(ctx, obj, "LV_LAYOUT_FLEX", LV_LAYOUT_FLEX);
-#endif
-    /* lv_layout_flex end - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
 
-    /* lv_layout_grid begin - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
-#if LV_USE_GRID
     set_int_prop(ctx, obj, "LV_LAYOUT_GRID", LV_LAYOUT_GRID);
-#endif
-    /* lv_layout_grid end - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
 
-    /* lv_grid_align_t begin - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
+    set_int_prop(ctx, obj, "LV_LAYOUT_LAST", LV_LAYOUT_LAST);
+    /* lv_layout_t end - deps/lvgl/src/layouts/lv_layout.h */
+
+    /* lv_grid_align_t begin - deps/lvgl/src/layouts/grid/lv_grid.h */
 #if LV_USE_GRID
     set_int_prop(ctx, obj, "LV_GRID_ALIGN_START", LV_GRID_ALIGN_START);
     set_int_prop(ctx, obj, "LV_GRID_ALIGN_CENTER", LV_GRID_ALIGN_CENTER);
@@ -141,7 +141,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_GRID_ALIGN_SPACE_AROUND", LV_GRID_ALIGN_SPACE_AROUND);
     set_int_prop(ctx, obj, "LV_GRID_ALIGN_SPACE_BETWEEN", LV_GRID_ALIGN_SPACE_BETWEEN);
 #endif
-    /* lv_grid_align_t end - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
+    /* lv_grid_align_t end - deps/lvgl/src/layouts/grid/lv_grid.h */
 
     /* lv_scroll_snap_t begin - deps/lvgl/src/core/lv_obj_scroll.h */
     /* Do not align, leave where it is */
@@ -154,7 +154,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_SCROLL_SNAP_CENTER", LV_SCROLL_SNAP_CENTER);
     /* lv_scroll_snap_t end - deps/lvgl/src/core/lv_obj_scroll.h */
 
-    /* lv_text_align_t begin - deps/lvgl/src/misc/lv_txt.h */
+    /* lv_text_align_t begin - deps/lvgl/src/misc/lv_text.h */
     /* Align text auto */
     set_int_prop(ctx, obj, "LV_TEXT_ALIGN_AUTO", LV_TEXT_ALIGN_AUTO);
     /* Align text to left */
@@ -163,7 +163,7 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_TEXT_ALIGN_CENTER", LV_TEXT_ALIGN_CENTER);
     /* Align text to right */
     set_int_prop(ctx, obj, "LV_TEXT_ALIGN_RIGHT", LV_TEXT_ALIGN_RIGHT);
-    /* lv_text_align_t end - deps/lvgl/src/misc/lv_txt.h */
+    /* lv_text_align_t end - deps/lvgl/src/misc/lv_text.h */
 
     /* lv_text_decor_t begin - deps/lvgl/src/misc/lv_style.h */
     set_int_prop(ctx, obj, "LV_TEXT_DECOR_NONE", LV_TEXT_DECOR_NONE);
@@ -171,14 +171,20 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_TEXT_DECOR_STRIKETHROUGH", LV_TEXT_DECOR_STRIKETHROUGH);
     /* lv_text_decor_t end - deps/lvgl/src/misc/lv_style.h */
 
-    /* lv_grad_dir_t begin - deps/lvgl/src/misc/lv_style.h */
+    /* lv_grad_dir_t begin - deps/lvgl/src/misc/lv_grad.h */
     /* No gradient (the `grad_color` property is ignored) */
     set_int_prop(ctx, obj, "LV_GRAD_DIR_NONE", LV_GRAD_DIR_NONE);
-    /* Vertical (top to bottom) gradient */
+    /* Simple vertical (top to bottom) gradient */
     set_int_prop(ctx, obj, "LV_GRAD_DIR_VER", LV_GRAD_DIR_VER);
-    /* Horizontal (left to right) gradient */
+    /* Simple horizontal (left to right) gradient */
     set_int_prop(ctx, obj, "LV_GRAD_DIR_HOR", LV_GRAD_DIR_HOR);
-    /* lv_grad_dir_t end - deps/lvgl/src/misc/lv_style.h */
+    /* Linear gradient defined by start and end points. Can be at any angle. */
+    set_int_prop(ctx, obj, "LV_GRAD_DIR_LINEAR", LV_GRAD_DIR_LINEAR);
+    /* Radial gradient defined by start and end circles */
+    set_int_prop(ctx, obj, "LV_GRAD_DIR_RADIAL", LV_GRAD_DIR_RADIAL);
+    /* Conical gradient defined by center point, start and end angles */
+    set_int_prop(ctx, obj, "LV_GRAD_DIR_CONICAL", LV_GRAD_DIR_CONICAL);
+    /* lv_grad_dir_t end - deps/lvgl/src/misc/lv_grad.h */
 
     /* lv_border_side_t begin - deps/lvgl/src/misc/lv_style.h */
     set_int_prop(ctx, obj, "LV_BORDER_SIDE_NONE", LV_BORDER_SIDE_NONE);
@@ -191,160 +197,191 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_BORDER_SIDE_INTERNAL", LV_BORDER_SIDE_INTERNAL);
     /* lv_border_side_t end - deps/lvgl/src/misc/lv_style.h */
 
-    /* lv_label_long_mode_t begin - deps/lvgl/src/widgets/lv_label.h */
-    /* Keep the object width, wrap the too long lines and expand the object height */
-    set_int_prop(ctx, obj, "LV_LABEL_LONG_WRAP", LV_LABEL_LONG_WRAP);
+    /* lv_label_long_mode_t begin - deps/lvgl/src/widgets/label/lv_label.h */
+    /* Keep the object width, wrap lines longer than object width and expand the object height */
+    set_int_prop(ctx, obj, "LV_LABEL_LONG_MODE_WRAP", LV_LABEL_LONG_MODE_WRAP);
     /* Keep the size and write dots at the end if the text is too long */
-    set_int_prop(ctx, obj, "LV_LABEL_LONG_DOT", LV_LABEL_LONG_DOT);
+    set_int_prop(ctx, obj, "LV_LABEL_LONG_MODE_DOTS", LV_LABEL_LONG_MODE_DOTS);
     /* Keep the size and roll the text back and forth */
-    set_int_prop(ctx, obj, "LV_LABEL_LONG_SCROLL", LV_LABEL_LONG_SCROLL);
+    set_int_prop(ctx, obj, "LV_LABEL_LONG_MODE_SCROLL", LV_LABEL_LONG_MODE_SCROLL);
     /* Keep the size and roll the text circularly */
-    set_int_prop(ctx, obj, "LV_LABEL_LONG_SCROLL_CIRCULAR", LV_LABEL_LONG_SCROLL_CIRCULAR);
+    set_int_prop(ctx, obj, "LV_LABEL_LONG_MODE_SCROLL_CIRCULAR", LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
     /* Keep the size and clip the text out of it */
-    set_int_prop(ctx, obj, "LV_LABEL_LONG_CLIP", LV_LABEL_LONG_CLIP);
-    /* lv_label_long_mode_t end - deps/lvgl/src/widgets/lv_label.h */
+    set_int_prop(ctx, obj, "LV_LABEL_LONG_MODE_CLIP", LV_LABEL_LONG_MODE_CLIP);
+    /* lv_label_long_mode_t end - deps/lvgl/src/widgets/label/lv_label.h */
 
     /* lv_style_prop_meta begin - deps/lvgl/src/misc/lv_style.h */
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_INHERIT", LV_STYLE_PROP_INHERIT);
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_EXT_DRAW", LV_STYLE_PROP_EXT_DRAW);
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_LAYOUT_REFR", LV_STYLE_PROP_LAYOUT_REFR);
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_PARENT_LAYOUT_REFR", LV_STYLE_PROP_PARENT_LAYOUT_REFR);
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_FILTER", LV_STYLE_PROP_FILTER);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_NONE", LV_STYLE_PROP_FLAG_NONE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_INHERITABLE", LV_STYLE_PROP_FLAG_INHERITABLE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_EXT_DRAW_UPDATE", LV_STYLE_PROP_FLAG_EXT_DRAW_UPDATE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_LAYOUT_UPDATE", LV_STYLE_PROP_FLAG_LAYOUT_UPDATE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_PARENT_LAYOUT_UPDATE", LV_STYLE_PROP_FLAG_PARENT_LAYOUT_UPDATE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_LAYER_UPDATE", LV_STYLE_PROP_FLAG_LAYER_UPDATE);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_TRANSFORM", LV_STYLE_PROP_FLAG_TRANSFORM);
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_FLAG_ALL", LV_STYLE_PROP_FLAG_ALL);
     /* lv_style_prop_meta end - deps/lvgl/src/misc/lv_style.h */
 
     /* lv_style_prop_t begin - deps/lvgl/src/misc/lv_style.h */
     set_int_prop(ctx, obj, "LV_STYLE_PROP_INV", LV_STYLE_PROP_INV);
 
-    /* Group 0 */
+    /* Size related properties */
     set_int_prop(ctx, obj, "LV_STYLE_WIDTH", LV_STYLE_WIDTH);
+    set_int_prop(ctx, obj, "LV_STYLE_HEIGHT", LV_STYLE_HEIGHT);
+    set_int_prop(ctx, obj, "LV_STYLE_LENGTH", LV_STYLE_LENGTH);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_WIDTH", LV_STYLE_TRANSFORM_WIDTH);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_HEIGHT", LV_STYLE_TRANSFORM_HEIGHT);
+
     set_int_prop(ctx, obj, "LV_STYLE_MIN_WIDTH", LV_STYLE_MIN_WIDTH);
     set_int_prop(ctx, obj, "LV_STYLE_MAX_WIDTH", LV_STYLE_MAX_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_HEIGHT", LV_STYLE_HEIGHT);
     set_int_prop(ctx, obj, "LV_STYLE_MIN_HEIGHT", LV_STYLE_MIN_HEIGHT);
     set_int_prop(ctx, obj, "LV_STYLE_MAX_HEIGHT", LV_STYLE_MAX_HEIGHT);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSLATE_X", LV_STYLE_TRANSLATE_X);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSLATE_Y", LV_STYLE_TRANSLATE_Y);
+    set_int_prop(ctx, obj, "LV_STYLE_RADIAL_OFFSET", LV_STYLE_RADIAL_OFFSET);
+
+    /* Position related properties */
     set_int_prop(ctx, obj, "LV_STYLE_X", LV_STYLE_X);
     set_int_prop(ctx, obj, "LV_STYLE_Y", LV_STYLE_Y);
     set_int_prop(ctx, obj, "LV_STYLE_ALIGN", LV_STYLE_ALIGN);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_WIDTH", LV_STYLE_TRANSFORM_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_HEIGHT", LV_STYLE_TRANSFORM_HEIGHT);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSLATE_X", LV_STYLE_TRANSLATE_X);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSLATE_Y", LV_STYLE_TRANSLATE_Y);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_ZOOM", LV_STYLE_TRANSFORM_ZOOM);
-    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_ANGLE", LV_STYLE_TRANSFORM_ANGLE);
 
-    /* Group 1 */
+    /* Padding related properties */
     set_int_prop(ctx, obj, "LV_STYLE_PAD_TOP", LV_STYLE_PAD_TOP);
     set_int_prop(ctx, obj, "LV_STYLE_PAD_BOTTOM", LV_STYLE_PAD_BOTTOM);
     set_int_prop(ctx, obj, "LV_STYLE_PAD_LEFT", LV_STYLE_PAD_LEFT);
     set_int_prop(ctx, obj, "LV_STYLE_PAD_RIGHT", LV_STYLE_PAD_RIGHT);
+    set_int_prop(ctx, obj, "LV_STYLE_PAD_RADIAL", LV_STYLE_PAD_RADIAL);
     set_int_prop(ctx, obj, "LV_STYLE_PAD_ROW", LV_STYLE_PAD_ROW);
     set_int_prop(ctx, obj, "LV_STYLE_PAD_COLUMN", LV_STYLE_PAD_COLUMN);
 
-    /* Group 2 */
-    set_int_prop(ctx, obj, "LV_STYLE_BG_COLOR", LV_STYLE_BG_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_COLOR_FILTERED", LV_STYLE_BG_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_OPA", LV_STYLE_BG_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_COLOR", LV_STYLE_BG_GRAD_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_COLOR_FILTERED", LV_STYLE_BG_GRAD_COLOR_FILTERED);
+    /* Margin related properties */
+    set_int_prop(ctx, obj, "LV_STYLE_MARGIN_TOP", LV_STYLE_MARGIN_TOP);
+    set_int_prop(ctx, obj, "LV_STYLE_MARGIN_BOTTOM", LV_STYLE_MARGIN_BOTTOM);
+    set_int_prop(ctx, obj, "LV_STYLE_MARGIN_LEFT", LV_STYLE_MARGIN_LEFT);
+    set_int_prop(ctx, obj, "LV_STYLE_MARGIN_RIGHT", LV_STYLE_MARGIN_RIGHT);
+
+    /* Bg. Gradient */
+    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD", LV_STYLE_BG_GRAD);
     set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_DIR", LV_STYLE_BG_GRAD_DIR);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_MAIN_OPA", LV_STYLE_BG_MAIN_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_OPA", LV_STYLE_BG_GRAD_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_COLOR", LV_STYLE_BG_GRAD_COLOR);
     set_int_prop(ctx, obj, "LV_STYLE_BG_MAIN_STOP", LV_STYLE_BG_MAIN_STOP);
     set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD_STOP", LV_STYLE_BG_GRAD_STOP);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_GRAD", LV_STYLE_BG_GRAD);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_DITHER_MODE", LV_STYLE_BG_DITHER_MODE);
 
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_SRC", LV_STYLE_BG_IMG_SRC);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_OPA", LV_STYLE_BG_IMG_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_RECOLOR", LV_STYLE_BG_IMG_RECOLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_RECOLOR_FILTERED", LV_STYLE_BG_IMG_RECOLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_RECOLOR_OPA", LV_STYLE_BG_IMG_RECOLOR_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_BG_IMG_TILED", LV_STYLE_BG_IMG_TILED);
+    /* Bg image */
+    set_int_prop(ctx, obj, "LV_STYLE_BG_IMAGE_SRC", LV_STYLE_BG_IMAGE_SRC);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_IMAGE_OPA", LV_STYLE_BG_IMAGE_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_IMAGE_RECOLOR_OPA", LV_STYLE_BG_IMAGE_RECOLOR_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_IMAGE_TILED", LV_STYLE_BG_IMAGE_TILED);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_IMAGE_RECOLOR", LV_STYLE_BG_IMAGE_RECOLOR);
 
     /* Group 3 */
-    set_int_prop(ctx, obj, "LV_STYLE_BORDER_COLOR", LV_STYLE_BORDER_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_BORDER_COLOR_FILTERED", LV_STYLE_BORDER_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_BORDER_OPA", LV_STYLE_BORDER_OPA);
     set_int_prop(ctx, obj, "LV_STYLE_BORDER_WIDTH", LV_STYLE_BORDER_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_BORDER_SIDE", LV_STYLE_BORDER_SIDE);
+    set_int_prop(ctx, obj, "LV_STYLE_BORDER_COLOR", LV_STYLE_BORDER_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_BORDER_OPA", LV_STYLE_BORDER_OPA);
     set_int_prop(ctx, obj, "LV_STYLE_BORDER_POST", LV_STYLE_BORDER_POST);
+    set_int_prop(ctx, obj, "LV_STYLE_BORDER_SIDE", LV_STYLE_BORDER_SIDE);
 
+    /* Outline */
     set_int_prop(ctx, obj, "LV_STYLE_OUTLINE_WIDTH", LV_STYLE_OUTLINE_WIDTH);
     set_int_prop(ctx, obj, "LV_STYLE_OUTLINE_COLOR", LV_STYLE_OUTLINE_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_OUTLINE_COLOR_FILTERED", LV_STYLE_OUTLINE_COLOR_FILTERED);
     set_int_prop(ctx, obj, "LV_STYLE_OUTLINE_OPA", LV_STYLE_OUTLINE_OPA);
     set_int_prop(ctx, obj, "LV_STYLE_OUTLINE_PAD", LV_STYLE_OUTLINE_PAD);
 
-    /* Group 4 */
+    /* Image, Shadow, Line, Arc, and Text are rarely used together. */
+    set_int_prop(ctx, obj, "LV_STYLE_BG_OPA", LV_STYLE_BG_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_BG_COLOR", LV_STYLE_BG_COLOR);
     set_int_prop(ctx, obj, "LV_STYLE_SHADOW_WIDTH", LV_STYLE_SHADOW_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OFS_X", LV_STYLE_SHADOW_OFS_X);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OFS_Y", LV_STYLE_SHADOW_OFS_Y);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_SPREAD", LV_STYLE_SHADOW_SPREAD);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_COLOR", LV_STYLE_SHADOW_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_COLOR_FILTERED", LV_STYLE_SHADOW_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OPA", LV_STYLE_SHADOW_OPA);
-
-    set_int_prop(ctx, obj, "LV_STYLE_IMG_OPA", LV_STYLE_IMG_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_IMG_RECOLOR", LV_STYLE_IMG_RECOLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_IMG_RECOLOR_FILTERED", LV_STYLE_IMG_RECOLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_IMG_RECOLOR_OPA", LV_STYLE_IMG_RECOLOR_OPA);
-
     set_int_prop(ctx, obj, "LV_STYLE_LINE_WIDTH", LV_STYLE_LINE_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_DASH_WIDTH", LV_STYLE_LINE_DASH_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_DASH_GAP", LV_STYLE_LINE_DASH_GAP);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_ROUNDED", LV_STYLE_LINE_ROUNDED);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_COLOR", LV_STYLE_LINE_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_COLOR_FILTERED", LV_STYLE_LINE_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_LINE_OPA", LV_STYLE_LINE_OPA);
-
-    /* Group 5 */
     set_int_prop(ctx, obj, "LV_STYLE_ARC_WIDTH", LV_STYLE_ARC_WIDTH);
-    set_int_prop(ctx, obj, "LV_STYLE_ARC_ROUNDED", LV_STYLE_ARC_ROUNDED);
-    set_int_prop(ctx, obj, "LV_STYLE_ARC_COLOR", LV_STYLE_ARC_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_ARC_COLOR_FILTERED", LV_STYLE_ARC_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_ARC_OPA", LV_STYLE_ARC_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_ARC_IMG_SRC", LV_STYLE_ARC_IMG_SRC);
-
-    set_int_prop(ctx, obj, "LV_STYLE_TEXT_COLOR", LV_STYLE_TEXT_COLOR);
-    set_int_prop(ctx, obj, "LV_STYLE_TEXT_COLOR_FILTERED", LV_STYLE_TEXT_COLOR_FILTERED);
-    set_int_prop(ctx, obj, "LV_STYLE_TEXT_OPA", LV_STYLE_TEXT_OPA);
     set_int_prop(ctx, obj, "LV_STYLE_TEXT_FONT", LV_STYLE_TEXT_FONT);
+    set_int_prop(ctx, obj, "LV_STYLE_IMAGE_RECOLOR_OPA", LV_STYLE_IMAGE_RECOLOR_OPA);
+
+    set_int_prop(ctx, obj, "LV_STYLE_IMAGE_OPA", LV_STYLE_IMAGE_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OPA", LV_STYLE_SHADOW_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_LINE_OPA", LV_STYLE_LINE_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_ARC_OPA", LV_STYLE_ARC_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_OPA", LV_STYLE_TEXT_OPA);
+
+    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_COLOR", LV_STYLE_SHADOW_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_IMAGE_RECOLOR", LV_STYLE_IMAGE_RECOLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_LINE_COLOR", LV_STYLE_LINE_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_ARC_COLOR", LV_STYLE_ARC_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_COLOR", LV_STYLE_TEXT_COLOR);
+
+    set_int_prop(ctx, obj, "LV_STYLE_ARC_IMAGE_SRC", LV_STYLE_ARC_IMAGE_SRC);
+    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OFFSET_X", LV_STYLE_SHADOW_OFFSET_X);
+    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_OFFSET_Y", LV_STYLE_SHADOW_OFFSET_Y);
+    set_int_prop(ctx, obj, "LV_STYLE_SHADOW_SPREAD", LV_STYLE_SHADOW_SPREAD);
+    set_int_prop(ctx, obj, "LV_STYLE_LINE_DASH_WIDTH", LV_STYLE_LINE_DASH_WIDTH);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_ALIGN", LV_STYLE_TEXT_ALIGN);
     set_int_prop(ctx, obj, "LV_STYLE_TEXT_LETTER_SPACE", LV_STYLE_TEXT_LETTER_SPACE);
     set_int_prop(ctx, obj, "LV_STYLE_TEXT_LINE_SPACE", LV_STYLE_TEXT_LINE_SPACE);
-    set_int_prop(ctx, obj, "LV_STYLE_TEXT_DECOR", LV_STYLE_TEXT_DECOR);
-    set_int_prop(ctx, obj, "LV_STYLE_TEXT_ALIGN", LV_STYLE_TEXT_ALIGN);
 
-    /* Group 6 */
-    set_int_prop(ctx, obj, "LV_STYLE_RADIUS", LV_STYLE_RADIUS);
-    set_int_prop(ctx, obj, "LV_STYLE_CLIP_CORNER", LV_STYLE_CLIP_CORNER);
+    set_int_prop(ctx, obj, "LV_STYLE_LINE_DASH_GAP", LV_STYLE_LINE_DASH_GAP);
+    set_int_prop(ctx, obj, "LV_STYLE_LINE_ROUNDED", LV_STYLE_LINE_ROUNDED);
+    set_int_prop(ctx, obj, "LV_STYLE_IMAGE_COLORKEY", LV_STYLE_IMAGE_COLORKEY);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_OUTLINE_STROKE_WIDTH", LV_STYLE_TEXT_OUTLINE_STROKE_WIDTH);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_OUTLINE_STROKE_OPA", LV_STYLE_TEXT_OUTLINE_STROKE_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_OUTLINE_STROKE_COLOR", LV_STYLE_TEXT_OUTLINE_STROKE_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_TEXT_DECOR", LV_STYLE_TEXT_DECOR);
+    set_int_prop(ctx, obj, "LV_STYLE_ARC_ROUNDED", LV_STYLE_ARC_ROUNDED);
+
+    /* Group unrelated props */
     set_int_prop(ctx, obj, "LV_STYLE_OPA", LV_STYLE_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_OPA_LAYERED", LV_STYLE_OPA_LAYERED);
     set_int_prop(ctx, obj, "LV_STYLE_COLOR_FILTER_DSC", LV_STYLE_COLOR_FILTER_DSC);
     set_int_prop(ctx, obj, "LV_STYLE_COLOR_FILTER_OPA", LV_STYLE_COLOR_FILTER_OPA);
-    set_int_prop(ctx, obj, "LV_STYLE_ANIM_TIME", LV_STYLE_ANIM_TIME);
-    set_int_prop(ctx, obj, "LV_STYLE_ANIM_SPEED", LV_STYLE_ANIM_SPEED);
+    set_int_prop(ctx, obj, "LV_STYLE_ANIM", LV_STYLE_ANIM);
+    set_int_prop(ctx, obj, "LV_STYLE_ANIM_DURATION", LV_STYLE_ANIM_DURATION);
     set_int_prop(ctx, obj, "LV_STYLE_TRANSITION", LV_STYLE_TRANSITION);
+
+    /* Radius is requested a lot, group it with rarely requested ones */
+    set_int_prop(ctx, obj, "LV_STYLE_RADIUS", LV_STYLE_RADIUS);
+    set_int_prop(ctx, obj, "LV_STYLE_BITMAP_MASK_SRC", LV_STYLE_BITMAP_MASK_SRC);
     set_int_prop(ctx, obj, "LV_STYLE_BLEND_MODE", LV_STYLE_BLEND_MODE);
-    set_int_prop(ctx, obj, "LV_STYLE_LAYOUT", LV_STYLE_LAYOUT);
+    set_int_prop(ctx, obj, "LV_STYLE_ROTARY_SENSITIVITY", LV_STYLE_ROTARY_SENSITIVITY);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSLATE_RADIAL", LV_STYLE_TRANSLATE_RADIAL);
+
+    /* Requested a lot but rarely used */
+    set_int_prop(ctx, obj, "LV_STYLE_CLIP_CORNER", LV_STYLE_CLIP_CORNER);
     set_int_prop(ctx, obj, "LV_STYLE_BASE_DIR", LV_STYLE_BASE_DIR);
+    set_int_prop(ctx, obj, "LV_STYLE_RECOLOR", LV_STYLE_RECOLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_RECOLOR_OPA", LV_STYLE_RECOLOR_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_LAYOUT", LV_STYLE_LAYOUT);
 
-    set_int_prop(ctx, obj, "LV_STYLE_LAST_BUILT_IN_PROP", _LV_STYLE_LAST_BUILT_IN_PROP);
+    /* Blur */
+    set_int_prop(ctx, obj, "LV_STYLE_BLUR_RADIUS", LV_STYLE_BLUR_RADIUS);
+    set_int_prop(ctx, obj, "LV_STYLE_BLUR_BACKDROP", LV_STYLE_BLUR_BACKDROP);
+    set_int_prop(ctx, obj, "LV_STYLE_BLUR_QUALITY", LV_STYLE_BLUR_QUALITY);
 
-    set_int_prop(ctx, obj, "LV_STYLE_PROP_ANY", LV_STYLE_PROP_ANY);
-    /* lv_style_prop_t end - deps/lvgl/src/misc/lv_style.h */
+    /* Drop shadow */
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_RADIUS", LV_STYLE_DROP_SHADOW_RADIUS);
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_OFFSET_X", LV_STYLE_DROP_SHADOW_OFFSET_X);
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_OFFSET_Y", LV_STYLE_DROP_SHADOW_OFFSET_Y);
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_COLOR", LV_STYLE_DROP_SHADOW_COLOR);
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_OPA", LV_STYLE_DROP_SHADOW_OPA);
+    set_int_prop(ctx, obj, "LV_STYLE_DROP_SHADOW_QUALITY", LV_STYLE_DROP_SHADOW_QUALITY);
 
-    /* lv_style_prop_t_extend_flow begin - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
-#if LV_USE_FLEX
+    /* Scale and transform */
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_SCALE_X", LV_STYLE_TRANSFORM_SCALE_X);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_SCALE_Y", LV_STYLE_TRANSFORM_SCALE_Y);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_PIVOT_X", LV_STYLE_TRANSFORM_PIVOT_X);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_PIVOT_Y", LV_STYLE_TRANSFORM_PIVOT_Y);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_ROTATION", LV_STYLE_TRANSFORM_ROTATION);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_SKEW_X", LV_STYLE_TRANSFORM_SKEW_X);
+    set_int_prop(ctx, obj, "LV_STYLE_TRANSFORM_SKEW_Y", LV_STYLE_TRANSFORM_SKEW_Y);
+
+    /* Flex and basic grid (rarely used together) */
     set_int_prop(ctx, obj, "LV_STYLE_FLEX_FLOW", LV_STYLE_FLEX_FLOW);
     set_int_prop(ctx, obj, "LV_STYLE_FLEX_MAIN_PLACE", LV_STYLE_FLEX_MAIN_PLACE);
     set_int_prop(ctx, obj, "LV_STYLE_FLEX_CROSS_PLACE", LV_STYLE_FLEX_CROSS_PLACE);
     set_int_prop(ctx, obj, "LV_STYLE_FLEX_TRACK_PLACE", LV_STYLE_FLEX_TRACK_PLACE);
     set_int_prop(ctx, obj, "LV_STYLE_FLEX_GROW", LV_STYLE_FLEX_GROW);
-#endif
-    /* lv_style_prop_t_extend_flow end - deps/lvgl/src/extra/layouts/flex/lv_flex.h */
-
-    /* lv_style_prop_t_extend_grid begin - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
-#if LV_USE_GRID
     set_int_prop(ctx, obj, "LV_STYLE_GRID_COLUMN_DSC_ARRAY", LV_STYLE_GRID_COLUMN_DSC_ARRAY);
-    set_int_prop(ctx, obj, "LV_STYLE_GRID_COLUMN_ALIGN", LV_STYLE_GRID_COLUMN_ALIGN);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_ROW_DSC_ARRAY", LV_STYLE_GRID_ROW_DSC_ARRAY);
+
+    set_int_prop(ctx, obj, "LV_STYLE_GRID_COLUMN_ALIGN", LV_STYLE_GRID_COLUMN_ALIGN);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_ROW_ALIGN", LV_STYLE_GRID_ROW_ALIGN);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_CELL_COLUMN_POS", LV_STYLE_GRID_CELL_COLUMN_POS);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_CELL_COLUMN_SPAN", LV_STYLE_GRID_CELL_COLUMN_SPAN);
@@ -352,8 +389,14 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_STYLE_GRID_CELL_ROW_POS", LV_STYLE_GRID_CELL_ROW_POS);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_CELL_ROW_SPAN", LV_STYLE_GRID_CELL_ROW_SPAN);
     set_int_prop(ctx, obj, "LV_STYLE_GRID_CELL_Y_ALIGN", LV_STYLE_GRID_CELL_Y_ALIGN);
-#endif
-    /* lv_style_prop_t_extend_grid end - deps/lvgl/src/extra/layouts/grid/lv_grid.h */
+
+    set_int_prop(ctx, obj, "LV_STYLE_LAST_BUILT_IN_PROP", LV_STYLE_LAST_BUILT_IN_PROP);
+    set_int_prop(ctx, obj, "LV_STYLE_NUM_BUILT_IN_PROPS", LV_STYLE_NUM_BUILT_IN_PROPS);
+
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_ANY", LV_STYLE_PROP_ANY);
+    /* magic value for const styles */
+    set_int_prop(ctx, obj, "LV_STYLE_PROP_CONST", LV_STYLE_PROP_CONST);
+    /* lv_style_prop_t end - deps/lvgl/src/misc/lv_style.h */
 
     /* lv_style_prop_t_extend_css begin - src/render/native/core/lv_conf/lv_style_prop_extend.h */
     set_int_prop(ctx, obj, "LV_STYLE_CSS_CHART_SCALE_X", LV_STYLE_CSS_CHART_SCALE_X);
@@ -375,49 +418,64 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_STYLE_CSS_TEXT_OVERFLOW", LV_STYLE_CSS_TEXT_OVERFLOW);
     /* lv_style_prop_t_extend_css end - src/render/native/core/lv_conf/lv_style_prop_extend.h */
 
-    /* lv_event_code_t begin - deps/lvgl/src/core/lv_event.h */
+    /* lv_event_code_t begin - deps/lvgl/src/misc/lv_event.h */
     set_int_prop(ctx, obj, "LV_EVENT_ALL", LV_EVENT_ALL);
 
     /* Input device events */
-    /* The object has been pressed */
+    /* Widget has been pressed */
     set_int_prop(ctx, obj, "LV_EVENT_PRESSED", LV_EVENT_PRESSED);
-    /* The object is being pressed (called continuously while pressing) */
+    /* Widget is being pressed (sent continuously while pressing) */
     set_int_prop(ctx, obj, "LV_EVENT_PRESSING", LV_EVENT_PRESSING);
-    /* The object is still being pressed but slid cursor/finger off of the object */
+    /* Widget is still being pressed but slid cursor/finger off Widget */
     set_int_prop(ctx, obj, "LV_EVENT_PRESS_LOST", LV_EVENT_PRESS_LOST);
-    /* The object was pressed for a short period of time, then released it. Not called if scrolled. */
+    /* Widget was pressed for a short period of time, then released. Not sent if scrolled. */
     set_int_prop(ctx, obj, "LV_EVENT_SHORT_CLICKED", LV_EVENT_SHORT_CLICKED);
-    /* Object has been pressed for at least `long_press_time`.  Not called if scrolled. */
+    /* Sent for first short click within a small distance and short time */
+    set_int_prop(ctx, obj, "LV_EVENT_SINGLE_CLICKED", LV_EVENT_SINGLE_CLICKED);
+    /* Sent for second short click within small distance and short time */
+    set_int_prop(ctx, obj, "LV_EVENT_DOUBLE_CLICKED", LV_EVENT_DOUBLE_CLICKED);
+    /* Sent for third short click within small distance and short time */
+    set_int_prop(ctx, obj, "LV_EVENT_TRIPLE_CLICKED", LV_EVENT_TRIPLE_CLICKED);
+    /* Object has been pressed for at least `long_press_time`.  Not sent if scrolled. */
     set_int_prop(ctx, obj, "LV_EVENT_LONG_PRESSED", LV_EVENT_LONG_PRESSED);
-    /* Called after `long_press_time` in every `long_press_repeat_time` ms.  Not called if scrolled. */
+    /* Sent after `long_press_time` in every `long_press_repeat_time` ms.  Not sent if scrolled. */
     set_int_prop(ctx, obj, "LV_EVENT_LONG_PRESSED_REPEAT", LV_EVENT_LONG_PRESSED_REPEAT);
-    /* Called on release if not scrolled (regardless to long press) */
+    /* Sent on release if not scrolled (regardless to long press) */
     set_int_prop(ctx, obj, "LV_EVENT_CLICKED", LV_EVENT_CLICKED);
-    /* Called in every cases when the object has been released */
+    /* Sent in every cases when Widget has been released */
     set_int_prop(ctx, obj, "LV_EVENT_RELEASED", LV_EVENT_RELEASED);
-    /* Scrolling begins */
+    /* Scrolling begins. The event parameter is a pointer to the animation of the scroll. Can be modified */
     set_int_prop(ctx, obj, "LV_EVENT_SCROLL_BEGIN", LV_EVENT_SCROLL_BEGIN);
+    set_int_prop(ctx, obj, "LV_EVENT_SCROLL_THROW_BEGIN", LV_EVENT_SCROLL_THROW_BEGIN);
     /* Scrolling ends */
     set_int_prop(ctx, obj, "LV_EVENT_SCROLL_END", LV_EVENT_SCROLL_END);
     /* Scrolling */
     set_int_prop(ctx, obj, "LV_EVENT_SCROLL", LV_EVENT_SCROLL);
-    /* A gesture is detected. Get the gesture with `lv_indev_get_gesture_dir(lv_indev_get_act());` */
+    /* A gesture is detected. Get gesture with `lv_indev_get_gesture_dir(lv_indev_active());` */
     set_int_prop(ctx, obj, "LV_EVENT_GESTURE", LV_EVENT_GESTURE);
-    /* A key is sent to the object. Get the key with `lv_indev_get_key(lv_indev_get_act());` */
+    /* A key is sent to Widget. Get key with `lv_indev_get_key(lv_indev_active());` */
     set_int_prop(ctx, obj, "LV_EVENT_KEY", LV_EVENT_KEY);
-    /* The object is focused */
+    /* An encoder or wheel was rotated. Get rotation count with `lv_event_get_rotary_diff(e);` */
+    set_int_prop(ctx, obj, "LV_EVENT_ROTARY", LV_EVENT_ROTARY);
+    /* Widget received focus */
     set_int_prop(ctx, obj, "LV_EVENT_FOCUSED", LV_EVENT_FOCUSED);
-    /* The object is defocused */
+    /* Widget's focus has been lost */
     set_int_prop(ctx, obj, "LV_EVENT_DEFOCUSED", LV_EVENT_DEFOCUSED);
-    /* The object is defocused but still selected */
+    /* Widget's focus has been lost but is still selected */
     set_int_prop(ctx, obj, "LV_EVENT_LEAVE", LV_EVENT_LEAVE);
     /* Perform advanced hit-testing */
     set_int_prop(ctx, obj, "LV_EVENT_HIT_TEST", LV_EVENT_HIT_TEST);
+    /* Indev has been reset */
+    set_int_prop(ctx, obj, "LV_EVENT_INDEV_RESET", LV_EVENT_INDEV_RESET);
+    /* Indev hover over object */
+    set_int_prop(ctx, obj, "LV_EVENT_HOVER_OVER", LV_EVENT_HOVER_OVER);
+    /* Indev hover leave object */
+    set_int_prop(ctx, obj, "LV_EVENT_HOVER_LEAVE", LV_EVENT_HOVER_LEAVE);
 
     /* Drawing events */
-    /* Check if the object fully covers an area. The event parameter is `lv_cover_check_info_t *`. */
+    /* Check if Widget fully covers an area. The event parameter is `lv_cover_check_info_t *`. */
     set_int_prop(ctx, obj, "LV_EVENT_COVER_CHECK", LV_EVENT_COVER_CHECK);
-    /* Get the required extra draw area around the object (e.g. for shadow). The event parameter is `lv_coord_t *` to store the size. */
+    /* Get required extra draw area around Widget (e.g. for shadow). The event parameter is `int32_t *` to store the size. */
     set_int_prop(ctx, obj, "LV_EVENT_REFR_EXT_DRAW_SIZE", LV_EVENT_REFR_EXT_DRAW_SIZE);
     /* Starting the main drawing phase */
     set_int_prop(ctx, obj, "LV_EVENT_DRAW_MAIN_BEGIN", LV_EVENT_DRAW_MAIN_BEGIN);
@@ -431,24 +489,26 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_EVENT_DRAW_POST", LV_EVENT_DRAW_POST);
     /* Finishing the post draw phase (when all children are drawn) */
     set_int_prop(ctx, obj, "LV_EVENT_DRAW_POST_END", LV_EVENT_DRAW_POST_END);
-    /* Starting to draw a part. The event parameter is `lv_obj_draw_dsc_t *`. */
-    set_int_prop(ctx, obj, "LV_EVENT_DRAW_PART_BEGIN", LV_EVENT_DRAW_PART_BEGIN);
-    /* Finishing to draw a part. The event parameter is `lv_obj_draw_dsc_t *`. */
-    set_int_prop(ctx, obj, "LV_EVENT_DRAW_PART_END", LV_EVENT_DRAW_PART_END);
+    /* Adding a draw task. The `LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS` flag needs to be set */
+    set_int_prop(ctx, obj, "LV_EVENT_DRAW_TASK_ADDED", LV_EVENT_DRAW_TASK_ADDED);
 
     /* Special events */
-    /* The object's value has changed (i.e. slider moved) */
+    /* Widget's value has changed (i.e. slider moved) */
     set_int_prop(ctx, obj, "LV_EVENT_VALUE_CHANGED", LV_EVENT_VALUE_CHANGED);
-    /* A text is inserted to the object. The event data is `char *` being inserted. */
+    /* Text has been inserted into Widget. The event data is `char *` being inserted. */
     set_int_prop(ctx, obj, "LV_EVENT_INSERT", LV_EVENT_INSERT);
-    /* Notify the object to refresh something on it (for the user) */
+    /* Notify Widget to refresh something on it (for user) */
     set_int_prop(ctx, obj, "LV_EVENT_REFRESH", LV_EVENT_REFRESH);
     /* A process has finished */
     set_int_prop(ctx, obj, "LV_EVENT_READY", LV_EVENT_READY);
     /* A process has been cancelled */
     set_int_prop(ctx, obj, "LV_EVENT_CANCEL", LV_EVENT_CANCEL);
+    /* The state of the widget changed */
+    set_int_prop(ctx, obj, "LV_EVENT_STATE_CHANGED", LV_EVENT_STATE_CHANGED);
 
     /* Other events */
+    /* Object is being created */
+    set_int_prop(ctx, obj, "LV_EVENT_CREATE", LV_EVENT_CREATE);
     /* Object is being deleted */
     set_int_prop(ctx, obj, "LV_EVENT_DELETE", LV_EVENT_DELETE);
     /* Child was removed, added, or its size, position were changed */
@@ -469,43 +529,90 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_EVENT_SIZE_CHANGED", LV_EVENT_SIZE_CHANGED);
     /* Object's style has changed */
     set_int_prop(ctx, obj, "LV_EVENT_STYLE_CHANGED", LV_EVENT_STYLE_CHANGED);
-    /* The children position has changed due to a layout recalculation */
+    /* A child's position position has changed due to a layout recalculation */
     set_int_prop(ctx, obj, "LV_EVENT_LAYOUT_CHANGED", LV_EVENT_LAYOUT_CHANGED);
-    /* Get the internal size of a widget */
+    /* Get internal size of a widget */
     set_int_prop(ctx, obj, "LV_EVENT_GET_SELF_SIZE", LV_EVENT_GET_SELF_SIZE);
 
+    /* Events of optional LVGL components */
+    /*
+     * An area is invalidated (marked for redraw). `lv_event_get_param(e)`
+     * returns a pointer to an `lv_area_t` object with the coordinates of the
+     * area to be invalidated.  The area can be freely modified if needed to
+     * adapt it a special requirement of the display. Usually needed with
+     * monochrome displays to invalidate `N x 8` rows or columns in one pass.
+     */
+    set_int_prop(ctx, obj, "LV_EVENT_INVALIDATE_AREA", LV_EVENT_INVALIDATE_AREA);
+    /* Sent when the resolution changes due to `lv_display_set_resolution()` or `lv_display_set_rotation()`. */
+    set_int_prop(ctx, obj, "LV_EVENT_RESOLUTION_CHANGED", LV_EVENT_RESOLUTION_CHANGED);
+    /* Sent as a result of any call to `lv_display_set_color_format()`. */
+    set_int_prop(ctx, obj, "LV_EVENT_COLOR_FORMAT_CHANGED", LV_EVENT_COLOR_FORMAT_CHANGED);
+    /* Sent when something happened that requires redraw. */
+    set_int_prop(ctx, obj, "LV_EVENT_REFR_REQUEST", LV_EVENT_REFR_REQUEST);
+    /* Sent before a refreshing cycle starts. Sent even if there is nothing to redraw. */
+    set_int_prop(ctx, obj, "LV_EVENT_REFR_START", LV_EVENT_REFR_START);
+    /* Sent when refreshing has been completed (after rendering and calling flush callback). Sent even if no redraw happened. */
+    set_int_prop(ctx, obj, "LV_EVENT_REFR_READY", LV_EVENT_REFR_READY);
+    /* Sent just before rendering begins. */
+    set_int_prop(ctx, obj, "LV_EVENT_RENDER_START", LV_EVENT_RENDER_START);
+    /* Sent after rendering has been completed. */
+    set_int_prop(ctx, obj, "LV_EVENT_RENDER_READY", LV_EVENT_RENDER_READY);
+    /* Sent before flush callback is called. */
+    set_int_prop(ctx, obj, "LV_EVENT_FLUSH_START", LV_EVENT_FLUSH_START);
+    /* Sent after flush callback call has returned. */
+    set_int_prop(ctx, obj, "LV_EVENT_FLUSH_FINISH", LV_EVENT_FLUSH_FINISH);
+    /* Sent before flush wait callback is called. */
+    set_int_prop(ctx, obj, "LV_EVENT_FLUSH_WAIT_START", LV_EVENT_FLUSH_WAIT_START);
+    /* Sent after flush wait callback call has returned. */
+    set_int_prop(ctx, obj, "LV_EVENT_FLUSH_WAIT_FINISH", LV_EVENT_FLUSH_WAIT_FINISH);
+    /* Sent after layout update completes */
+    set_int_prop(ctx, obj, "LV_EVENT_UPDATE_LAYOUT_COMPLETED", LV_EVENT_UPDATE_LAYOUT_COMPLETED);
+
+    set_int_prop(ctx, obj, "LV_EVENT_VSYNC", LV_EVENT_VSYNC);
+    set_int_prop(ctx, obj, "LV_EVENT_VSYNC_REQUEST", LV_EVENT_VSYNC_REQUEST);
+    /* Sent when the translation language changed. */
+    set_int_prop(ctx, obj, "LV_EVENT_TRANSLATION_LANGUAGE_CHANGED", LV_EVENT_TRANSLATION_LANGUAGE_CHANGED);
+
     /* Number of default events */
-    set_int_prop(ctx, obj, "LV_EVENT_LAST", _LV_EVENT_LAST);
+    set_int_prop(ctx, obj, "LV_EVENT_LAST", LV_EVENT_LAST);
 
     /*
      * This is a flag that can be set with an event so it's processed
      * before the class default event processing
      */
     set_int_prop(ctx, obj, "LV_EVENT_PREPROCESS", LV_EVENT_PREPROCESS);
-    /* lv_event_code_t end - deps/lvgl/src/core/lv_event.h */
+    set_int_prop(ctx, obj, "LV_EVENT_MARKED_DELETING", LV_EVENT_MARKED_DELETING);
+    /* lv_event_code_t end - deps/lvgl/src/misc/lv_event.h */
 
-    /* lv_arc_mode_t begin - deps/lvgl/src/widgets/lv_arc.h */
+    /* lv_arc_mode_t begin - deps/lvgl/src/widgets/arc/lv_arc.h */
 #if LV_USE_ARC
+    /* Clock-wise */
     set_int_prop(ctx, obj, "LV_ARC_MODE_NORMAL", LV_ARC_MODE_NORMAL);
+    /* Left/right from the midpoint */
     set_int_prop(ctx, obj, "LV_ARC_MODE_SYMMETRICAL", LV_ARC_MODE_SYMMETRICAL);
+    /* Counterclock-wise */
     set_int_prop(ctx, obj, "LV_ARC_MODE_REVERSE", LV_ARC_MODE_REVERSE);
 #endif
-    /* lv_arc_mode_t end - deps/lvgl/src/widgets/lv_arc.h */
+    /* lv_arc_mode_t end - deps/lvgl/src/widgets/arc/lv_arc.h */
 
-    /* lv_chart_type_t begin - deps/lvgl/src/extra/widgets/chart/lv_chart.h */
+    /* lv_chart_type_t begin - deps/lvgl/src/widgets/chart/lv_chart.h */
 #if LV_USE_CHART
     /* Don't draw the series */
     set_int_prop(ctx, obj, "LV_CHART_TYPE_NONE", LV_CHART_TYPE_NONE);
     /* Connect the points with lines */
     set_int_prop(ctx, obj, "LV_CHART_TYPE_LINE", LV_CHART_TYPE_LINE);
-    /* Draw columns */
+    /* Connect the points with curves */
+    set_int_prop(ctx, obj, "LV_CHART_TYPE_CURVE", LV_CHART_TYPE_CURVE);
+    /* Draw bars for each series */
     set_int_prop(ctx, obj, "LV_CHART_TYPE_BAR", LV_CHART_TYPE_BAR);
+    /* Draw a single stacked bar for each data point. Supports only positive values */
+    set_int_prop(ctx, obj, "LV_CHART_TYPE_STACKED", LV_CHART_TYPE_STACKED);
     /* Draw points and lines in 2D (x,y coordinates) */
     set_int_prop(ctx, obj, "LV_CHART_TYPE_SCATTER", LV_CHART_TYPE_SCATTER);
 #endif
-    /* lv_chart_type_t end - deps/lvgl/src/extra/widgets/chart/lv_chart.h */
+    /* lv_chart_type_t end - deps/lvgl/src/widgets/chart/lv_chart.h */
 
-    /* lv_keyboard_mode_t begin - deps/lvgl/src/extra/widgets/keyboard/lv_keyboard.h */
+    /* lv_keyboard_mode_t begin - deps/lvgl/src/widgets/keyboard/lv_keyboard.h */
 #if LV_USE_KEYBOARD
     set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_TEXT_LOWER", LV_KEYBOARD_MODE_TEXT_LOWER);
     set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_TEXT_UPPER", LV_KEYBOARD_MODE_TEXT_UPPER);
@@ -515,7 +622,8 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_USER_2", LV_KEYBOARD_MODE_USER_2);
     set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_USER_3", LV_KEYBOARD_MODE_USER_3);
     set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_USER_4", LV_KEYBOARD_MODE_USER_4);
+    set_int_prop(ctx, obj, "LV_KEYBOARD_MODE_TEXT_ARABIC", LV_KEYBOARD_MODE_TEXT_ARABIC);
 #endif
-    /* lv_keyboard_mode_t end - deps/lvgl/src/extra/widgets/keyboard/lv_keyboard.h */
+    /* lv_keyboard_mode_t end - deps/lvgl/src/widgets/keyboard/lv_keyboard.h */
     JS_SetPropertyStr(ctx, ns, "lv_conf", obj);
 }

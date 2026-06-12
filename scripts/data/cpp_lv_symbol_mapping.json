@@ -761,13 +761,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_IMG_OPA",
+          "lv_symbol": "LV_STYLE_IMAGE_OPA",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_IMG_OPA"
+      "cpp_lv_symbol": "LV_STYLE_IMAGE_OPA"
     },
     {
       "cpp_key": "recolor-opacity",
@@ -775,13 +775,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_IMG_RECOLOR_OPA",
+          "lv_symbol": "LV_STYLE_IMAGE_RECOLOR_OPA",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_IMG_RECOLOR_OPA"
+      "cpp_lv_symbol": "LV_STYLE_IMAGE_RECOLOR_OPA"
     },
     {
       "cpp_key": "translateX",
@@ -817,13 +817,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_TRANSFORM_ZOOM",
+          "lv_symbol": "LV_STYLE_TRANSFORM_SCALE_X",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_TRANSFORM_ZOOM"
+      "cpp_lv_symbol": "LV_STYLE_TRANSFORM_SCALE_X"
     },
     {
       "cpp_key": "rotate",
@@ -831,13 +831,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_TRANSFORM_ANGLE",
+          "lv_symbol": "LV_STYLE_TRANSFORM_ROTATION",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_TRANSFORM_ANGLE"
+      "cpp_lv_symbol": "LV_STYLE_TRANSFORM_ROTATION"
     },
     {
       "cpp_key": "img-scale",
@@ -918,13 +918,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_ANIM_TIME",
+          "lv_symbol": "LV_STYLE_ANIM_DURATION",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_ANIM_TIME"
+      "cpp_lv_symbol": "LV_STYLE_ANIM_DURATION"
     },
     {
       "cpp_key": "text-color",
@@ -946,13 +946,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_IMG_RECOLOR",
+          "lv_symbol": "LV_STYLE_IMAGE_RECOLOR",
           "value_kind": "Color"
         }
       ],
       "status": "REAL",
       "value_kind": "Color",
-      "cpp_lv_symbol": "LV_STYLE_IMG_RECOLOR"
+      "cpp_lv_symbol": "LV_STYLE_IMAGE_RECOLOR"
     },
     {
       "cpp_key": "row-spacing",
@@ -1086,13 +1086,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_SHADOW_OFS_X",
+          "lv_symbol": "LV_STYLE_SHADOW_OFFSET_X",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_SHADOW_OFS_X"
+      "cpp_lv_symbol": "LV_STYLE_SHADOW_OFFSET_X"
     },
     {
       "cpp_key": "shadow-offset-y",
@@ -1100,13 +1100,13 @@
       "setter_count": 1,
       "slots": [
         {
-          "lv_symbol": "LV_STYLE_SHADOW_OFS_Y",
+          "lv_symbol": "LV_STYLE_SHADOW_OFFSET_Y",
           "value_kind": "Num"
         }
       ],
       "status": "REAL",
       "value_kind": "Num",
-      "cpp_lv_symbol": "LV_STYLE_SHADOW_OFS_Y"
+      "cpp_lv_symbol": "LV_STYLE_SHADOW_OFFSET_Y"
     },
     {
       "cpp_key": "position",

@@ -24,7 +24,7 @@
       "stub": true
     },
     {
-      "header": "core/lv_obj.h",
+      "header": "core/lv_obj_style.h",
       "name": "lv_part_t",
       "enum_typedef": "lv_part_t",
       "alias": {
@@ -35,7 +35,7 @@
       }
     },
     {
-      "header": "core/lv_obj.h",
+      "header": "core/lv_obj_style.h",
       "name": "lv_state_t",
       "enum_typedef": "lv_state_t",
       "alias": {
@@ -78,7 +78,7 @@
       }
     },
     {
-      "header": "extra/layouts/flex/lv_flex.h",
+      "header": "layouts/flex/lv_flex.h",
       "name": "lv_flex_flow_t",
       "enum_typedef": "lv_flex_flow_t",
       "stub": true,
@@ -92,7 +92,7 @@
       }
     },
     {
-      "header": "extra/layouts/flex/lv_flex.h",
+      "header": "layouts/flex/lv_flex.h",
       "name": "lv_flex_align_t",
       "enum_typedef": "lv_flex_align_t",
       "stub": true,
@@ -111,19 +111,12 @@
       }
     },
     {
-      "header": "extra/layouts/flex/lv_flex.h",
-      "name": "lv_layout_flex",
-      "symbols": ["LV_LAYOUT_FLEX"],
-      "guard": "LV_USE_FLEX"
+      "header": "layouts/lv_layout.h",
+      "name": "lv_layout_t",
+      "enum_typedef": "lv_layout_t"
     },
     {
-      "header": "extra/layouts/grid/lv_grid.h",
-      "name": "lv_layout_grid",
-      "symbols": ["LV_LAYOUT_GRID"],
-      "guard": "LV_USE_GRID"
-    },
-    {
-      "header": "extra/layouts/grid/lv_grid.h",
+      "header": "layouts/grid/lv_grid.h",
       "name": "lv_grid_align_t",
       "enum_typedef": "lv_grid_align_t",
       "stub": true,
@@ -153,7 +146,7 @@
       }
     },
     {
-      "header": "misc/lv_txt.h",
+      "header": "misc/lv_text.h",
       "name": "lv_text_align_t",
       "enum_typedef": "lv_text_align_t",
       "alias": {
@@ -177,7 +170,7 @@
       }
     },
     {
-      "header": "misc/lv_style.h",
+      "header": "misc/lv_grad.h",
       "name": "lv_grad_dir_t",
       "enum_typedef": "lv_grad_dir_t",
       "alias": {
@@ -199,7 +192,7 @@
       "stub": true
     },
     {
-      "header": "widgets/lv_label.h",
+      "header": "widgets/label/lv_label.h",
       "name": "lv_label_long_mode_t",
       "enum_typedef": "lv_label_long_mode_t",
       "alias": {
@@ -207,9 +200,9 @@
         "type_name": "LabelLongModeMapKey",
         "doc": "text-overflow keyword -> LVGL lv_label_long_mode_t",
         "renames": {
-          "LV_LABEL_LONG_DOT": "LV_LABEL_LONG_ellipsis",
-          "LV_LABEL_LONG_WRAP": "LV_LABEL_LONG_auto",
-          "LV_LABEL_LONG_SCROLL_CIRCULAR": "LV_LABEL_LONG_circular"
+          "LV_LABEL_LONG_MODE_DOTS": "LV_LABEL_LONG_ellipsis",
+          "LV_LABEL_LONG_MODE_WRAP": "LV_LABEL_LONG_auto",
+          "LV_LABEL_LONG_MODE_SCROLL_CIRCULAR": "LV_LABEL_LONG_circular"
         },
         "strip_prefix": "LV_LABEL_LONG_",
         "to_lowercase": true
@@ -223,23 +216,7 @@
     {
       "header": "misc/lv_style.h",
       "name": "lv_style_prop_t",
-      "enum_typedef": "lv_style_prop_t",
-      "renames": {
-        "_LV_STYLE_LAST_BUILT_IN_PROP": "LV_STYLE_LAST_BUILT_IN_PROP",
-        "_LV_STYLE_NUM_BUILT_IN_PROPS": "LV_STYLE_NUM_BUILT_IN_PROPS"
-      }
-    },
-    {
-      "header": "extra/layouts/flex/lv_flex.h",
-      "name": "lv_style_prop_t_extend_flow",
-      "extern_type": "lv_style_prop_t",
-      "guard": "LV_USE_FLEX"
-    },
-    {
-      "header": "extra/layouts/grid/lv_grid.h",
-      "name": "lv_style_prop_t_extend_grid",
-      "extern_type": "lv_style_prop_t",
-      "guard": "LV_USE_GRID"
+      "enum_typedef": "_lv_style_id_t"
     },
     {
       "project_root": "repo",
@@ -248,12 +225,9 @@
       "extern_type": "lv_style_prop_t"
     },
     {
-      "header": "core/lv_event.h",
+      "header": "misc/lv_event.h",
       "name": "lv_event_code_t",
       "enum_typedef": "lv_event_code_t",
-      "renames": {
-        "_LV_EVENT_LAST": "LV_EVENT_LAST"
-      },
       "alias": {
         "export": "EVENT_TYPE_MAP",
         "strip_prefix": "LV_",
@@ -262,19 +236,19 @@
       }
     },
     {
-      "header": "widgets/lv_arc.h",
+      "header": "widgets/arc/lv_arc.h",
       "name": "lv_arc_mode_t",
       "enum_typedef": "lv_arc_mode_t",
       "guard": "LV_USE_ARC"
     },
     {
-      "header": "extra/widgets/chart/lv_chart.h",
+      "header": "widgets/chart/lv_chart.h",
       "name": "lv_chart_type_t",
       "enum_typedef": "lv_chart_type_t",
       "guard": "LV_USE_CHART"
     },
     {
-      "header": "extra/widgets/keyboard/lv_keyboard.h",
+      "header": "widgets/keyboard/lv_keyboard.h",
       "name": "lv_keyboard_mode_t",
       "enum_typedef": "lv_keyboard_mode_t",
       "guard": "LV_USE_KEYBOARD"

@@ -7,7 +7,7 @@
     "lvgl_ref": "v8.3.0"
   },
   "summary": {
-    "entry_count": 84,
+    "entry_count": 82,
     "matched": 84,
     "mismatched": 0
   },
@@ -195,44 +195,37 @@
       "match": true
     },
     {
-      "trans_key": "background-dither-mode",
-      "trans_id": 39,
-      "lv_symbol": "LV_STYLE_BG_DITHER_MODE",
-      "lv_base": 39,
-      "match": true
-    },
-    {
       "trans_key": "background-image",
       "trans_id": 40,
-      "lv_symbol": "LV_STYLE_BG_IMG_SRC",
+      "lv_symbol": "LV_STYLE_BG_IMAGE_SRC",
       "lv_base": 40,
       "match": true
     },
     {
       "trans_key": "background-image-opacity",
       "trans_id": 41,
-      "lv_symbol": "LV_STYLE_BG_IMG_OPA",
+      "lv_symbol": "LV_STYLE_BG_IMAGE_OPA",
       "lv_base": 41,
       "match": true
     },
     {
       "trans_key": "background-image-recolor",
       "trans_id": 42,
-      "lv_symbol": "LV_STYLE_BG_IMG_RECOLOR",
+      "lv_symbol": "LV_STYLE_BG_IMAGE_RECOLOR",
       "lv_base": 42,
       "match": true
     },
     {
       "trans_key": "background-image-recolor-opacity",
       "trans_id": 43,
-      "lv_symbol": "LV_STYLE_BG_IMG_RECOLOR_OPA",
+      "lv_symbol": "LV_STYLE_BG_IMAGE_RECOLOR_OPA",
       "lv_base": 43,
       "match": true
     },
     {
       "trans_key": "background-image-tiled",
       "trans_id": 44,
-      "lv_symbol": "LV_STYLE_BG_IMG_TILED",
+      "lv_symbol": "LV_STYLE_BG_IMAGE_TILED",
       "lv_base": 44,
       "match": true
     },
@@ -309,14 +302,14 @@
     {
       "trans_key": "shadow-ofs-x",
       "trans_id": 65,
-      "lv_symbol": "LV_STYLE_SHADOW_OFS_X",
+      "lv_symbol": "LV_STYLE_SHADOW_OFFSET_X",
       "lv_base": 65,
       "match": true
     },
     {
       "trans_key": "shadow-ofs-y",
       "trans_id": 66,
-      "lv_symbol": "LV_STYLE_SHADOW_OFS_Y",
+      "lv_symbol": "LV_STYLE_SHADOW_OFFSET_Y",
       "lv_base": 66,
       "match": true
     },
@@ -344,21 +337,21 @@
     {
       "trans_key": "img-opacity",
       "trans_id": 70,
-      "lv_symbol": "LV_STYLE_IMG_OPA",
+      "lv_symbol": "LV_STYLE_IMAGE_OPA",
       "lv_base": 70,
       "match": true
     },
     {
       "trans_key": "img-recolor",
       "trans_id": 71,
-      "lv_symbol": "LV_STYLE_IMG_RECOLOR",
+      "lv_symbol": "LV_STYLE_IMAGE_RECOLOR",
       "lv_base": 71,
       "match": true
     },
     {
       "trans_key": "img-recolor-opacity",
       "trans_id": 72,
-      "lv_symbol": "LV_STYLE_IMG_RECOLOR_OPA",
+      "lv_symbol": "LV_STYLE_IMAGE_RECOLOR_OPA",
       "lv_base": 72,
       "match": true
     },
@@ -435,7 +428,7 @@
     {
       "trans_key": "arc-image",
       "trans_id": 84,
-      "lv_symbol": "LV_STYLE_ARC_IMG_SRC",
+      "lv_symbol": "LV_STYLE_ARC_IMAGE_SRC",
       "lv_base": 84,
       "match": true
     },
@@ -519,15 +512,8 @@
     {
       "trans_key": "animate-time",
       "trans_id": 100,
-      "lv_symbol": "LV_STYLE_ANIM_TIME",
+      "lv_symbol": "LV_STYLE_ANIM_DURATION",
       "lv_base": 100,
-      "match": true
-    },
-    {
-      "trans_key": "animate-speed",
-      "trans_id": 101,
-      "lv_symbol": "LV_STYLE_ANIM_SPEED",
-      "lv_base": 101,
       "match": true
     },
     {
@@ -575,14 +561,14 @@
     {
       "trans_key": "transform-scale",
       "trans_id": 108,
-      "lv_symbol": "LV_STYLE_TRANSFORM_ZOOM",
+      "lv_symbol": "LV_STYLE_TRANSFORM_SCALE_X",
       "lv_base": 108,
       "match": true
     },
     {
       "trans_key": "transform-rotate",
       "trans_id": 109,
-      "lv_symbol": "LV_STYLE_TRANSFORM_ANGLE",
+      "lv_symbol": "LV_STYLE_TRANSFORM_ROTATION",
       "lv_base": 109,
       "match": true
     },
