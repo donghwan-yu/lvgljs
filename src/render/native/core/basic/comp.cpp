@@ -257,11 +257,11 @@ BasicComponent::~BasicComponent () {
 };
 
 void BasicComponent::setAlign (int32_t align_type, int32_t x, int32_t y) {
-    lv_obj_align(this->instance, static_cast<lv_align_t>(align_type), x, y);
+    lv_obj_align(this->alignInstance(), static_cast<lv_align_t>(align_type), x, y);
 };
 
 void BasicComponent::setAlignTo (int32_t align_type, int32_t x, int32_t y, BasicComponent* parent) {
-    lv_obj_align_to(this->instance, parent->instance, static_cast<lv_align_t>(align_type), x, y);
+    lv_obj_align_to(this->alignInstance(), parent->instance, static_cast<lv_align_t>(align_type), x, y);
 };
 
 void BasicComponent::moveToFront () {

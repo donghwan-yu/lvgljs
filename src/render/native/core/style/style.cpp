@@ -6,6 +6,7 @@
 #include "native/core/lv_conf/lv_style_prop_extend.h"
 #include "native/core/style/font/font.hpp"
 #include "native/core/basic/comp.hpp"
+#include "native/components/chart/chart.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -273,18 +274,26 @@ static void CompSetTransformOrigin (lv_obj_t* comp, lv_style_t* style, JSContext
     lv_img_set_pivot(comp, x, y);
 };
 
+/* lv_chart_set_zoom_x/y() were removed in LVGL 9; the Chart component
+ * emulates them with a scrollable viewport (value is still 256-based) */
 static void CompSetChartScaleX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int x;
     JS_ToInt32(ctx, &x, obj);
 
-    lv_chart_set_zoom_x(comp, x);
+    Chart* chart = static_cast<Chart*>(lv_obj_get_user_data(comp));
+    if (chart != nullptr) {
+        chart->setZoomX(x);
+    }
 };
 
 static void CompSetChartScaleY (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int x;
     JS_ToInt32(ctx, &x, obj);
 
-    lv_chart_set_zoom_y(comp, x);
+    Chart* chart = static_cast<Chart*>(lv_obj_get_user_data(comp));
+    if (chart != nullptr) {
+        chart->setZoomY(x);
+    }
 };
 
 void CompSetTransition (

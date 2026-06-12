@@ -85,6 +85,10 @@ class BasicComponent {
 
     void setAlign (int32_t align_type, int32_t x, int32_t y);
     void setAlignTo (int32_t align_type, int32_t x, int32_t y, BasicComponent* parent);
+
+    /* object that positioning (align/align_to) should be applied to;
+     * components with an internal wrapper (e.g. zoomed Chart) override this */
+    virtual lv_obj_t* alignInstance () { return this->instance; }
 };
 
 extern std::unordered_map<std::string, BasicComponent*> comp_map;
