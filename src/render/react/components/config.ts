@@ -61,6 +61,20 @@ export const EDropdownListArrowDirection = {
 
 export const styleGetterProp: readonly (string | symbol)[] = ["height", "width", "left", "top"] as const;
 
+const DATA_ATTR_PREFIX = "data-";
+
+/** Copies `data-*` props from a props object onto `comp.dataset`. */
+export function applyDataPropsToDataset(
+  comp: { dataset: Record<string, unknown> },
+  props: Record<string, unknown>,
+): void {
+  comp.dataset = {};
+  for (const prop of Object.keys(props)) {
+    if (!prop.startsWith(DATA_ATTR_PREFIX)) continue;
+    comp.dataset[prop.slice(DATA_ATTR_PREFIX.length)] = props[prop];
+  }
+}
+
 export type LvgljsComponentConfig<ComponentProps, ComponentInstance> = Pick<
   HostConfig<any, ComponentProps, any, ComponentInstance, any, any, any, any, any, any, any, any>,
   | "shouldSetTextContent"

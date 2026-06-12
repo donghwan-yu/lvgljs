@@ -5,6 +5,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  applyDataPropsToDataset,
 } from "../config";
 import CanvasContext from "./context";
 
@@ -56,13 +57,7 @@ function setCanvasProps(comp, newProps: CanvasProps, oldProps: CanvasProps) {
     },
   };
   Object.assign(setter, newProps);
-  comp.dataset = {};
-  Object.keys(newProps).forEach((prop) => {
-    const index = prop.indexOf("data-");
-    if (index === 0) {
-      comp.dataset[prop.substring(5)] = newProps[prop];
-    }
-  });
+  applyDataPropsToDataset(comp, newProps);
 }
 
 export class CanvasComp extends NativeButton {

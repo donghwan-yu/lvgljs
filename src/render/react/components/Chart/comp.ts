@@ -8,6 +8,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  applyDataPropsToDataset,
 } from "../config";
 
 import { GetBridge } from "../../core/bridge";
@@ -270,13 +271,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
       setter[key](newProps[key]);
     }
   });
-  comp.dataset = {};
-  Object.keys(newProps).forEach((prop) => {
-    const index = prop.indexOf("data-");
-    if (index === 0) {
-      comp.dataset[prop.substring(5)] = newProps[prop];
-    }
-  });
+  applyDataPropsToDataset(comp, newProps);
   // This gives issues: invalid call to setPointNum?
   // comp.refresh();
 }

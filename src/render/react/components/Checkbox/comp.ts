@@ -6,6 +6,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  applyDataPropsToDataset,
 } from "../config";
 
 import { GetBridge } from "../../core/bridge";
@@ -77,13 +78,7 @@ function setCheckboxProps(comp, newProps: CheckboxProps, oldProps: CheckboxProps
       setter[key](newProps[key]);
     }
   });
-  comp.dataset = {};
-  Object.keys(newProps).forEach((prop) => {
-    const index = prop.indexOf("data-");
-    if (index === 0) {
-      comp.dataset[prop.substring(5)] = newProps[prop];
-    }
-  });
+  applyDataPropsToDataset(comp, newProps);
 }
 
 export class CheckboxComp extends NativeView {

@@ -1,6 +1,6 @@
 import { StyleProps } from "../../core/style";
 import { CommonComponentApi, CommonProps } from "../common/index";
-import { STYLE_TYPE, handleEvent, setStyle, styleGetterProp } from "../config";
+import { STYLE_TYPE, handleEvent, setStyle, styleGetterProp, applyDataPropsToDataset } from "../config";
 
 import { GetBridge } from "../../core/bridge";
 
@@ -60,13 +60,7 @@ function setProgressBarProps(comp, newProps: ProgressBarProps, oldProps: Partial
       setter[key](newProps[key]);
     }
   });
-  comp.dataset = {};
-  Object.keys(newProps).forEach((prop) => {
-    const index = prop.indexOf("data-");
-    if (index === 0) {
-      comp.dataset[prop.substring(5)] = newProps[prop];
-    }
-  });
+  applyDataPropsToDataset(comp, newProps);
 }
 
 export class ProgressBarComp extends NativeProgressBar {

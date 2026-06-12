@@ -6,6 +6,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  applyDataPropsToDataset,
 } from "../config";
 
 import { GetBridge } from "../../core/bridge";
@@ -90,13 +91,7 @@ function setInputProps(comp, newProps: InputProps, oldProps: Partial<InputProps>
       setter[key](newProps[key]);
     }
   });
-  comp.dataset = {};
-  Object.keys(newProps).forEach((prop) => {
-    const index = prop.indexOf("data-");
-    if (index === 0) {
-      comp.dataset[prop.substring(5)] = newProps[prop];
-    }
-  });
+  applyDataPropsToDataset(comp, newProps);
 }
 
 /** A one line mode of Textarea */
