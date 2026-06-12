@@ -8,6 +8,7 @@ import {
 } from "../config";
 
 import { GetBridge } from "../../core/bridge";
+import { LV_DIR_MAP } from "../../core/lv_types";
 
 const bridge = GetBridge();
 const NativeTabs = bridge.NativeRender.NativeComponents.TabView;
@@ -49,10 +50,10 @@ function setTabsProps(comp, newProps: TabsProps, oldProps: Partial<TabsProps>) {
 }
 
 const tabPositionObj = {
-  left: 1 << 0,
-  top: 1 << 2,
-  right: 1 << 1,
-  bottom: 1 << 3,
+  left: LV_DIR_MAP.left,
+  top: LV_DIR_MAP.top,
+  right: LV_DIR_MAP.right,
+  bottom: LV_DIR_MAP.bottom,
 };
 
 export class TabsComp extends NativeTabs {
