@@ -48,12 +48,15 @@ export const STYLE_TYPE = {
 
 export const EDropdownlistDirection = LV_DIR_MAP;
 
-/** Matches Dropdownlist::setArrowDir enum order in dropdownlist.hpp. */
+/**
+ * Dropdownlist::setArrowDir (EArrowType in dropdownlist.hpp).
+ * Not LV_DIR_MAP - custom arrow glyph order: up, right, down, left.
+ */
 export const EDropdownListArrowDirection = {
-  up: 0,
-  right: 1,
-  down: 2,
-  left: 3,
+  up: 0, // DROPDOWNLIST_UP
+  right: 1, // DROPDOWNLIST_RIGHT
+  down: 2, // DROPDOWNLIST_DOWN
+  left: 3, // DROPDOWNLIST_LEFT
 } as const;
 
 export const styleGetterProp: readonly (string | symbol)[] = ["height", "width", "left", "top"] as const;
