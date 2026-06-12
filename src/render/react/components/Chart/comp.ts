@@ -12,6 +12,9 @@ import {
 
 import { GetBridge } from "../../core/bridge";
 
+/** chart.cpp: color == -1 uses lv_theme_get_color_primary for the series. */
+const CHART_COLOR_USE_THEME = -1;
+
 const bridge = GetBridge();
 const NativeChart = bridge.NativeRender.NativeComponents.Chart;
 
@@ -106,7 +109,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
             arr.push(item1[1]);
           });
           return {
-            color: item.color === void 0 ? -1 : colorTransform(item.color),
+            color: item.color === void 0 ? CHART_COLOR_USE_THEME : colorTransform(item.color),
             data: arr,
           };
         });
@@ -132,7 +135,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
       if (data !== oldProps?.leftAxisData) {
         data = data.map((item) => ({
           ...item,
-          color: item.color === void 0 ? -1 : colorTransform(item.color),
+          color: item.color === void 0 ? CHART_COLOR_USE_THEME : colorTransform(item.color),
         }));
         comp.setLeftAxisData(data);
       }
@@ -156,7 +159,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
       if (data !== oldProps?.bottomAxisData) {
         data = data.map((item) => ({
           ...item,
-          color: item.color === void 0 ? -1 : colorTransform(item.color),
+          color: item.color === void 0 ? CHART_COLOR_USE_THEME : colorTransform(item.color),
         }));
         comp.setBottomAxisData(data);
       }
@@ -180,7 +183,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
       if (data !== oldProps?.rightAxisData) {
         data = data.map((item) => ({
           ...item,
-          color: item.color === void 0 ? -1 : colorTransform(item.color),
+          color: item.color === void 0 ? CHART_COLOR_USE_THEME : colorTransform(item.color),
         }));
         comp.setRightAxisData(data);
       }
@@ -204,7 +207,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
       if (data !== oldProps?.topAxisData) {
         data = data.map((item) => ({
           ...item,
-          color: item.color === void 0 ? -1 : colorTransform(item.color),
+          color: item.color === void 0 ? CHART_COLOR_USE_THEME : colorTransform(item.color),
         }));
         comp.setTopAxisData(data);
       }
