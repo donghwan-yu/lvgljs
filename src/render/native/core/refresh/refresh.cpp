@@ -44,9 +44,14 @@ static JSValue NativeRenderCaptureDisplay(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, ok);
 }
 
+static JSValue NativeRenderGetCompMapSize(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    return JS_NewUint32(ctx, static_cast<uint32_t>(comp_map.size()));
+}
+
 static const JSCFunctionListEntry util_funcs[] = {
     TJS_CFUNC_DEF("refreshWindow", 0, NativeRenderRefreshScreen),
     TJS_CFUNC_DEF("captureDisplay", 0, NativeRenderCaptureDisplay),
+    TJS_CFUNC_DEF("getCompMapSize", 0, NativeRenderGetCompMapSize),
 };
 
 void NativeRenderUtilInit (JSContext* ctx, JSValue& ns) {

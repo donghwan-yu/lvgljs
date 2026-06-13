@@ -41,7 +41,19 @@ import TextareaConfig from "./components/Textarea/config";
 import { ViewComp, ViewProps } from "./components/View/comp";
 import ViewConfig from "./components/View/config";
 import { registerComponent } from "./components/config";
+import reconciler from "./core/reconciler";
 import { Renderer } from "./core/renderer";
+
+const testContainerInfo = new Set();
+let testContainer: ReturnType<typeof reconciler.createContainer> | null = null;
+
+/** Synchronous reconciler updates for runtime leak probes (reuses one container). */
+export function updateTestTree(element: unknown) {
+  if (!testContainer) {
+    testContainer = reconciler.createContainer(testContainerInfo, true, false);
+  }
+  reconciler.updateContainer(element, testContainer, null);
+}
 
 export const View = registerComponent<ViewProps, ViewComp>(new ViewConfig());
 // export const Window = registerComponent<WindowProps, Window>(new WindowConfig());
