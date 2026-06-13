@@ -43,6 +43,17 @@ describe("TransStyle pipe", () => {
     assert.equal(map.get("rotate"), 45);
   });
 
+  it("maps scale to img-scaleX/Y for Image", () => {
+    const { map } = runPipeFull(
+      TransStyle,
+      { transform: "scale(1.5)" },
+      "Image",
+    );
+    assert.equal(map.get("img-scaleX"), 384);
+    assert.equal(map.get("img-scaleY"), 384);
+    assert.equal(map.has("scale"), false);
+  });
+
   it("pushes img-origin for Image transform-origin", () => {
     const { map } = runPipeFull(
       TransStyle,
@@ -50,6 +61,27 @@ describe("TransStyle pipe", () => {
       "Image",
     );
     assert.deepEqual(map.get("img-origin"), [10, 20]);
+  });
+
+  it("maps rotate to img-rotate for Image", () => {
+    const { map } = runPipeFull(
+      TransStyle,
+      { transform: "rotate(90deg)" },
+      "Image",
+    );
+    assert.equal(map.get("img-rotate"), 90);
+    assert.equal(map.has("rotate"), false);
+  });
+
+  it("maps scaleX and scaleY to chart-scale props for Chart", () => {
+    const { map } = runPipeFull(
+      TransStyle,
+      { transform: "scaleX(2) scaleY(0.5)" },
+      "Chart",
+    );
+    assert.equal(map.get("chart-scaleX"), 512);
+    assert.equal(map.get("chart-scaleY"), 128);
+    assert.equal(map.has("scaleX"), false);
   });
 
   it("filters unknown transition properties", () => {
@@ -95,25 +127,40 @@ describe("TransStyle pipe", () => {
     });
 
     describe("scale and rotate routing (trans.ts scale/rotate/scaleX/scaleY branches)", () => {
-      it("maps scale() to img-scale for Image", () => {
+      it("maps scale() to img-scaleX/Y for Image", () => {
         const { map } = runPipeFull(
           TransStyle,
           { transform: "scale(1.5)" },
           "Image",
         );
-        assert.equal(map.get("img-scale"), 384);
+        assert.equal(map.get("img-scaleX"), 384);
+        assert.equal(map.get("img-scaleY"), 384);
+        assert.equal(map.has("scaleX"), false);
         assert.equal(map.has("scale"), false);
       });
 
-      it("maps scale() to scale for non-Image components (View, GIF, etc.)", () => {
-        for (const compName of ["View", "GIF"] as const) {
+      it("maps scale() to img-scaleX/Y for GIF", () => {
+        const { map } = runPipeFull(
+          TransStyle,
+          { transform: "scale(2)" },
+          "GIF",
+        );
+        assert.equal(map.get("img-scaleX"), 512);
+        assert.equal(map.get("img-scaleY"), 512);
+        assert.equal(map.has("scaleX"), false);
+      });
+
+      it("maps scale() to scaleX/Y for View and Chart", () => {
+        for (const compName of ["View", "Chart"] as const) {
           const { map } = runPipeFull(
             TransStyle,
             { transform: "scale(2)" },
             compName,
           );
-          assert.equal(map.get("scale"), 512, compName);
-          assert.equal(map.has("img-scale"), false, compName);
+          assert.equal(map.get("scaleX"), 512, compName);
+          assert.equal(map.get("scaleY"), 512, compName);
+          assert.equal(map.has("scale"), false, compName);
+          assert.equal(map.has("img-scaleX"), false, compName);
         }
       });
 
@@ -143,9 +190,10 @@ describe("TransStyle pipe", () => {
           { transform: "scale(0.5) rotate(180deg)" },
           "Image",
         );
-        assert.equal(map.get("img-scale"), 128);
+        assert.equal(map.get("img-scaleX"), 128);
+        assert.equal(map.get("img-scaleY"), 128);
         assert.equal(map.get("img-rotate"), 180);
-        assert.equal(map.has("scale"), false);
+        assert.equal(map.has("scaleX"), false);
         assert.equal(map.has("rotate"), false);
       });
 
@@ -157,43 +205,42 @@ describe("TransStyle pipe", () => {
         );
         assert.equal(map.get("chart-scaleX"), 512);
         assert.equal(map.get("chart-scaleY"), 128);
-        assert.equal(map.has("scale"), false);
-        assert.equal(map.has("img-scale"), false);
+        assert.equal(map.has("scaleX"), false);
+        assert.equal(map.has("img-scaleX"), false);
       });
 
-      it("maps uniform scale() on Chart to scale, not chart-scale", () => {
-        const { map } = runPipeFull(
-          TransStyle,
-          { transform: "scale(2)" },
-          "Chart",
-        );
-        assert.equal(map.get("scale"), 512);
-        assert.equal(map.has("chart-scaleX"), false);
-        assert.equal(map.has("img-scale"), false);
-      });
-
-      it("maps scaleX/scaleY to img-scale for Image (last axis wins)", () => {
+      it("maps scaleX/scaleY to img-scaleX/Y for Image", () => {
         const { map } = runPipeFull(
           TransStyle,
           { transform: "scaleX(2) scaleY(0.5)" },
           "Image",
         );
-        assert.equal(map.get("img-scale"), 128);
-        assert.equal(map.has("scale"), false);
+        assert.equal(map.get("img-scaleX"), 512);
+        assert.equal(map.get("img-scaleY"), 128);
+        assert.equal(map.has("scaleX"), false);
       });
 
-      it("maps scaleX/scaleY to scale for non-Chart non-Image (last axis wins)", () => {
-        for (const compName of ["View", "GIF"] as const) {
-          const { map } = runPipeFull(
-            TransStyle,
-            { transform: "scaleX(1.25) scaleY(3)" },
-            compName,
-          );
-          assert.equal(map.get("scale"), 768, compName);
-          assert.equal(map.has("img-scale"), false, compName);
-          assert.equal(map.has("chart-scaleX"), false, compName);
-          assert.equal(map.has("chart-scaleY"), false, compName);
-        }
+      it("maps scaleX/scaleY to scaleX/Y for View", () => {
+        const { map } = runPipeFull(
+          TransStyle,
+          { transform: "scaleX(1.25) scaleY(3)" },
+          "View",
+        );
+        assert.equal(map.get("scaleX"), 320);
+        assert.equal(map.get("scaleY"), 768);
+        assert.equal(map.has("scale"), false);
+        assert.equal(map.has("img-scaleX"), false);
+      });
+
+      it("maps scaleX/scaleY to img-scaleX/Y for GIF", () => {
+        const { map } = runPipeFull(
+          TransStyle,
+          { transform: "scaleX(1.25) scaleY(3)" },
+          "GIF",
+        );
+        assert.equal(map.get("img-scaleX"), 320);
+        assert.equal(map.get("img-scaleY"), 768);
+        assert.equal(map.has("scaleX"), false);
       });
     });
 
@@ -212,7 +259,8 @@ describe("TransStyle pipe", () => {
       });
       assert.equal(map.get("translateX"), 1);
       assert.equal(map.get("translateY"), 2);
-      assert.equal(map.get("scale"), 256);
+      assert.equal(map.get("scaleX"), 256);
+      assert.equal(map.get("scaleY"), 256);
       assert.equal(map.get("rotate"), 0);
       assert.equal(map.get("transform-width"), 10);
     });
@@ -232,7 +280,8 @@ describe("TransStyle pipe", () => {
       });
       assert.equal(map.get("translateX"), 8);
       assert.equal(map.has("scale"), false);
-      assert.equal(map.has("img-scale"), false);
+      assert.equal(map.has("scaleX"), false);
+      assert.equal(map.has("img-scaleX"), false);
     });
   });
 });

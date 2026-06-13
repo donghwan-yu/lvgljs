@@ -232,11 +232,18 @@ static void CompScrollEnableSnap (lv_obj_t* comp, lv_style_t* style, JSContext* 
     }
 };
 
-static void CompSetImgScale (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
+static void CompSetImgScaleX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int x;
     JS_ToInt32(ctx, &x, obj);
 
-    lv_img_set_zoom(comp, x);
+    lv_image_set_scale_x(comp, x);
+};
+
+static void CompSetImgScaleY (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
+    int x;
+    JS_ToInt32(ctx, &x, obj);
+
+    lv_image_set_scale_y(comp, x);
 };
 
 static void CompSetImgRotate (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
@@ -439,7 +446,8 @@ void NativeStyleInit(JSContext* ctx) {
     g_native_style_prop_handlers[LV_STYLE_CSS_GRID_TEMPLATE] = &CompGridColumnRow;
     g_native_style_prop_handlers[LV_STYLE_CSS_IMG_ORIGIN] = &CompSetTransformOrigin;
     g_native_style_prop_handlers[LV_STYLE_CSS_IMG_ROTATE] = &CompSetImgRotate;
-    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_SCALE] = &CompSetImgScale;
+    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_SCALE_X] = &CompSetImgScaleX;
+    g_native_style_prop_handlers[LV_STYLE_CSS_IMG_SCALE_Y] = &CompSetImgScaleY;
     g_native_style_prop_handlers[LV_STYLE_CSS_OVERFLOW] = &CompSetOverflow;
     g_native_style_prop_handlers[LV_STYLE_CSS_OVERFLOW_SCROLLING] = &CompSetOverFlowScrolling;
     g_native_style_prop_handlers[LV_STYLE_CSS_POSITION] = &CompSetPosition;

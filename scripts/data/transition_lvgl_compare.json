@@ -559,7 +559,7 @@
       "match": true
     },
     {
-      "trans_key": "transform-scale",
+      "trans_key": "transform-scale-x",
       "trans_id": 108,
       "lv_symbol": "LV_STYLE_TRANSFORM_SCALE_X",
       "lv_base": 108,
@@ -584,6 +584,13 @@
       "trans_id": 111,
       "lv_symbol": "LV_STYLE_TRANSFORM_PIVOT_Y",
       "lv_base": 111,
+      "match": true
+    },
+    {
+      "trans_key": "transform-scale-y",
+      "trans_id": 108,
+      "lv_symbol": "LV_STYLE_TRANSFORM_SCALE_Y",
+      "lv_base": 108,
       "match": true
     }
   ]

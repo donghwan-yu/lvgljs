@@ -812,8 +812,8 @@
       "cpp_lv_symbol": "LV_STYLE_TRANSLATE_Y"
     },
     {
-      "cpp_key": "scale",
-      "handler": "CompSetScale",
+      "cpp_key": "scaleX",
+      "handler": "CompSetScaleX",
       "setter_count": 1,
       "slots": [
         {
@@ -824,6 +824,20 @@
       "status": "REAL",
       "value_kind": "Num",
       "cpp_lv_symbol": "LV_STYLE_TRANSFORM_SCALE_X"
+    },
+    {
+      "cpp_key": "scaleY",
+      "handler": "CompSetScaleY",
+      "setter_count": 1,
+      "slots": [
+        {
+          "lv_symbol": "LV_STYLE_TRANSFORM_SCALE_Y",
+          "value_kind": "Num"
+        }
+      ],
+      "status": "REAL",
+      "value_kind": "Num",
+      "cpp_lv_symbol": "LV_STYLE_TRANSFORM_SCALE_Y"
     },
     {
       "cpp_key": "rotate",
@@ -840,13 +854,22 @@
       "cpp_lv_symbol": "LV_STYLE_TRANSFORM_ROTATION"
     },
     {
-      "cpp_key": "img-scale",
-      "handler": "CompSetImgScale",
+      "cpp_key": "img-scaleX",
+      "handler": "CompSetImgScaleX",
       "setter_count": 0,
       "slots": [],
       "status": "VIRTUAL",
       "value_kind": "CSS",
-      "cpp_lv_symbol": "LV_STYLE_CSS_IMG_SCALE"
+      "cpp_lv_symbol": "LV_STYLE_CSS_IMG_SCALE_X"
+    },
+    {
+      "cpp_key": "img-scaleY",
+      "handler": "CompSetImgScaleY",
+      "setter_count": 0,
+      "slots": [],
+      "status": "VIRTUAL",
+      "value_kind": "CSS",
+      "cpp_lv_symbol": "LV_STYLE_CSS_IMG_SCALE_Y"
     },
     {
       "cpp_key": "img-rotate",

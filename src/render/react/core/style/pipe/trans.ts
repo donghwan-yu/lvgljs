@@ -14,6 +14,11 @@ import {
   NormalizeTime,
 } from "../util";
 
+/** lv_img widgets (Image, GIF) use img-* props -> lv_image_set_*; not style transform. */
+function usesImgTransform(compName?: string) {
+  return compName === "Image" || compName === "GIF";
+}
+
 const transformSupportKeys = [
   "translate",
   "translate-x",
@@ -85,34 +90,27 @@ export function TransStyle(
           NormalizePx(val),
         );
       } else if (prop === "scale") {
-        batch.push(
-          compName === "Image" ? STYLE_PROP["img-scale"] : STYLE_PROP.scale,
-          NormalizeScale(val),
-        );
-      } else if (prop === "rotate") {
-        batch.push(
-          compName === "Image" ? STYLE_PROP["img-rotate"] : STYLE_PROP.rotate,
-          NormalizeDeg(val),
-        );
-      } else if (prop === "scaleX" || prop === "scaleY") {
-        if (compName === "Chart") {
-          batch.push(STYLE_PROP[`chart-${prop}`], NormalizeScale(val));
-        } else if (compName === "Image") {
-          // LVGL only has uniform zoom outside Chart; Image maps either axis to
-          // img-scale, other components don't support per-axis scaling at all.
-          batch.push(STYLE_PROP["img-scale"], NormalizeScale(val));
+        const norm = NormalizeScale(val);
+        if (usesImgTransform(compName)) {
+          batch.push(STYLE_PROP["img-scaleX"], norm);
+          batch.push(STYLE_PROP["img-scaleY"], norm);
         } else {
-          // Fallback to uniform scale for other components as they don't support
-          // per-axis scaling yet.
-          batch.push(STYLE_PROP["scale"], NormalizeScale(val));
+          batch.push(STYLE_PROP.scaleX, norm);
+          batch.push(STYLE_PROP.scaleY, norm);
         }
+      } else if (prop === "rotate") {
+        const prefix = usesImgTransform(compName) ? "img-" : "";
+        batch.push(STYLE_PROP[`${prefix}rotate`], NormalizeDeg(val));
+      } else if (prop === "scaleX" || prop === "scaleY") {
+        const prefix = usesImgTransform(compName) ? "img-" : compName === "Chart" ? "chart-" : "";
+        batch.push(STYLE_PROP[`${prefix}${prop}`], NormalizeScale(val));
       } else if (prop === "transform-width" || prop === "transform-height") {
         batch.push(STYLE_PROP[prop], NormalizePx(val));
       }
     }
   }
 
-  if (style["transform-origin"] && compName === "Image") {
+  if (style["transform-origin"] && usesImgTransform(compName)) {
     const [x, y] = style["transform-origin"].trim()?.split(" ");
     batch.push(STYLE_PROP["img-origin"], [NormalizePx(x), NormalizePx(y)]);
   }
