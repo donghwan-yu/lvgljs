@@ -32,7 +32,7 @@ static JSValue NativeCompSetRange(JSContext *ctx, JSValueConst this_val, int arg
         JS_ToInt32(ctx, &max, max_value);
 
         ((Arc*)(ref->comp))->setRange(min, max);
-        LV_LOG_USER("Arc %s set range", ref->uid);
+        LV_LOG_USER("Arc %s set range", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -44,7 +44,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
         JS_ToInt32(ctx, &value, argv[0]);
 
         ((Arc*)(ref->comp))->setValue(value);
-        LV_LOG_USER("Arc %s set value", ref->uid);
+        LV_LOG_USER("Arc %s set value", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -72,7 +72,7 @@ static JSValue NativeCompSetArcImage(JSContext *ctx, JSValueConst this_val, int 
     JS_ToInt32(ctx, &type, argv[1]);
 
     ((Arc*)(s->comp))->setArcImage(buf, static_cast<size_t>(image_bytelength), type, image_symbol);
-    LV_LOG_USER("%s %s setArcImage type %d", "Arc", s->uid, type);
+    LV_LOG_USER("%s %s setArcImage type %d", "Arc", s->getUid(), type);
     return JS_NewBool(ctx, 1);
   }
   return JS_NewBool(ctx, 0);
@@ -133,7 +133,7 @@ static JSValue ArcConstructor(JSContext *ctx, JSValueConst new_target, int argc,
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Arc(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -149,14 +149,7 @@ static JSValue ArcConstructor(JSContext *ctx, JSValueConst new_target, int argc,
     return JS_EXCEPTION;
 };
 
-static void ArcFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ArcClassID);
-    LV_LOG_USER("Arc %s release", th->uid);
-    if (th) {
-        delete static_cast<Arc*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ArcFinalizer, Arc, ArcClassID)
 
 static JSClassDef ArcClass = {
     .class_name = "Arc",

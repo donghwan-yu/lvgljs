@@ -47,7 +47,7 @@ WRAPPED_JS_CLOSE_COMPONENT(TabView, "TabView")
 
 //         JS_FreeValue(ctx, len_value);
 
-//         LV_LOG_USER("TabView %s setTab", ref->uid);
+//         LV_LOG_USER("TabView %s setTab", ref->getUid());
 //     };
 //     return JS_UNDEFINED;
 // };
@@ -66,7 +66,7 @@ static JSValue NativeCompSetTab(JSContext *ctx, JSValueConst this_val, int argc,
         static_cast<TabView*>(ref->comp)->setTab(str, static_cast<BasicComponent*>(ref_content->comp));
         JS_FreeCString(ctx, str_ori);
 
-        LV_LOG_USER("TabView %s setTab child %s", ref->uid, ref_content->uid);
+        LV_LOG_USER("TabView %s setTab child %s", ref->getUid(), ref_content->getUid());
     };
     return JS_UNDEFINED;
 };
@@ -133,7 +133,7 @@ static JSValue TabViewConstructor(JSContext *ctx, JSValueConst new_target, int a
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new TabView(uid, pos, size, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -149,14 +149,7 @@ static JSValue TabViewConstructor(JSContext *ctx, JSValueConst new_target, int a
     return JS_EXCEPTION;
 };
 
-static void TabViewFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, TabViewClassID);
-    LV_LOG_USER("TabView %s release", th->uid);
-    if (th) {
-        delete static_cast<TabView*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(TabViewFinalizer, TabView, TabViewClassID)
 
 static JSClassDef TabViewClass = {
     .class_name = "TabView",

@@ -7,10 +7,41 @@
 
 #include "native/core/utils/utils.hpp"
 
-typedef struct COMP_REF {
-    void* comp;
-    const char* uid;
-} COMP_REF;
+struct COMP_REF {
+    void* comp = nullptr;
+
+private:
+    const char* uid_ = nullptr;
+
+public:
+    const char* getUid() const { return uid_; }
+
+    friend void CompRefStoreUid(JSContext* ctx, COMP_REF* ref, const char* uid);
+    friend void CompRefFreeUid(JSRuntime* rt, COMP_REF* ref);
+};
+
+void CompRefStoreUid(JSContext* ctx, COMP_REF* ref, const char* uid);
+void CompRefFreeUid(JSRuntime* rt, COMP_REF* ref);
+
+template<typename Component>
+static void CompRefFinalizer(JSRuntime* rt, JSValue val, JSClassID class_id, const char* comp_name) {
+    COMP_REF* th = (COMP_REF*)JS_GetOpaque(val, class_id);
+    if (!th) {
+        return;
+    }
+    LV_LOG_USER("%s %s release", comp_name, th->getUid());
+    if (th->comp) {
+        delete static_cast<Component*>(th->comp);
+        th->comp = nullptr;
+    }
+    CompRefFreeUid(rt, th);
+    js_free_rt(rt, th);
+}
+
+#define COMP_FINALIZER(FinalizerName, Component, ClassID) \
+    static void FinalizerName(JSRuntime* rt, JSValue val) { \
+        CompRefFinalizer<Component>(rt, val, ClassID, #Component); \
+    }
 
 lv_obj_t* GetWindowInstance ();
 
@@ -67,7 +98,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             JS_ToInt32(ctx, &value, argv[0]); \
             \
             ((COMPONENT *)(ref->comp))->set##PROPERTY_NAME(value); \
-            LV_LOG_USER(COMPONENT_NAME "%s set" #PROPERTY_NAME, ref->uid); \
+            LV_LOG_USER(COMPONENT_NAME "%s set" #PROPERTY_NAME, ref->getUid()); \
         } \
         return JS_UNDEFINED; \
     }; \
@@ -81,7 +112,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             COMP_REF* parent = (COMP_REF*)JS_GetAnyOpaque(this_val, &_class_id);                                            \
                                                                                                                             \
             ((COMPONENT*)(parent->comp))->appendChild((void*)(child->comp));                                                \
-            LV_LOG_USER("%s %s append child %s", COMPONENT_NAME, parent->uid, child->uid);                                  \
+            LV_LOG_USER("%s %s append child %s", COMPONENT_NAME, parent->getUid(), child->getUid());                        \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
@@ -95,7 +126,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             COMP_REF* parent = (COMP_REF*)JS_GetAnyOpaque(this_val, &_class_id);                                            \
                                                                                                                             \
             ((COMPONENT*)(parent->comp))->removeChild((void*)(child->comp));                                                \
-            LV_LOG_USER("%s %s remove child %s", COMPONENT_NAME, parent->uid, child->uid);                                  \
+            LV_LOG_USER("%s %s remove child %s", COMPONENT_NAME, parent->getUid(), child->getUid());                        \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
@@ -109,7 +140,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             COMP_REF* parent = (COMP_REF*)JS_GetAnyOpaque(this_val, &_class_id);                                            \
                                                                                                                             \
             ((COMPONENT*)(parent->comp))->insertChildBefore((void*)(child->comp));                                          \
-            LV_LOG_USER("%s %s insertChildBefore %s", COMPONENT_NAME, parent->uid, child->uid);                             \
+            LV_LOG_USER("%s %s insertChildBefore %s", COMPONENT_NAME, parent->getUid(), child->getUid());                   \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
@@ -120,7 +151,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                              \
                                                                                                                             \
         ((COMPONENT*)(ref->comp))->moveToFront();                                                                           \
-        LV_LOG_USER("%s %s moveToFront", COMPONENT_NAME, ref->uid);                                                         \
+        LV_LOG_USER("%s %s moveToFront", COMPONENT_NAME, ref->getUid());                                                    \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
                                                                                                                             \
@@ -130,7 +161,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                              \
                                                                                                                             \
         ((COMPONENT*)(ref->comp))->moveToBackground();                                                                      \
-        LV_LOG_USER("%s %s moveToBackground", COMPONENT_NAME, ref->uid);                                                    \
+        LV_LOG_USER("%s %s moveToBackground", COMPONENT_NAME, ref->getUid());                                               \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
                                                                                                                             \
@@ -140,7 +171,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                              \
                                                                                                                             \
         ((COMPONENT*)(ref->comp))->scrollIntoView();                                                                        \
-        LV_LOG_USER("%s %s scrollIntoView", COMPONENT_NAME, ref->uid);                                                      \
+        LV_LOG_USER("%s %s scrollIntoView", COMPONENT_NAME, ref->getUid());                                                 \
         return JS_UNDEFINED;                                                                                                \
     };                                                                                                                      \
                                                                                                                             \
@@ -156,7 +187,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             isinit = JS_ToBool(ctx, argv[2]);                                                                               \
                                                                                                                             \
             static_cast<COMPONENT*>(ref->comp)->BasicComponent::setStyle(ctx, argv[0], type, isinit);                       \
-            LV_LOG_USER("%s %s setStyle type %d", COMPONENT_NAME, ref->uid, type);                                          \
+            LV_LOG_USER("%s %s setStyle type %d", COMPONENT_NAME, ref->getUid(), type);                                     \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
     }                                                                                                                       \
@@ -189,7 +220,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             int align_type;                                                                                                 \
             JS_ToInt32(ctx, &align_type, argv[0]);                                                                          \
             ((COMPONENT*)(s->comp))->BasicComponent::setAlign(align_type, x, y);                                            \
-            LV_LOG_USER("%s %s setAlign", COMPONENT_NAME, s->uid);                                                          \
+            LV_LOG_USER("%s %s setAlign", COMPONENT_NAME, s->getUid());                                                     \
             JS_FreeValue(ctx, x_value);                                                                                     \
             JS_FreeValue(ctx, y_value);                                                                                     \
             return JS_NewBool(ctx, 1);                                                                                      \
@@ -216,7 +247,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             COMP_REF* parent = (COMP_REF*)JS_GetAnyOpaque(argv[2], &_class_id);                                             \
                                                                                                                             \
             ((COMPONENT*)(s->comp))->BasicComponent::setAlignTo(align_type, x, y, static_cast<BasicComponent*>(parent->comp));   \
-            LV_LOG_USER("%s %s setAlignTo", COMPONENT_NAME, s->uid);                                                        \
+            LV_LOG_USER("%s %s setAlignTo", COMPONENT_NAME, s->getUid());                                                   \
             JS_FreeValue(ctx, x_value);                                                                                     \
             JS_FreeValue(ctx, y_value);                                                                                     \
             return JS_NewBool(ctx, 1);                                                                                      \
@@ -249,7 +280,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             JS_ToInt32(ctx, &type, argv[1]);                                                                                \
                                                                                                                             \
             ((COMPONENT*)(s->comp))->setBackgroundImage(buf, static_cast<size_t>(image_bytelength), type, image_symbol);    \
-            LV_LOG_USER("%s %s setBackgroundImage type %d", COMPONENT_NAME, s->uid, type);                                  \
+            LV_LOG_USER("%s %s setBackgroundImage type %d", COMPONENT_NAME, s->getUid(), type);                             \
             return JS_NewBool(ctx, 1);                                                                                      \
         }                                                                                                                   \
         return JS_NewBool(ctx, 0);                                                                                          \

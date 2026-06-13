@@ -21,7 +21,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
         bool use_animation = JS_ToBool(ctx, argv[1]);
 
         ((ProgressBar*)(ref->comp))->setValue(value, use_animation);
-        LV_LOG_USER("ProgressBar %s setValue", ref->uid);
+        LV_LOG_USER("ProgressBar %s setValue", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -35,7 +35,7 @@ static JSValue NativeCompSetRange(JSContext *ctx, JSValueConst this_val, int arg
         JS_ToInt32(ctx, &end, argv[1]);
 
         ((ProgressBar*)(ref->comp))->setRange(start, end);
-        LV_LOG_USER("ProgressBar %s setRange", ref->uid);
+        LV_LOG_USER("ProgressBar %s setRange", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -87,7 +87,7 @@ static JSValue ProgressBarConstructor(JSContext *ctx, JSValueConst new_target, i
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new ProgressBar(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -103,14 +103,7 @@ static JSValue ProgressBarConstructor(JSContext *ctx, JSValueConst new_target, i
     return JS_EXCEPTION;
 };
 
-static void ProgressBarFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ProgressBarClassID);
-    LV_LOG_USER("ProgressBar %s release", th->uid);
-    if (th) {
-        delete static_cast<ProgressBar*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ProgressBarFinalizer, ProgressBar, ProgressBarClassID)
 
 static JSClassDef ProgressBarClass = {
     .class_name = "ProgressBar",

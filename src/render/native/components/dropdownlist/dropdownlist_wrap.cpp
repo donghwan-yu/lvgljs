@@ -36,7 +36,7 @@ static JSValue NativeCompSetItems(JSContext *ctx, JSValueConst this_val, int arg
         }
 
         ((Dropdownlist*)(ref->comp))->setItems(items);
-        LV_LOG_USER("Dropdownlist %s setItems", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setItems", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -48,7 +48,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
         JS_ToInt32(ctx, &index, argv[0]);
 
         ((Dropdownlist*)(ref->comp))->setSelectIndex(index);
-        LV_LOG_USER("Dropdownlist %s setSelectIndex", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setSelectIndex", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -62,7 +62,7 @@ static JSValue NativeCompSeText(JSContext *ctx, JSValueConst this_val, int argc,
         s.resize(len);
 
         ((Dropdownlist*)(ref->comp))->setText(s);
-        LV_LOG_USER("Dropdownlist %s setText", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setText", ref->getUid());
         JS_FreeCString(ctx, str);
     }
     return JS_UNDEFINED;
@@ -75,7 +75,7 @@ static JSValue NativeCompSetDir(JSContext *ctx, JSValueConst this_val, int argc,
         JS_ToInt32(ctx, &dir, argv[0]);
 
         ((Dropdownlist*)(ref->comp))->setDir(static_cast<lv_dir_t>(dir));
-        LV_LOG_USER("Dropdownlist %s setDir", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setDir", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -87,7 +87,7 @@ static JSValue NativeCompSetArrowDir(JSContext *ctx, JSValueConst this_val, int 
         JS_ToInt32(ctx, &dir, argv[0]);
 
         ((Dropdownlist*)(ref->comp))->setArrowDir(dir);
-        LV_LOG_USER("Dropdownlist %s setArrowDir", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setArrowDir", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -98,7 +98,7 @@ static JSValue NativeCompSetHighLightSelect(JSContext *ctx, JSValueConst this_va
         bool payload = JS_ToBool(ctx, argv[0]);
 
         ((Dropdownlist*)(ref->comp))->setHighLightSelect(payload);
-        LV_LOG_USER("Dropdownlist %s setHighLightSelect", ref->uid);
+        LV_LOG_USER("Dropdownlist %s setHighLightSelect", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -153,7 +153,7 @@ static JSValue DropdownlistConstructor(JSContext *ctx, JSValueConst new_target, 
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Dropdownlist(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -169,14 +169,7 @@ static JSValue DropdownlistConstructor(JSContext *ctx, JSValueConst new_target, 
     return JS_EXCEPTION;
 };
 
-static void DropdownlistFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, DropdownlistClassID);
-    LV_LOG_USER("Dropdownlist %s release", th->uid);
-    if (th) {
-        delete static_cast<Dropdownlist*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(DropdownlistFinalizer, Dropdownlist, DropdownlistClassID)
 
 static JSClassDef DropdownlistClass = {
     .class_name = "Dropdownlist",

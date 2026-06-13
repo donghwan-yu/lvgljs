@@ -64,7 +64,7 @@ static JSValue ViewConstructor(JSContext *ctx, JSValueConst new_target, int argc
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new View(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -80,14 +80,7 @@ static JSValue ViewConstructor(JSContext *ctx, JSValueConst new_target, int argc
     return JS_EXCEPTION;
 };
 
-static void ViewFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ViewClassID);
-    LV_LOG_USER("View %s release", th->uid);
-    if (th) {
-        delete static_cast<View*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ViewFinalizer, View, ViewClassID)
 
 static JSClassDef ViewClass = {
     .class_name = "View",

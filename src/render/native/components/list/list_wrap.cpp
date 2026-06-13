@@ -19,7 +19,7 @@ static JSValue NativeCompRemoveChild(JSContext *ctx, JSValueConst this_val, int 
         COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, ListClassID);
 
         ((List*)(parent->comp))->removeChild((void*)(child->comp));
-        LV_LOG_USER("List %s remove child %s", parent->uid, child->uid);
+        LV_LOG_USER("List %s remove child %s", parent->getUid(), child->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -31,7 +31,7 @@ static JSValue NativeCompAppendChild(JSContext *ctx, JSValueConst this_val, int 
         COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, ListClassID);
 
         ((List*)(parent->comp))->appendChild((void*)(child->comp));
-        LV_LOG_USER("List %s append child %s", parent->uid, child->uid);
+        LV_LOG_USER("List %s append child %s", parent->getUid(), child->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -82,7 +82,7 @@ static JSValue ListConstructor(JSContext *ctx, JSValueConst new_target, int argc
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new List(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -98,14 +98,7 @@ static JSValue ListConstructor(JSContext *ctx, JSValueConst new_target, int argc
     return JS_EXCEPTION;
 };
 
-static void ListFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ListClassID);
-    LV_LOG_USER("List %s release", th->uid);
-    if (th) {
-        delete static_cast<List*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ListFinalizer, List, ListClassID)
 
 static JSClassDef ListClass = {
     .class_name = "List",

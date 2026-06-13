@@ -64,7 +64,7 @@ static JSValue ButtonConstructor(JSContext *ctx, JSValueConst new_target, int ar
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Button(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -80,14 +80,7 @@ static JSValue ButtonConstructor(JSContext *ctx, JSValueConst new_target, int ar
     return JS_EXCEPTION;
 };
 
-static void ButtonFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ButtonClassID);
-    LV_LOG_USER("Button %s release", th->uid);
-    if (th) {
-        delete static_cast<Button*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ButtonFinalizer, Button, ButtonClassID)
 
 static JSClassDef ButtonClass = {
     .class_name = "Button",

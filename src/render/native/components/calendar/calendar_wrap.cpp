@@ -51,7 +51,7 @@ static JSValue NativeCompSetHightLights(JSContext *ctx, JSValueConst this_val, i
         }
 
         ((Calendar*)(ref->comp))->setHighlightDates(dates, num);
-        LV_LOG_USER("Calendar %s setHighlightDates", ref->uid);
+        LV_LOG_USER("Calendar %s setHighlightDates", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -68,7 +68,7 @@ static JSValue NativeCompSetToday (JSContext *ctx, JSValueConst this_val, int ar
         JS_ToInt32(ctx, &day, argv[2]);
 
         ((Calendar*)(ref->comp))->setToday(year, month, day);
-        LV_LOG_USER("Calendar %s setToday", ref->uid);
+        LV_LOG_USER("Calendar %s setToday", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -83,7 +83,7 @@ static JSValue NativeCompSetShownMonth (JSContext *ctx, JSValueConst this_val, i
         JS_ToInt32(ctx, &month, argv[1]);
 
         ((Calendar*)(ref->comp))->setShownMonth(year, month);
-        LV_LOG_USER("Calendar %s setShownMonth", ref->uid);
+        LV_LOG_USER("Calendar %s setShownMonth", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -135,7 +135,7 @@ static JSValue CalendarConstructor(JSContext *ctx, JSValueConst new_target, int 
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Calendar(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -151,14 +151,7 @@ static JSValue CalendarConstructor(JSContext *ctx, JSValueConst new_target, int 
     return JS_EXCEPTION;
 };
 
-static void CalendarFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, CalendarClassID);
-    LV_LOG_USER("Calendar %s release", th->uid);
-    if (th) {
-        delete static_cast<Calendar*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(CalendarFinalizer, Calendar, CalendarClassID)
 
 static JSClassDef CalendarClass = {
     .class_name = "Calendar",

@@ -38,7 +38,7 @@ static JSValue NativeCompSetOptions(JSContext *ctx, JSValueConst this_val, int a
         }
 
         ((Roller*)(ref->comp))->setOptions(items, mode);
-        LV_LOG_USER("Roller %s setOptions", ref->uid);
+        LV_LOG_USER("Roller %s setOptions", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -50,7 +50,7 @@ static JSValue NativeCompSetSelectIndex(JSContext *ctx, JSValueConst this_val, i
         JS_ToInt32(ctx, &index, argv[0]);
 
         ((Roller*)(ref->comp))->setSelectIndex(index);
-        LV_LOG_USER("Roller %s setSelectIndex", ref->uid);
+        LV_LOG_USER("Roller %s setSelectIndex", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -62,7 +62,7 @@ static JSValue NativeCompSetVisibleRowCount(JSContext *ctx, JSValueConst this_va
         JS_ToInt32(ctx, &count, argv[0]);
 
         ((Roller*)(ref->comp))->setVisibleRowCount(count);
-        LV_LOG_USER("Roller %s setVisibleRowCount", ref->uid);
+        LV_LOG_USER("Roller %s setVisibleRowCount", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -114,7 +114,7 @@ static JSValue RollerConstructor(JSContext *ctx, JSValueConst new_target, int ar
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Roller(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -130,14 +130,7 @@ static JSValue RollerConstructor(JSContext *ctx, JSValueConst new_target, int ar
     return JS_EXCEPTION;
 };
 
-static void RollerFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, RollerClassID);
-    LV_LOG_USER("Roller %s release", th->uid);
-    if (th) {
-        delete static_cast<Roller*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(RollerFinalizer, Roller, RollerClassID)
 
 static JSClassDef RollerClass = {
     .class_name = "Roller",

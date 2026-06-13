@@ -22,7 +22,7 @@ static JSValue NativeCompSetText(JSContext *ctx, JSValueConst this_val, int argc
         s.resize(len);
 
         ((Checkbox*)(ref->comp))->setText(s);
-        LV_LOG_USER("Checkbox %s setText", ref->uid);
+        LV_LOG_USER("Checkbox %s setText", ref->getUid());
         JS_FreeCString(ctx, str);
     }
     return JS_UNDEFINED;
@@ -34,7 +34,7 @@ static JSValue NativeCompSetChecked(JSContext *ctx, JSValueConst this_val, int a
         bool payload = JS_ToBool(ctx, argv[0]);
 
         ((Checkbox*)(ref->comp))->setChecked(payload);
-        LV_LOG_USER("Checkbox %s setChecked %d", ref->uid, payload);
+        LV_LOG_USER("Checkbox %s setChecked %d", ref->getUid(), payload);
     }
     return JS_UNDEFINED;
 };
@@ -45,7 +45,7 @@ static JSValue NativeCompSetDisabled(JSContext *ctx, JSValueConst this_val, int 
         bool payload = JS_ToBool(ctx, argv[0]);
 
         ((Checkbox*)(ref->comp))->setDisabled(payload);
-        LV_LOG_USER("Checkbox %s setDisabled", ref->uid);
+        LV_LOG_USER("Checkbox %s setDisabled", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -98,7 +98,7 @@ static JSValue CheckboxConstructor(JSContext *ctx, JSValueConst new_target, int 
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Checkbox(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -114,14 +114,7 @@ static JSValue CheckboxConstructor(JSContext *ctx, JSValueConst new_target, int 
     return JS_EXCEPTION;
 };
 
-static void CheckboxFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, CheckboxClassID);
-    LV_LOG_USER("Checkbox %s release", th->uid);
-    if (th) {
-        delete static_cast<Checkbox*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(CheckboxFinalizer, Checkbox, CheckboxClassID)
 
 static JSClassDef CheckboxClass = {
     .class_name = "Checkbox",

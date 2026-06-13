@@ -19,7 +19,7 @@ static JSValue NativeCompSetTextarea(JSContext *ctx, JSValueConst this_val, int 
         COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, KeyboardClassID);
 
         ((Keyboard*)(parent->comp))->setTextarea(static_cast<BasicComponent*>(child->comp));
-        LV_LOG_USER("Keyboard %s setTextarea %s", parent->uid, child->uid);
+        LV_LOG_USER("Keyboard %s setTextarea %s", parent->getUid(), child->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -31,7 +31,7 @@ static JSValue NativeCompSetMode(JSContext *ctx, JSValueConst this_val, int argc
         JS_ToInt32(ctx, &mode, argv[0]);
 
         ((Keyboard*)(ref->comp))->setMode(mode);
-        LV_LOG_USER("Keyboard %s setMode %d", ref->uid, mode);
+        LV_LOG_USER("Keyboard %s setMode %d", ref->getUid(), mode);
     }
     return JS_UNDEFINED;
 };
@@ -82,7 +82,7 @@ static JSValue KeyboardConstructor(JSContext *ctx, JSValueConst new_target, int 
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Keyboard(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -98,14 +98,7 @@ static JSValue KeyboardConstructor(JSContext *ctx, JSValueConst new_target, int 
     return JS_EXCEPTION;
 };
 
-static void KeyboardFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, KeyboardClassID);
-    LV_LOG_USER("Keyboard %s release", th->uid);
-    if (th) {
-        delete static_cast<Keyboard*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(KeyboardFinalizer, Keyboard, KeyboardClassID)
 
 static JSClassDef KeyboardClass = {
     .class_name = "Keyboard",

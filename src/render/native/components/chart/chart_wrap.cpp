@@ -40,7 +40,7 @@ static JSValue NativeCompSetLeftAxisLabels(JSContext *ctx, JSValueConst this_val
         }
 
         ((Chart*)(ref->comp))->setLeftAxisLabels(result);
-        LV_LOG_USER("Chart %s setLeftAxisLabels", ref->uid);
+        LV_LOG_USER("Chart %s setLeftAxisLabels", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -71,7 +71,7 @@ static JSValue NativeCompSetRightAxisLabels(JSContext *ctx, JSValueConst this_va
         }
 
         ((Chart*)(ref->comp))->setRightAxisLabels(result);
-        LV_LOG_USER("Chart %s setRightAxisLabels", ref->uid);
+        LV_LOG_USER("Chart %s setRightAxisLabels", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -102,7 +102,7 @@ static JSValue NativeCompSetTopAxisLabels(JSContext *ctx, JSValueConst this_val,
         }
 
         ((Chart*)(ref->comp))->setTopAxisLabels(result);
-        LV_LOG_USER("Chart %s setTopAxisLabels", ref->uid);
+        LV_LOG_USER("Chart %s setTopAxisLabels", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -133,7 +133,7 @@ static JSValue NativeCompSetBottomAxisLabels(JSContext *ctx, JSValueConst this_v
         }
 
         ((Chart*)(ref->comp))->setBottomAxisLabels(result);
-        LV_LOG_USER("Chart %s setBottomAxisLabels", ref->uid);
+        LV_LOG_USER("Chart %s setBottomAxisLabels", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -153,7 +153,7 @@ static JSValue NativeCompSetDivLine(JSContext *ctx, JSValueConst this_val, int a
         JS_FreeValue(ctx, vdiv_value);
 
         ((Chart*)(ref->comp))->setDivLineCount(hdiv, vdiv);
-        LV_LOG_USER("Chart %s setDivLineCount %d %d", ref->uid, hdiv, vdiv);
+        LV_LOG_USER("Chart %s setDivLineCount %d %d", ref->getUid(), hdiv, vdiv);
     }
     return JS_UNDEFINED;
 };
@@ -165,7 +165,7 @@ static JSValue NativeCompSetPointNum(JSContext *ctx, JSValueConst this_val, int 
         JS_ToInt32(ctx, &pointNUm, argv[0]);
 
         ((Chart*)(ref->comp))->setPointNum(pointNUm);
-        LV_LOG_USER("Chart %s setPointNum %d", ref->uid, pointNUm);
+        LV_LOG_USER("Chart %s setPointNum %d", ref->getUid(), pointNUm);
     }
     return JS_UNDEFINED;
 };
@@ -177,7 +177,7 @@ static JSValue NativeCompSetType(JSContext *ctx, JSValueConst this_val, int argc
         JS_ToInt32(ctx, &type, argv[0]);
 
         ((Chart*)(ref->comp))->setType(type);
-        LV_LOG_USER("Chart %s setType %d", ref->uid, type);
+        LV_LOG_USER("Chart %s setType %d", ref->getUid(), type);
     }
     return JS_UNDEFINED;
 };
@@ -205,7 +205,7 @@ static JSValue NativeCompSetLeftAxisOption(JSContext *ctx, JSValueConst this_val
         JS_FreeValue(ctx, draw_size_value);
 
         ((Chart*)(ref->comp))->setLeftAxisOption(major_len, minor_len, major_num, minor_num, draw_size);
-        LV_LOG_USER("Chart %s setLeftAxisOption", ref->uid);
+        LV_LOG_USER("Chart %s setLeftAxisOption", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -233,7 +233,7 @@ static JSValue NativeCompSetRightAxisOption(JSContext *ctx, JSValueConst this_va
         JS_FreeValue(ctx, draw_size_value);
 
         ((Chart*)(ref->comp))->setRightAxisOption(major_len, minor_len, major_num, minor_num, draw_size);
-        LV_LOG_USER("Chart %s setRightAxisOption", ref->uid);
+        LV_LOG_USER("Chart %s setRightAxisOption", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -261,7 +261,7 @@ static JSValue NativeCompSetTopAxisOption(JSContext *ctx, JSValueConst this_val,
         JS_FreeValue(ctx, draw_size_value);
 
         ((Chart*)(ref->comp))->setTopAxisOption(major_len, minor_len, major_num, minor_num, draw_size);
-        LV_LOG_USER("Chart %s setTopAxisOption", ref->uid);
+        LV_LOG_USER("Chart %s setTopAxisOption", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -289,7 +289,7 @@ static JSValue NativeCompSetBottomAxisOption(JSContext *ctx, JSValueConst this_v
         JS_FreeValue(ctx, draw_size_value);
 
         ((Chart*)(ref->comp))->setBottomAxisOption(major_len, minor_len, major_num, minor_num, draw_size);
-        LV_LOG_USER("Chart %s setBottomAxisOption", ref->uid);
+        LV_LOG_USER("Chart %s setBottomAxisOption", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -313,7 +313,7 @@ static JSValue NativeCompSetBottomAxisOption(JSContext *ctx, JSValueConst this_v
 //         JS_FreeValue(ctx, len_value);
         
 //         ((Chart*)(ref->comp))->setBottomAxisData(data);
-//         LV_LOG_USER("Chart %s setBottomAxisData", ref->uid);
+//         LV_LOG_USER("Chart %s setBottomAxisData", ref->getUid());
 //     }
 //     return JS_UNDEFINED;
 // };
@@ -337,7 +337,7 @@ static JSValue NativeCompSetBottomAxisOption(JSContext *ctx, JSValueConst this_v
 //         JS_FreeValue(ctx, len_value);
         
 //         ((Chart*)(ref->comp))->setTopAxisData(data);
-//         LV_LOG_USER("Chart %s setTopAxisData", ref->uid);
+//         LV_LOG_USER("Chart %s setTopAxisData", ref->getUid());
 //     }
 //     return JS_UNDEFINED;
 // };
@@ -386,7 +386,7 @@ static JSValue NativeCompSetLeftAxisData(JSContext *ctx, JSValueConst this_val, 
         JS_FreeValue(ctx, len1_value);
 
         ((Chart*)(ref->comp))->setLeftAxisData(data);
-        LV_LOG_USER("Chart %s setLeftAxisData", ref->uid);
+        LV_LOG_USER("Chart %s setLeftAxisData", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -435,7 +435,7 @@ static JSValue NativeCompSetRightAxisData(JSContext *ctx, JSValueConst this_val,
         JS_FreeValue(ctx, len1_value);
 
         ((Chart*)(ref->comp))->setRightAxisData(data);
-        LV_LOG_USER("Chart %s setRightAxisData", ref->uid);
+        LV_LOG_USER("Chart %s setRightAxisData", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -484,7 +484,7 @@ static JSValue NativeCompSetScatterData (JSContext *ctx, JSValueConst this_val, 
         JS_FreeValue(ctx, len1_value);
 
         ((Chart*)(ref->comp))->setScatterData(data);
-        LV_LOG_USER("Chart %s setScatterData", ref->uid);
+        LV_LOG_USER("Chart %s setScatterData", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -506,7 +506,7 @@ static JSValue NativeCompSetLeftAxisRange(JSContext *ctx, JSValueConst this_val,
         JS_FreeValue(ctx, min_value);
         JS_FreeValue(ctx, max_value);
 
-        LV_LOG_USER("Chart %s setLeftAxisRange", ref->uid);
+        LV_LOG_USER("Chart %s setLeftAxisRange", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -528,7 +528,7 @@ static JSValue NativeCompSetRightAxisRange(JSContext *ctx, JSValueConst this_val
         JS_FreeValue(ctx, min_value);
         JS_FreeValue(ctx, max_value);
 
-        LV_LOG_USER("Chart %s setRightAxisRange", ref->uid);
+        LV_LOG_USER("Chart %s setRightAxisRange", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -550,7 +550,7 @@ static JSValue NativeCompSetTopAxisRange(JSContext *ctx, JSValueConst this_val, 
         JS_FreeValue(ctx, min_value);
         JS_FreeValue(ctx, max_value);
 
-        LV_LOG_USER("Chart %s setTopAxisRange", ref->uid);
+        LV_LOG_USER("Chart %s setTopAxisRange", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -572,7 +572,7 @@ static JSValue NativeCompSetBottomAxisRange(JSContext *ctx, JSValueConst this_va
         JS_FreeValue(ctx, min_value);
         JS_FreeValue(ctx, max_value);
 
-        LV_LOG_USER("Chart %s setBottomAxisRange", ref->uid);
+        LV_LOG_USER("Chart %s setBottomAxisRange", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -645,7 +645,7 @@ static JSValue ChartConstructor(JSContext *ctx, JSValueConst new_target, int arg
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Chart(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -661,14 +661,7 @@ static JSValue ChartConstructor(JSContext *ctx, JSValueConst new_target, int arg
     return JS_EXCEPTION;
 };
 
-static void ChartFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ChartClassID);
-    LV_LOG_USER("Chart %s release", th->uid);
-    if (th) {
-        delete static_cast<Chart*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ChartFinalizer, Chart, ChartClassID)
 
 static JSClassDef ChartClass = {
     .class_name = "Chart",

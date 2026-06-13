@@ -22,7 +22,7 @@ static JSValue NativeCompSetImageBinary(JSContext *ctx, JSValueConst this_val, i
         JS_ToInt32(ctx, &image_bytelength, byteLength);
 
         ((Image*)(s->comp))->setImageBinary(buf, static_cast<size_t>(image_bytelength));
-        LV_LOG_USER("Image %s setImage", s->uid);
+        LV_LOG_USER("Image %s setImage", s->getUid());
 
         return JS_NewBool(ctx, 1);
     fail:
@@ -40,7 +40,7 @@ static JSValue NativeCompSetSymbol(JSContext *ctx, JSValueConst this_val, int ar
         s.resize(len);
 
         ((Image*)(ref->comp))->setSymbol(s);
-        LV_LOG_USER("Image %s setYmbol", ref->uid);
+        LV_LOG_USER("Image %s setYmbol", ref->getUid());
         JS_FreeCString(ctx, str);
 
         return JS_NewBool(ctx, 1);
@@ -96,7 +96,7 @@ static JSValue ImageConstructor(JSContext *ctx, JSValueConst new_target, int arg
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Image(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -112,14 +112,7 @@ static JSValue ImageConstructor(JSContext *ctx, JSValueConst new_target, int arg
     return JS_EXCEPTION;
 };
 
-static void ImageFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, ImageClassID);
-    LV_LOG_USER("Image %s release", th->uid);
-    if (th) {
-        delete static_cast<Image*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(ImageFinalizer, Image, ImageClassID)
 
 static JSClassDef ImageClass = {
     .class_name = "Image",

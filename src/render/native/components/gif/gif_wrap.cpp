@@ -22,7 +22,7 @@ static JSValue NativeCompSetGIFBinary(JSContext *ctx, JSValueConst this_val, int
         JS_ToInt32(ctx, &GIF_bytelength, byteLength);
 
         ((GIF*)(s->comp))->setGIFBinary(buf, static_cast<size_t>(GIF_bytelength));
-        LV_LOG_USER("GIF %s setGIF", s->uid);
+        LV_LOG_USER("GIF %s setGIF", s->getUid());
 
         return JS_NewBool(ctx, 1);
     fail:
@@ -38,7 +38,7 @@ static JSValue NativeCompPause(JSContext *ctx, JSValueConst this_val, int argc, 
     }
 
     ((GIF*)(s->comp))->pause();
-    LV_LOG_USER("GIF %s pause", s->uid);
+    LV_LOG_USER("GIF %s pause", s->getUid());
     return JS_UNDEFINED;
 };
 
@@ -49,7 +49,7 @@ static JSValue NativeCompResume(JSContext *ctx, JSValueConst this_val, int argc,
     }
 
     ((GIF*)(s->comp))->resume();
-    LV_LOG_USER("GIF %s resume", s->uid);
+    LV_LOG_USER("GIF %s resume", s->getUid());
     return JS_UNDEFINED;
 };
 
@@ -100,7 +100,7 @@ static JSValue GIFConstructor(JSContext *ctx, JSValueConst new_target, int argc,
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new GIF(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -116,14 +116,7 @@ static JSValue GIFConstructor(JSContext *ctx, JSValueConst new_target, int argc,
     return JS_EXCEPTION;
 };
 
-static void GIFFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, GIFClassID);
-    LV_LOG_USER("GIF %s release", th->uid);
-    if (th) {
-        delete static_cast<GIF*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(GIFFinalizer, GIF, GIFClassID)
 
 static JSClassDef GIFClass = {
     .class_name = "GIF",

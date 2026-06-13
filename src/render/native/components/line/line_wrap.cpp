@@ -47,7 +47,7 @@ static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int ar
         }
 
         ((Line*)(ref->comp))->setPoints(points, num);
-        LV_LOG_USER("Line %s setPoints", ref->uid);
+        LV_LOG_USER("Line %s setPoints", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -97,7 +97,7 @@ static JSValue LineConstructor(JSContext *ctx, JSValueConst new_target, int argc
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Line(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -113,14 +113,7 @@ static JSValue LineConstructor(JSContext *ctx, JSValueConst new_target, int argc
     return JS_EXCEPTION;
 };
 
-static void LineFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, LineClassID);
-    LV_LOG_USER("Line %s release", th->uid);
-    if (th) {
-        delete static_cast<Line*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(LineFinalizer, Line, LineClassID)
 
 static JSClassDef LineClass = {
     .class_name = "Line",

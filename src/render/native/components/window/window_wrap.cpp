@@ -52,7 +52,7 @@ static JSValue WindowConstructor(JSContext *ctx, JSValueConst new_target, int ar
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Window(uid);
 
     JS_FreeCString(ctx, uid);
@@ -68,14 +68,7 @@ static JSValue WindowConstructor(JSContext *ctx, JSValueConst new_target, int ar
     return JS_EXCEPTION;
 };
 
-static void WindowFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, WindowClassID);
-    LV_LOG_USER("Window %s release", th->uid);
-    if (th) {
-        delete static_cast<Window*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(WindowFinalizer, Window, WindowClassID)
 
 static JSClassDef WindowClass = {
     .class_name = "Window",

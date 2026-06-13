@@ -21,7 +21,7 @@ static JSValue NativeCompSetText(JSContext *ctx, JSValueConst this_val, int argc
         COMP_REF* s = (COMP_REF*)JS_GetOpaque(this_val, TextClassID);
         ((Text*)(s->comp))->setText(str);
         JS_FreeCString(ctx, ori_str);
-        LV_LOG_USER("Text %s setText\n", s->uid);
+        LV_LOG_USER("Text %s setText\n", s->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -71,7 +71,7 @@ static JSValue TextConstructor(JSContext *ctx, JSValueConst new_target, int argc
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Text(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -87,14 +87,7 @@ static JSValue TextConstructor(JSContext *ctx, JSValueConst new_target, int argc
     return JS_EXCEPTION;
 };
 
-static void TextFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, TextClassID);
-    LV_LOG_USER("Text %s release", th->uid);
-    if (th) {
-        delete static_cast<Text*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(TextFinalizer, Text, TextClassID)
 
 static JSClassDef ViewClass = {
     .class_name = "Text",

@@ -52,7 +52,7 @@ static JSValue MaskConstructor(JSContext *ctx, JSValueConst new_target, int argc
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Mask(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -68,14 +68,7 @@ static JSValue MaskConstructor(JSContext *ctx, JSValueConst new_target, int argc
     return JS_EXCEPTION;
 };
 
-static void MaskFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, MaskClassID);
-    LV_LOG_USER("Mask %s release", th->uid);
-    if (th) {
-        delete static_cast<Mask*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(MaskFinalizer, Mask, MaskClassID)
 
 static JSClassDef MaskClass = {
     .class_name = "Mask",

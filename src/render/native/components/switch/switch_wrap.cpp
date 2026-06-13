@@ -20,7 +20,7 @@ static JSValue NativeCompRemoveChild(JSContext *ctx, JSValueConst this_val, int 
         COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, SwitchClassID);
 
         ((Switch*)(parent->comp))->removeChild((void*)(child->comp));
-        LV_LOG_USER("Switch %s remove child %s", parent->uid, child->uid);
+        LV_LOG_USER("Switch %s remove child %s", parent->getUid(), child->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -32,7 +32,7 @@ static JSValue NativeCompAppendChild(JSContext *ctx, JSValueConst this_val, int 
         COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, SwitchClassID);
 
         ((Switch*)(parent->comp))->appendChild((void*)(child->comp));
-        LV_LOG_USER("Switch %s append child %s", parent->uid, child->uid);
+        LV_LOG_USER("Switch %s append child %s", parent->getUid(), child->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -44,7 +44,7 @@ static JSValue NativeCompSetChecked(JSContext *ctx, JSValueConst this_val, int a
         value = JS_ToBool(ctx, argv[0]);
 
         ((Switch*)(ref->comp))->setValue(value);
-        LV_LOG_USER("Switch %s set value", ref->uid);
+        LV_LOG_USER("Switch %s set value", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -56,7 +56,7 @@ static JSValue NativeCompSetDisabled(JSContext *ctx, JSValueConst this_val, int 
         value = JS_ToBool(ctx, argv[0]);
 
         ((Switch*)(ref->comp))->setDisabled(value);
-        LV_LOG_USER("Switch %s setDisabled", ref->uid);
+        LV_LOG_USER("Switch %s setDisabled", ref->getUid());
     }
     return JS_UNDEFINED;
 };
@@ -108,7 +108,7 @@ static JSValue SwitchConstructor(JSContext *ctx, JSValueConst new_target, int ar
     if (JS_IsException(obj))
         goto fail;
     s = (COMP_REF*)js_mallocz(ctx, sizeof(*s));
-    s->uid = uid;
+    CompRefStoreUid(ctx, s, uid);
     s->comp = new Switch(uid, NULL);
 
     JS_FreeCString(ctx, uid);
@@ -124,18 +124,11 @@ static JSValue SwitchConstructor(JSContext *ctx, JSValueConst new_target, int ar
     return JS_EXCEPTION;
 };
 
-static void ViewFinalizer(JSRuntime *rt, JSValue val) {
-    COMP_REF *th = (COMP_REF *)JS_GetOpaque(val, SwitchClassID);
-    LV_LOG_USER("Switch %s release", th->uid);
-    if (th) {
-        delete static_cast<Switch*>(th->comp);
-        js_free_rt(rt, th);
-    }
-};
+COMP_FINALIZER(SwitchFinalizer, Switch, SwitchClassID)
 
 static JSClassDef ViewClass = {
     .class_name = "Switch",
-    .finalizer = ViewFinalizer,
+    .finalizer = SwitchFinalizer,
 };
 
 void NativeComponentSwitchInit (JSContext* ctx, JSValue ns) {
