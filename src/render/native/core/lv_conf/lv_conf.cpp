@@ -408,7 +408,8 @@ void Native_lv_conf_Init(JSContext* ctx, JSValue& ns) {
     set_int_prop(ctx, obj, "LV_STYLE_CSS_GRID_TEMPLATE", LV_STYLE_CSS_GRID_TEMPLATE);
     set_int_prop(ctx, obj, "LV_STYLE_CSS_IMG_ORIGIN", LV_STYLE_CSS_IMG_ORIGIN);
     set_int_prop(ctx, obj, "LV_STYLE_CSS_IMG_ROTATE", LV_STYLE_CSS_IMG_ROTATE);
-    set_int_prop(ctx, obj, "LV_STYLE_CSS_IMG_SCALE", LV_STYLE_CSS_IMG_SCALE);
+    set_int_prop(ctx, obj, "LV_STYLE_CSS_IMG_SCALE_X", LV_STYLE_CSS_IMG_SCALE_X);
+    set_int_prop(ctx, obj, "LV_STYLE_CSS_IMG_SCALE_Y", LV_STYLE_CSS_IMG_SCALE_Y);
     set_int_prop(ctx, obj, "LV_STYLE_CSS_OVERFLOW", LV_STYLE_CSS_OVERFLOW);
     set_int_prop(ctx, obj, "LV_STYLE_CSS_OVERFLOW_SCROLLING", LV_STYLE_CSS_OVERFLOW_SCROLLING);
     set_int_prop(ctx, obj, "LV_STYLE_CSS_POSITION", LV_STYLE_CSS_POSITION);

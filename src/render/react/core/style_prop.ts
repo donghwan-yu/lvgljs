@@ -143,14 +143,15 @@ export const LvStyleProp = {
   LV_STYLE_CSS_GRID_TEMPLATE: lv.LV_STYLE_CSS_GRID_TEMPLATE as 183,
   LV_STYLE_CSS_IMG_ORIGIN: lv.LV_STYLE_CSS_IMG_ORIGIN as 184,
   LV_STYLE_CSS_IMG_ROTATE: lv.LV_STYLE_CSS_IMG_ROTATE as 185,
-  LV_STYLE_CSS_IMG_SCALE: lv.LV_STYLE_CSS_IMG_SCALE as 186,
-  LV_STYLE_CSS_OVERFLOW: lv.LV_STYLE_CSS_OVERFLOW as 187,
-  LV_STYLE_CSS_OVERFLOW_SCROLLING: lv.LV_STYLE_CSS_OVERFLOW_SCROLLING as 188,
-  LV_STYLE_CSS_POSITION: lv.LV_STYLE_CSS_POSITION as 189,
-  LV_STYLE_CSS_SCROLL_ENABLE_SNAP: lv.LV_STYLE_CSS_SCROLL_ENABLE_SNAP as 190,
-  LV_STYLE_CSS_SCROLL_SNAP_X: lv.LV_STYLE_CSS_SCROLL_SNAP_X as 191,
-  LV_STYLE_CSS_SCROLL_SNAP_Y: lv.LV_STYLE_CSS_SCROLL_SNAP_Y as 192,
-  LV_STYLE_CSS_TEXT_OVERFLOW: lv.LV_STYLE_CSS_TEXT_OVERFLOW as 193,
+  LV_STYLE_CSS_IMG_SCALE_X: lv.LV_STYLE_CSS_IMG_SCALE_X as 186,
+  LV_STYLE_CSS_IMG_SCALE_Y: lv.LV_STYLE_CSS_IMG_SCALE_Y as 187,
+  LV_STYLE_CSS_OVERFLOW: lv.LV_STYLE_CSS_OVERFLOW as 188,
+  LV_STYLE_CSS_OVERFLOW_SCROLLING: lv.LV_STYLE_CSS_OVERFLOW_SCROLLING as 189,
+  LV_STYLE_CSS_POSITION: lv.LV_STYLE_CSS_POSITION as 190,
+  LV_STYLE_CSS_SCROLL_ENABLE_SNAP: lv.LV_STYLE_CSS_SCROLL_ENABLE_SNAP as 191,
+  LV_STYLE_CSS_SCROLL_SNAP_X: lv.LV_STYLE_CSS_SCROLL_SNAP_X as 192,
+  LV_STYLE_CSS_SCROLL_SNAP_Y: lv.LV_STYLE_CSS_SCROLL_SNAP_Y as 193,
+  LV_STYLE_CSS_TEXT_OVERFLOW: lv.LV_STYLE_CSS_TEXT_OVERFLOW as 194,
 } as const;
 
 export type LvStylePropId = (typeof LvStyleProp)[keyof typeof LvStyleProp];
@@ -294,7 +295,8 @@ export const LvStylePropKindMap: Record<LvStylePropId, StylePropValueKind> = {
   [LvStyleProp.LV_STYLE_CSS_GRID_TEMPLATE]: StylePropValueKind.CSS,
   [LvStyleProp.LV_STYLE_CSS_IMG_ORIGIN]: StylePropValueKind.CSS,
   [LvStyleProp.LV_STYLE_CSS_IMG_ROTATE]: StylePropValueKind.CSS,
-  [LvStyleProp.LV_STYLE_CSS_IMG_SCALE]: StylePropValueKind.CSS,
+  [LvStyleProp.LV_STYLE_CSS_IMG_SCALE_X]: StylePropValueKind.CSS,
+  [LvStyleProp.LV_STYLE_CSS_IMG_SCALE_Y]: StylePropValueKind.CSS,
   [LvStyleProp.LV_STYLE_CSS_OVERFLOW]: StylePropValueKind.CSS,
   [LvStyleProp.LV_STYLE_CSS_OVERFLOW_SCROLLING]: StylePropValueKind.CSS,
   [LvStyleProp.LV_STYLE_CSS_POSITION]: StylePropValueKind.CSS,
@@ -366,9 +368,11 @@ export const NATIVE_STYLE_PROP_INTM = {
   "recolor-opacity": LvStyleProp.LV_STYLE_IMAGE_RECOLOR_OPA,
   translateX: LvStyleProp.LV_STYLE_TRANSLATE_X,
   translateY: LvStyleProp.LV_STYLE_TRANSLATE_Y,
-  scale: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X,
+  scaleX: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X,
+  scaleY: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_Y,
   rotate: LvStyleProp.LV_STYLE_TRANSFORM_ROTATION,
-  "img-scale": LvStyleProp.LV_STYLE_CSS_IMG_SCALE,
+  "img-scaleX": LvStyleProp.LV_STYLE_CSS_IMG_SCALE_X,
+  "img-scaleY": LvStyleProp.LV_STYLE_CSS_IMG_SCALE_Y,
   "img-rotate": LvStyleProp.LV_STYLE_CSS_IMG_ROTATE,
   "img-origin": LvStyleProp.LV_STYLE_CSS_IMG_ORIGIN,
   "chart-scaleX": LvStyleProp.LV_STYLE_CSS_CHART_SCALE_X,
@@ -496,8 +500,10 @@ export const TRANSITION_PROP = {
   translateX: LvStyleProp.LV_STYLE_TRANSLATE_X, // alias
   "translate-y": LvStyleProp.LV_STYLE_TRANSLATE_Y,
   translateY: LvStyleProp.LV_STYLE_TRANSLATE_Y, // alias
-  scale: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X,
-  "transform-scale": LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X, // alias
+  scaleX: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X,
+  "transform-scale-x": LvStyleProp.LV_STYLE_TRANSFORM_SCALE_X, // alias
+  scaleY: LvStyleProp.LV_STYLE_TRANSFORM_SCALE_Y,
+  "transform-scale-y": LvStyleProp.LV_STYLE_TRANSFORM_SCALE_Y, // alias
   rotate: LvStyleProp.LV_STYLE_TRANSFORM_ROTATION,
   "transform-rotate": LvStyleProp.LV_STYLE_TRANSFORM_ROTATION, // alias
   "transform-pivot-x": LvStyleProp.LV_STYLE_TRANSFORM_PIVOT_X,
@@ -516,7 +522,8 @@ export const TRANSITION_PROP_ALIAS = {
   "line-height": "line-spacing",
   "text-decor": "text-decoration",
   "animate-time": "style-transition-time",
-  "transform-scale": "scale",
+  "transform-scale-x": "scaleX",
+  "transform-scale-y": "scaleY",
   "transform-rotate": "rotate",
 } as const;
 

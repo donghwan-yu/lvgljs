@@ -35,8 +35,8 @@ export class StyleBatch {
     if (kind === StylePropValueKind.Num || kind === StylePropValueKind.Color) {
       value = Number(value);
     }
-    // Central NaN gate: also covers CSS-kind scalar numbers (img-scale,
-    // img-rotate, chart-scaleX/Y). Numbers nested in CSS arrays (grid-template,
+    // Central NaN gate: also covers CSS-kind scalar numbers (img-rotate,
+    // img-scaleX/Y, chart-scaleX/Y). Numbers nested in CSS arrays (grid-template,
     // img-origin) are NOT seen here; their producers must return null instead.
     if (typeof value === "number" && Number.isNaN(value)) {
       return true;
