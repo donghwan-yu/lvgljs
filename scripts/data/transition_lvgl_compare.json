@@ -510,13 +510,6 @@
       "match": true
     },
     {
-      "trans_key": "animate",
-      "trans_id": 99,
-      "lv_symbol": "LV_STYLE_ANIM",
-      "lv_base": 99,
-      "match": true
-    },
-    {
       "trans_key": "animate-time",
       "trans_id": 100,
       "lv_symbol": "LV_STYLE_ANIM_TIME",
@@ -584,20 +577,6 @@
       "trans_id": 109,
       "lv_symbol": "LV_STYLE_TRANSFORM_ANGLE",
       "lv_base": 109,
-      "match": true
-    },
-    {
-      "trans_key": "transform-pivot-x",
-      "trans_id": 110,
-      "lv_symbol": "LV_STYLE_TRANSFORM_PIVOT_X",
-      "lv_base": 110,
-      "match": true
-    },
-    {
-      "trans_key": "transform-pivot-y",
-      "trans_id": 111,
-      "lv_symbol": "LV_STYLE_TRANSFORM_PIVOT_Y",
-      "lv_base": 111,
       "match": true
     }
   ]
