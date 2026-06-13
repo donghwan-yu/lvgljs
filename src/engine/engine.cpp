@@ -8,8 +8,23 @@
 
 static TJSRuntime* qrt;
 
+static void timer_cb(uv_timer_t *handle);
+
+static void schedule_lv_timer(uv_timer_t *handle, uint32_t delay_ms)
+{
+    if (delay_ms == LV_NO_TIMER_READY) {
+        delay_ms = LV_DEF_REFR_PERIOD;
+    } else if (delay_ms == 0) {
+        delay_ms = 1;
+    }
+
+    if (uv_timer_start(handle, timer_cb, delay_ms, 0) != 0) {
+        printf("uv_timer_start failed\n");
+    }
+}
+
 static void timer_cb(uv_timer_t *handle) {
-    lv_timer_handler();
+    schedule_lv_timer(handle, lv_timer_handler());
 }
 
 int main(int argc, char **argv) {
@@ -34,13 +49,13 @@ int main(int argc, char **argv) {
     hal_init();
     WindowInit();
 
-    // create timer for rendering
+    // Pump lv_timer_handler on LVGL's schedule (aligned with LV_DEF_REFR_PERIOD).
     static uv_timer_t handle;
     handle.data = qrt;
     if (uv_timer_init(&qrt->loop, &handle) != 0) {
         printf("uv_timer_init failed\n");
-    } else if (uv_timer_start(&handle, timer_cb, 30, 30) != 0) {
-        printf("uv_timer_start failed\n");
+    } else {
+        schedule_lv_timer(&handle, 1);
     }
 
     int exit_code = TJS_Run(qrt);
