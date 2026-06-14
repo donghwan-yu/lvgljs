@@ -168,7 +168,6 @@ export class ArcComp extends NativeArc {
   static tagName = "Arc";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

@@ -85,7 +85,6 @@ export class RollerComp extends NativeRoller {
   static tagName = "Roller";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

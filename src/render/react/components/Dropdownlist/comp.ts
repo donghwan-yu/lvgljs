@@ -98,7 +98,6 @@ export class DropdownlistComp extends NativeDropdownlist {
   static tagName = "Dropdownlist";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

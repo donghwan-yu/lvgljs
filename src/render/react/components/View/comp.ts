@@ -54,9 +54,6 @@ export class ViewComp extends NativeView {
   appendChild(child) {
     super.appendChild(child);
   }
-  removeChild(child) {
-    super.removeChild(child);
-  }
   close() {
     super.close();
   }

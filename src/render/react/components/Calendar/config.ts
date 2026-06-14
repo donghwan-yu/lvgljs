@@ -20,5 +20,4 @@ export default class CalendarConfig implements LvgljsComponentConfig<CalendarPro
   insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
 }

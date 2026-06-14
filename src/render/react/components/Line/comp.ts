@@ -59,7 +59,6 @@ export class LineComp extends NativeLine {
   static tagName = "Line";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

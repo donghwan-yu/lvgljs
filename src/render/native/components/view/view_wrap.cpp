@@ -10,7 +10,6 @@ WRAPPED_JS_Align_To(View, "View")
 STYLE_INFO(View, "View")
 WRAPPED_JS_BACKGROUND_IMAGE(View,"View")
 WRAPPED_APPEND_CHILD(View,"View")
-WRAPPED_REMOVE_CHILD(View,"View")
 WRAPPED_INSERT_CHILD(View,"View")
 WRAPPED_MOVE_TO_FRONT(View, "View")
 WRAPPED_MOVE_TO_BACKGROUND(View, "View")
@@ -21,7 +20,6 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
     TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
-    TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),

@@ -85,5 +85,4 @@ export type LvgljsComponentConfig<ComponentProps, ComponentInstance> = Pick<
   | "insertBefore"
   | "appendInitialChild"
   | "appendChild"
-  | "removeChild"
 > & { tagName: string };

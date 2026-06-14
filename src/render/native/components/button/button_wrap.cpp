@@ -10,7 +10,6 @@ WRAPPED_JS_Align_To(Button, "Button")
 STYLE_INFO(Button, "Button")
 WRAPPED_JS_BACKGROUND_IMAGE(Button,"Button")
 WRAPPED_APPEND_CHILD(Button,"Button")
-WRAPPED_REMOVE_CHILD(Button,"Button")
 WRAPPED_INSERT_CHILD(Button,"Button")
 WRAPPED_MOVE_TO_FRONT(Button, "Button")
 WRAPPED_MOVE_TO_BACKGROUND(Button, "Button")
@@ -21,7 +20,6 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
     TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
-    TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),

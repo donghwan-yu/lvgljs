@@ -78,7 +78,6 @@ export class CalendarComp extends NativeCalendar {
   static tagName = "Calendar";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

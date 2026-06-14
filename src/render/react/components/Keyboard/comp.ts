@@ -84,7 +84,6 @@ export class KeyboardComp extends NativeView {
   insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

@@ -102,7 +102,6 @@ export class TextareaComp extends NativeView {
   insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {}
   setStyle(style, type = STYLE_TYPE.PART_MAIN) {
     setStyle({

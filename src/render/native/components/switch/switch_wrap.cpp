@@ -14,18 +14,6 @@ WRAPPED_MOVE_TO_BACKGROUND(Switch, "Switch")
 WRAPPED_SCROLL_INTO_VIEW(Switch, "Switch")
 WRAPPED_JS_CLOSE_COMPONENT(Switch, "Switch")
 
-static JSValue NativeCompRemoveChild(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsObject(argv[0])) {
-        JSClassID _class_id;
-        COMP_REF* child = (COMP_REF*)JS_GetAnyOpaque(argv[0], &_class_id);
-        COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, SwitchClassID);
-
-        ((Switch*)(parent->comp))->removeChild((void*)(child->comp));
-        LV_LOG_USER("Switch %s remove child %s", parent->getUid(), child->getUid());
-    }
-    return JS_UNDEFINED;
-};
-
 static JSValue NativeCompAppendChild(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
     if (argc >= 1 && JS_IsObject(argv[0])) {
         JSClassID _class_id;

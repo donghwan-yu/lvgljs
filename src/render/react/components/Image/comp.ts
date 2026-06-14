@@ -74,7 +74,6 @@ export class ImageComp extends NativeImage {
   static tagName = "Image";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

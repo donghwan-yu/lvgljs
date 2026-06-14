@@ -118,19 +118,8 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
     };                                                                                                                      \
                                                                                                                             \
 
-#define WRAPPED_REMOVE_CHILD(COMPONENT,COMPONENT_NAME)                                                                      \
-    static JSValue NativeCompRemoveChild(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {             \
-        if (argc >= 1 && JS_IsObject(argv[0])) {                                                                            \
-            JSClassID _class_id;                                                                                            \
-            COMP_REF* child = (COMP_REF*)JS_GetAnyOpaque(argv[0], &_class_id);                                              \
-            COMP_REF* parent = (COMP_REF*)JS_GetAnyOpaque(this_val, &_class_id);                                            \
-                                                                                                                            \
-            ((COMPONENT*)(parent->comp))->removeChild((void*)(child->comp));                                                \
-            LV_LOG_USER("%s %s remove child %s", COMPONENT_NAME, parent->getUid(), child->getUid());                        \
-        }                                                                                                                   \
-        return JS_UNDEFINED;                                                                                                \
-    };                                                                                                                      \
-                                                                                                                            \
+// Host child removal is handled in JS (reconciler detachInstance + close()).
+// Do not add WRAPPED_REMOVE_CHILD; lv_obj teardown does not use native removeChild.
 
 #define WRAPPED_INSERT_CHILD(COMPONENT,COMPONENT_NAME)                                                                      \
     static JSValue NativeCompInsertChildBefore(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {       \

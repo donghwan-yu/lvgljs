@@ -91,9 +91,6 @@ export class MaskComp extends NativeMask {
   appendChild(child) {
     super.appendChild(child);
   }
-  removeChild(child) {
-    super.removeChild(child);
-  }
   close() {
     super.close();
   }

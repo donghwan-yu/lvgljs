@@ -77,7 +77,6 @@ class BasicComponent {
     bool ensureStyle (int32_t type);
 
     void appendChild(void* child);
-    void removeChild(void* child);
     void insertChildBefore(void *child);
 
     void moveToFront ();

@@ -89,7 +89,6 @@ export class GIFComp extends NativeGIF {
   static tagName = "GIF";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

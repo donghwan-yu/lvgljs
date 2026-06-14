@@ -85,7 +85,6 @@ export class ProgressBarComp extends NativeProgressBar {
   static tagName = "ProgressBar";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

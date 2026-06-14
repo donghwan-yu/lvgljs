@@ -81,7 +81,6 @@ export class TabsComp extends NativeTabs {
     this.setTab(this.tabs[this.currentAppendIndex] || "", child);
     this.currentAppendIndex++;
   }
-  removeChild(child) {}
   close() {
     super.close();
   }

@@ -48,12 +48,6 @@ void BasicComponent::insertChildBefore(void *child) {
     }
 };
 
-void BasicComponent::removeChild(void* child) {
-    // No-op only. Reconciler detachInstance closes children before parents so
-    // lv_obj_del on the parent does not cascade-delete live child widgets. Do not
-    // reparent to GetWindowInstance() here; teardown order is owned by JS.
-};
-
 void BasicComponent::appendChild (void* child) {
     static_cast<BasicComponent*>(child)->parent_instance = this->instance;
     if (!(static_cast<BasicComponent*>(child)->is_fixed) && (static_cast<BasicComponent*>(child)->type != COMP_TYPE_MASK)) {

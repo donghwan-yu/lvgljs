@@ -31,10 +31,9 @@ export declare class LvgljsNativeComponent {
   getBoundingClientRect(): LvgljsBoundingClientRect;
 }
 
-/** appendChild / removeChild / insertChildBefore (Mask, Window, View, Button, TabView). */
+/** appendChild / insertChildBefore (Mask, Window, View, Button, TabView). Child removal: reconciler detachInstance only. */
 export declare class LvgljsChildContainerComponent extends LvgljsNativeComponent {
   appendChild(child: LvgljsNativeComponent): void;
-  removeChild(child: LvgljsNativeComponent): void;
   insertChildBefore(
     child: LvgljsNativeComponent,
     beforeChild?: LvgljsNativeComponent,
@@ -61,7 +60,6 @@ export declare class LvgljsScrollableComponent extends LvgljsAlignableComponent 
 /** Full container: child tree + align + z-order (View, Button, TabView). */
 export declare class LvgljsWidgetComponent extends LvgljsScrollableComponent {
   appendChild(child: LvgljsNativeComponent): void;
-  removeChild(child: LvgljsNativeComponent): void;
   insertChildBefore(
     child: LvgljsNativeComponent,
     beforeChild?: LvgljsNativeComponent,
@@ -88,7 +86,6 @@ export declare class LvgljsBackgroundScrollableComponent extends LvgljsScrollabl
 /** List: child tree + align + z-order, no insertChildBefore. */
 export declare class LvgljsListComponent extends LvgljsScrollableComponent {
   appendChild(child: LvgljsNativeComponent): void;
-  removeChild(child: LvgljsNativeComponent): void;
 }
 
 export declare class LvgljsArcComponent extends LvgljsBackgroundScrollableComponent {

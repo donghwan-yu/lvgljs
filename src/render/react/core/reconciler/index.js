@@ -170,12 +170,10 @@ const HostConfig = {
     detachInstance(instance);
   },
   removeChild(parent, child) {
+    // Host child removal is JS-only: untrack, then detachInstance (close()).
+    // No native removeChild; lv_obj teardown runs in BasicComponent destructor.
     untrackHostChild(parent, child);
-    // close() first so lv_obj is freed before any parent teardown touches the tree
     detachInstance(child);
-
-    // removeChild is an no-op that will be removed in future, no need call it
-    // parent?.removeChild(child);
   },
   commitMount: function (instance, type, newProps, internalInstanceHandle) {
     instanceMap.set(instance.uid, instance);

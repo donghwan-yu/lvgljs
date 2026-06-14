@@ -63,7 +63,6 @@ export class TextComp extends NativeText {
   insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

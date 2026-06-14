@@ -13,18 +13,6 @@ WRAPPED_MOVE_TO_BACKGROUND(List, "List")
 WRAPPED_SCROLL_INTO_VIEW(List, "List")
 WRAPPED_JS_CLOSE_COMPONENT(List, "List")
 
-static JSValue NativeCompRemoveChild(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsObject(argv[0])) {
-        JSClassID _class_id;
-        COMP_REF* child = (COMP_REF*)JS_GetAnyOpaque(argv[0], &_class_id);
-        COMP_REF* parent = (COMP_REF*)JS_GetOpaque(this_val, ListClassID);
-
-        ((List*)(parent->comp))->removeChild((void*)(child->comp));
-        LV_LOG_USER("List %s remove child %s", parent->getUid(), child->getUid());
-    }
-    return JS_UNDEFINED;
-};
-
 static JSValue NativeCompAppendChild(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
     if (argc >= 1 && JS_IsObject(argv[0])) {
         JSClassID _class_id;
@@ -41,7 +29,6 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
     TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
-    TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),

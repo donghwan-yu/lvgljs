@@ -76,7 +76,6 @@ export class SwitchComp extends NativeComp {
   insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

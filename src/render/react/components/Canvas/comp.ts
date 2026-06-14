@@ -84,9 +84,6 @@ export class CanvasComp extends NativeButton {
   appendChild(child) {
     super.appendChild(child);
   }
-  removeChild(child) {
-    super.removeChild(child);
-  }
   close() {
     super.close();
   }

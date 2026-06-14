@@ -298,7 +298,6 @@ export class ChartComp extends NativeChart {
   static tagName = "Chart";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }

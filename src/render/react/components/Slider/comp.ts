@@ -119,7 +119,6 @@ export class SliderComp extends NativeSlider {
   static tagName = "Slider";
   appendInitialChild(child) {}
   appendChild(child) {}
-  removeChild(child) {}
   close() {
     super.close();
   }
