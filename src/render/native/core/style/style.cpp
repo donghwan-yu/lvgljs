@@ -274,17 +274,17 @@ static void CompSetTransformOrigin (lv_obj_t* comp, lv_style_t* style, JSContext
 };
 
 static void CompSetChartScaleX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int x;
-    JS_ToInt32(ctx, &x, obj);
-
-    lv_chart_set_zoom_x(comp, x);
+    (void)comp;
+    (void)style;
+    (void)ctx;
+    (void)obj;
 };
 
 static void CompSetChartScaleY (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    int x;
-    JS_ToInt32(ctx, &x, obj);
-
-    lv_chart_set_zoom_y(comp, x);
+    (void)comp;
+    (void)style;
+    (void)ctx;
+    (void)obj;
 };
 
 void CompSetTransition (

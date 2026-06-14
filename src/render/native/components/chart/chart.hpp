@@ -34,8 +34,6 @@ class Chart final : public BasicComponent {
   void setBottomAxisLabels (std::vector<std::string>& labels);
   void setTopAxisLabels (std::vector<std::string>& labels);
 
-  static void draw_event_cb (lv_event_t * e);
-
   void setType (int32_t type);
 
   void setLeftAxisOption (
