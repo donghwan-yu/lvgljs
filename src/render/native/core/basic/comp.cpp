@@ -28,7 +28,10 @@ void BasicComponent::EventCallback (lv_event_t * event) {
 void BasicComponent::removeEventListener (int eventType) {
     this->registeEvents.erase(eventType);
 
-    lv_obj_remove_event_cb(this->instance, &BasicComponent::EventCallback);
+    if (this->registeEvents.empty() && this->listening) {
+        this->listening = false;
+        lv_obj_remove_event_cb(this->instance, &BasicComponent::EventCallback);
+    }
 };
 
 bool BasicComponent::isEventRegist(int eventType) {

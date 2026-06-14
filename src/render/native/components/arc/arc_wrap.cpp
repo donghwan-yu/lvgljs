@@ -4,6 +4,7 @@ static JSClassID ArcClassID;
 
 WRAPPED_JS_SETSTYLE(Arc, "Arc")
 WRAPPED_JS_AddEventListener(Arc, "Arc")
+WRAPPED_JS_RemoveEventListener(Arc, "Arc")
 WRAPPED_JS_Align(Arc, "Arc")
 WRAPPED_JS_Align_To(Arc, "Arc")
 STYLE_INFO(Arc, "Arc")
@@ -81,6 +82,7 @@ static JSValue NativeCompSetArcImage(JSContext *ctx, JSValueConst this_val, int 
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("setRange", 0, NativeCompSetRange),
     TJS_CFUNC_DEF("setValue", 0, NativeCompSetValue),
     TJS_CFUNC_DEF("setStartAngle", 0, NativeCompSetStartAngle),

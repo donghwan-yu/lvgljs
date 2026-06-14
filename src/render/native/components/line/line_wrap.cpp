@@ -4,6 +4,7 @@ static JSClassID LineClassID;
 
 WRAPPED_JS_SETSTYLE(Line, "Line")
 WRAPPED_JS_AddEventListener(Line, "Line")
+WRAPPED_JS_RemoveEventListener(Line, "Line")
 WRAPPED_JS_Align(Line, "Line")
 WRAPPED_JS_Align_To(Line, "Line")
 STYLE_INFO(Line, "Line")
@@ -55,6 +56,7 @@ static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int ar
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("getBoundingClientRect", 0, GetStyleBoundClinetRect),

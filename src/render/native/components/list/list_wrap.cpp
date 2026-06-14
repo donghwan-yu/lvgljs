@@ -4,6 +4,7 @@ static JSClassID ListClassID;
 
 WRAPPED_JS_SETSTYLE(List, "List")
 WRAPPED_JS_AddEventListener(List, "List")
+WRAPPED_JS_RemoveEventListener(List, "List")
 WRAPPED_JS_Align(List, "List")
 WRAPPED_JS_Align_To(List, "List")
 STYLE_INFO(List, "List")
@@ -39,6 +40,7 @@ static JSValue NativeCompAppendChild(JSContext *ctx, JSValueConst this_val, int 
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),

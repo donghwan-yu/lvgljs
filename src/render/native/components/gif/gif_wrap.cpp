@@ -4,6 +4,7 @@ static JSClassID GIFClassID;
 
 WRAPPED_JS_SETSTYLE(GIF, "GIF")
 WRAPPED_JS_AddEventListener(GIF, "GIF")
+WRAPPED_JS_RemoveEventListener(GIF, "GIF")
 WRAPPED_JS_Align(GIF, "GIF")
 WRAPPED_JS_Align_To(GIF, "GIF")
 STYLE_INFO(GIF, "GIF")
@@ -56,6 +57,7 @@ static JSValue NativeCompResume(JSContext *ctx, JSValueConst this_val, int argc,
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("setGIFBinary", 0, NativeCompSetGIFBinary),
     TJS_CFUNC_DEF("pause", 0, NativeCompPause),
     TJS_CFUNC_DEF("resume", 0, NativeCompResume),

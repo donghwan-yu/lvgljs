@@ -4,6 +4,7 @@ static JSClassID DropdownlistClassID;
 
 WRAPPED_JS_SETSTYLE(Dropdownlist, "Dropdownlist")
 WRAPPED_JS_AddEventListener(Dropdownlist, "Dropdownlist")
+WRAPPED_JS_RemoveEventListener(Dropdownlist, "Dropdownlist")
 WRAPPED_JS_Align(Dropdownlist, "Dropdownlist")
 WRAPPED_JS_Align_To(Dropdownlist, "Dropdownlist")
 STYLE_INFO(Dropdownlist, "Dropdownlist")
@@ -106,6 +107,7 @@ static JSValue NativeCompSetHighLightSelect(JSContext *ctx, JSValueConst this_va
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("getBoundingClientRect", 0, GetStyleBoundClinetRect),

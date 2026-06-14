@@ -4,6 +4,7 @@ static JSClassID ImageClassID;
 
 WRAPPED_JS_SETSTYLE(Image, "Image")
 WRAPPED_JS_AddEventListener(Image, "Image")
+WRAPPED_JS_RemoveEventListener(Image, "Image")
 WRAPPED_JS_Align(Image, "Image")
 WRAPPED_JS_Align_To(Image, "Image")
 STYLE_INFO(Image, "Image")
@@ -53,6 +54,7 @@ static JSValue NativeCompSetSymbol(JSContext *ctx, JSValueConst this_val, int ar
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("setImageBinary", 0, NativeCompSetImageBinary),
     TJS_CFUNC_DEF("setSymbol", 0, NativeCompSetSymbol),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),

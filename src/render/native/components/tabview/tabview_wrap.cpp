@@ -4,6 +4,7 @@ static JSClassID TabViewClassID;
 
 WRAPPED_JS_SETSTYLE(TabView, "TabView")
 WRAPPED_JS_AddEventListener(TabView, "TabView")
+WRAPPED_JS_RemoveEventListener(TabView, "TabView")
 WRAPPED_JS_Align(TabView, "TabView")
 WRAPPED_JS_Align_To(TabView, "TabView")
 STYLE_INFO(TabView, "TabView")
@@ -75,6 +76,7 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("setTab", 0, NativeCompSetTab),
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),

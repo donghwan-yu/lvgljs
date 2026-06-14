@@ -4,6 +4,7 @@ static JSClassID TextClassID;
 
 WRAPPED_JS_SETSTYLE(Text, "Text")
 WRAPPED_JS_AddEventListener(Text, "Text")
+WRAPPED_JS_RemoveEventListener(Text, "Text")
 WRAPPED_JS_Align(Text, "Text")
 WRAPPED_JS_Align_To(Text, "Text")
 STYLE_INFO(Text, "Text")
@@ -29,6 +30,7 @@ static JSValue NativeCompSetText(JSContext *ctx, JSValueConst this_val, int argc
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("setText", 0, NativeCompSetText),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),

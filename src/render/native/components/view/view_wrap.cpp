@@ -4,6 +4,7 @@ static JSClassID ViewClassID;
 
 WRAPPED_JS_SETSTYLE(View, "View")
 WRAPPED_JS_AddEventListener(View, "View")
+WRAPPED_JS_RemoveEventListener(View, "View")
 WRAPPED_JS_Align(View, "View")
 WRAPPED_JS_Align_To(View, "View")
 STYLE_INFO(View, "View")
@@ -19,6 +20,7 @@ WRAPPED_JS_CLOSE_COMPONENT(View, "View")
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),

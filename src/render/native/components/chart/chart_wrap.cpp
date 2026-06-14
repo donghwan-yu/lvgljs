@@ -4,6 +4,7 @@ static JSClassID ChartClassID;
 
 WRAPPED_JS_SETSTYLE(Chart, "Chart")
 WRAPPED_JS_AddEventListener(Chart, "Chart")
+WRAPPED_JS_RemoveEventListener(Chart, "Chart")
 WRAPPED_JS_Align(Chart, "Chart")
 WRAPPED_JS_Align_To(Chart, "Chart")
 STYLE_INFO(Chart, "Chart")
@@ -603,6 +604,7 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("refresh", 0, NativeCompRefreshComponent),
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("getBoundingClientRect", 0, GetStyleBoundClinetRect),

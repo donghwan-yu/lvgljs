@@ -4,6 +4,7 @@ static JSClassID ProgressBarClassID;
 
 WRAPPED_JS_SETSTYLE(ProgressBar, "ProgressBar")
 WRAPPED_JS_AddEventListener(ProgressBar, "ProgressBar")
+WRAPPED_JS_RemoveEventListener(ProgressBar, "ProgressBar")
 WRAPPED_JS_Align(ProgressBar, "ProgressBar")
 WRAPPED_JS_Align_To(ProgressBar, "ProgressBar")
 STYLE_INFO(ProgressBar, "ProgressBar")
@@ -43,6 +44,7 @@ static JSValue NativeCompSetRange(JSContext *ctx, JSValueConst this_val, int arg
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("getBoundingClientRect", 0, GetStyleBoundClinetRect),

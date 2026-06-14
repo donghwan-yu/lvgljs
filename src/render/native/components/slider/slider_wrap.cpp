@@ -4,6 +4,7 @@ static JSClassID SliderClassID;
 
 WRAPPED_JS_SETSTYLE(Slider, "Slider")
 WRAPPED_JS_AddEventListener(Slider, "Slider")
+WRAPPED_JS_RemoveEventListener(Slider, "Slider")
 WRAPPED_JS_Align(Slider, "Slider")
 WRAPPED_JS_Align_To(Slider, "Slider")
 STYLE_INFO(Slider, "Slider")
@@ -45,6 +46,7 @@ static JSValue NativeCompSetValue(JSContext *ctx, JSValueConst this_val, int arg
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("setRange", 0, NativeCompSetRange),
     TJS_CFUNC_DEF("setValue", 0, NativeCompSetValue),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),

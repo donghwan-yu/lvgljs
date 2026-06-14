@@ -4,6 +4,7 @@ static JSClassID KeyboardClassID;
 
 WRAPPED_JS_SETSTYLE(Keyboard, "Keyboard")
 WRAPPED_JS_AddEventListener(Keyboard, "Keyboard")
+WRAPPED_JS_RemoveEventListener(Keyboard, "Keyboard")
 WRAPPED_JS_Align(Keyboard, "Keyboard")
 WRAPPED_JS_Align_To(Keyboard, "Keyboard")
 STYLE_INFO(Keyboard, "Keyboard")
@@ -39,6 +40,7 @@ static JSValue NativeCompSetMode(JSContext *ctx, JSValueConst this_val, int argc
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     JS_OBJECT_DEF("style", style_funcs, countof(style_funcs), JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE),

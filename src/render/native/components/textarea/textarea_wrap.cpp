@@ -4,6 +4,7 @@ static JSClassID TextareaClassID;
 
 WRAPPED_JS_SETSTYLE(Textarea, "Textarea")
 WRAPPED_JS_AddEventListener(Textarea, "Textarea")
+WRAPPED_JS_RemoveEventListener(Textarea, "Textarea")
 WRAPPED_JS_Align(Textarea, "Textarea")
 WRAPPED_JS_Align_To(Textarea, "Textarea")
 STYLE_INFO(Textarea, "Textarea")
@@ -92,6 +93,7 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("setAutoKeyboard", 0, NativeCompSetAutoKeyboard),
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     JS_OBJECT_DEF("style", style_funcs, countof(style_funcs), JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE),

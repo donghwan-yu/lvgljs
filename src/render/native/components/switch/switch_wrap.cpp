@@ -4,6 +4,7 @@ static JSClassID SwitchClassID;
 
 WRAPPED_JS_SETSTYLE(Switch, "Switch")
 WRAPPED_JS_AddEventListener(Switch, "Switch")
+WRAPPED_JS_RemoveEventListener(Switch, "Switch")
 WRAPPED_JS_Align(Switch, "Switch")
 WRAPPED_JS_Align_To(Switch, "Switch")
 STYLE_INFO(Switch, "Switch")
@@ -64,6 +65,7 @@ static JSValue NativeCompSetDisabled(JSContext *ctx, JSValueConst this_val, int 
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("setChecked", 0, NativeCompSetChecked),

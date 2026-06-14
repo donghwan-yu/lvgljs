@@ -4,6 +4,7 @@ static JSClassID ButtonClassID;
 
 WRAPPED_JS_SETSTYLE(Button, "Button")
 WRAPPED_JS_AddEventListener(Button, "Button")
+WRAPPED_JS_RemoveEventListener(Button, "Button")
 WRAPPED_JS_Align(Button, "Button")
 WRAPPED_JS_Align_To(Button, "Button")
 STYLE_INFO(Button, "Button")
@@ -19,6 +20,7 @@ WRAPPED_JS_CLOSE_COMPONENT(Button, "Button")
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),

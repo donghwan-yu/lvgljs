@@ -4,6 +4,7 @@ static JSClassID CalendarClassID;
 
 WRAPPED_JS_SETSTYLE(Calendar, "Calendar")
 WRAPPED_JS_AddEventListener(Calendar, "Calendar")
+WRAPPED_JS_RemoveEventListener(Calendar, "Calendar")
 WRAPPED_JS_Align(Calendar, "Calendar")
 WRAPPED_JS_Align_To(Calendar, "Calendar")
 STYLE_INFO(Calendar, "Calendar")
@@ -91,6 +92,7 @@ static JSValue NativeCompSetShownMonth (JSContext *ctx, JSValueConst this_val, i
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("align", 0, NativeCompSetAlign),
     TJS_CFUNC_DEF("alignTo", 0, NativeCompSetAlignTo),
     TJS_CFUNC_DEF("getBoundingClientRect", 0, GetStyleBoundClinetRect),

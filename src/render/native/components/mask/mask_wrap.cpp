@@ -4,6 +4,7 @@ static JSClassID MaskClassID;
 
 WRAPPED_JS_SETSTYLE(Mask, "Mask")
 WRAPPED_JS_AddEventListener(Mask, "Mask")
+WRAPPED_JS_RemoveEventListener(Mask, "Mask")
 STYLE_INFO(Mask, "Mask")
 WRAPPED_APPEND_CHILD(Mask,"Mask")
 WRAPPED_REMOVE_CHILD(Mask,"Mask")
@@ -13,6 +14,7 @@ WRAPPED_JS_CLOSE_COMPONENT(Mask, "Mask")
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),

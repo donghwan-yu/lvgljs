@@ -206,6 +206,19 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
     }                                                                                                                       \
                                                                                                                             \
 
+#define WRAPPED_JS_RemoveEventListener(COMPONENT,COMPONENT_NAME)                                                            \
+    static JSValue NativeCompRemoveEventListener(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {     \
+        if (argc >= 1 && JS_IsNumber(argv[0])) {                                                                            \
+            COMP_REF* s = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                            \
+            int event_type;                                                                                                 \
+            JS_ToInt32(ctx, &event_type, argv[0]);                                                                          \
+            ((COMPONENT*)(s->comp))->removeEventListener(event_type);                                                       \
+            return JS_NewBool(ctx, 1);                                                                                      \
+        }                                                                                                                   \
+        return JS_NewBool(ctx, 0);                                                                                          \
+    }                                                                                                                       \
+                                                                                                                            \
+
 #define WRAPPED_JS_Align(COMPONENT,COMPONENT_NAME)                                                                          \
     static JSValue NativeCompSetAlign(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {                \
         if (argc >= 2 && JS_IsNumber(argv[0]) && JS_IsArray(argv[1])) {                                                \

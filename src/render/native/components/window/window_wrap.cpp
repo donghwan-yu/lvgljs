@@ -4,6 +4,7 @@ static JSClassID WindowClassID;
 
 WRAPPED_JS_SETSTYLE(Window, "Window")
 WRAPPED_JS_AddEventListener(Window, "Window")
+WRAPPED_JS_RemoveEventListener(Window, "Window")
 STYLE_INFO(Window, "Window")
 WRAPPED_APPEND_CHILD(Window,"Window")
 WRAPPED_REMOVE_CHILD(Window,"Window")
@@ -13,6 +14,7 @@ WRAPPED_JS_CLOSE_COMPONENT(Window, "Window")
 static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("nativeSetStyle", 0, NativeCompSetStyle),
     TJS_CFUNC_DEF("addEventListener", 0, NativeCompAddEventListener),
+    TJS_CFUNC_DEF("removeEventListener", 0, NativeCompRemoveEventListener),
     TJS_CFUNC_DEF("removeChild", 0, NativeCompRemoveChild),
     TJS_CFUNC_DEF("insertChildBefore", 0, NativeCompInsertChildBefore),
     TJS_CFUNC_DEF("appendChild", 0, NativeCompAppendChild),
