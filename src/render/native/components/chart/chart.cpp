@@ -351,25 +351,43 @@ void Chart::setRightAxisData (std::vector<axis_data>& data) {
     lv_chart_refresh(this->instance);
 };
 
-// void Chart::setTopAxisData (std::vector<axis_data>& data) {
-//     if (this->top_axis == nullptr) {
-//         this->top_axis = lv_chart_add_series(this->instance, lv_theme_get_color_primary(this->instance), LV_CHART_AXIS_SECONDARY_X);
-//     }
-//     int32_t i;
-//     for (i=0; i<data.size(); i++) {
-//         this->top_axis->y_points[i] = (lv_coord_t)data[i];
-//     }
-// };
+void Chart::setTopAxisData (std::vector<axis_data>& data) {
+    size_t i;
 
-// void Chart::setBottomAxisData (std::vector<axis_data>& data) {
-//     int32_t i;
-//     if (this->bottom_axis == nullptr) {
-//         this->bottom_axis = lv_chart_add_series(this->instance, lv_theme_get_color_primary(this->instance), LV_CHART_AXIS_PRIMARY_X);
-//     }
-//     for (i=0; i<data.size(); i++) {
-//         this->bottom_axis->y_points[i] = (lv_coord_t)data[i];
-//     }
-// };
+    for (i = 0; i < this->top_axis.size(); i++) {
+        lv_chart_remove_series(this->instance, this->top_axis[i]);
+    }
+    this->top_axis.clear();
+
+    for (i = 0; i < data.size(); i++) {
+        this->top_axis.push_back(
+            lv_chart_add_series(this->instance, this->seriesColor(data[i].color), LV_CHART_AXIS_SECONDARY_X));
+    }
+
+    for (i = 0; i < data.size(); i++) {
+        this->fillSeriesY(this->top_axis[i], data[i].data);
+    }
+    lv_chart_refresh(this->instance);
+};
+
+void Chart::setBottomAxisData (std::vector<axis_data>& data) {
+    size_t i;
+
+    for (i = 0; i < this->bottom_axis.size(); i++) {
+        lv_chart_remove_series(this->instance, this->bottom_axis[i]);
+    }
+    this->bottom_axis.clear();
+
+    for (i = 0; i < data.size(); i++) {
+        this->bottom_axis.push_back(
+            lv_chart_add_series(this->instance, this->seriesColor(data[i].color), LV_CHART_AXIS_PRIMARY_X));
+    }
+
+    for (i = 0; i < data.size(); i++) {
+        this->fillSeriesY(this->bottom_axis[i], data[i].data);
+    }
+    lv_chart_refresh(this->instance);
+};
 
 void Chart::setPointNum (int32_t num) {
     lv_chart_set_point_count(this->instance, (uint32_t)num);

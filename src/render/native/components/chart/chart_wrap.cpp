@@ -295,53 +295,67 @@ static JSValue NativeCompSetBottomAxisOption(JSContext *ctx, JSValueConst this_v
     return JS_UNDEFINED;
 };
 
-// static JSValue NativeCompSetBottomAxisData(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-//     if (argc >= 1 && JS_IsArray(argv[0])) {
-//         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ChartClassID);
+static std::vector<axis_data> ParseAxisDataArg (JSContext *ctx, JSValueConst arg) {
+    std::vector<axis_data> data;
+    int32_t len1, len2, color, data_item;
+    JSValue item_value;
+    JSValue color_value;
+    JSValue data_value;
+    JSValue data_item_value;
+    JSValue len2_value;
+    JSValue len1_value = JS_GetPropertyStr(ctx, arg, "length");
+    JS_ToInt32(ctx, &len1, len1_value);
 
-//         int32_t len, i, data_item;
-//         std::vector<int32_t> data;
-//         JSValue data_item_value;
-//         JSValue len_value = JS_GetPropertyStr(ctx, argv[0], "length");
-//         JS_ToInt32(ctx, &len, len_value);
+    for(int i=0; i<len1; i++) {
+        struct axis_data item;
+        item_value = JS_GetPropertyUint32(ctx, arg, i);
 
-//         for(int i=0; i<len; i++) {
-//             data_item_value = JS_GetPropertyUint32(ctx, argv[0], i);
-//             JS_ToInt32(ctx, &data_item, data_item_value);
-//             data.push_back(data_item);
-//             JS_FreeValue(ctx, data_item_value);
-//         }
-//         JS_FreeValue(ctx, len_value);
-        
-//         ((Chart*)(ref->comp))->setBottomAxisData(data);
-//         LV_LOG_USER("Chart %s setBottomAxisData", ref->getUid());
-//     }
-//     return JS_UNDEFINED;
-// };
+        color_value = JS_GetPropertyStr(ctx, item_value, "color");
+        data_value = JS_GetPropertyStr(ctx, item_value, "data");
+        len2_value = JS_GetPropertyStr(ctx, data_value, "length");
 
-// static JSValue NativeCompSetTopAxisData(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-//     if (argc >= 1 && JS_IsArray(argv[0])) {
-//         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ChartClassID);
+        JS_ToInt32(ctx, &color, color_value);
+        item.color = color;
 
-//         int32_t len, i, data_item;
-//         std::vector<int32_t> data;
-//         JSValue data_item_value;
-//         JSValue len_value = JS_GetPropertyStr(ctx, argv[0], "length");
-//         JS_ToInt32(ctx, &len, len_value);
+        JS_ToInt32(ctx, &len2, len2_value);
 
-//         for(int i=0; i<len; i++) {
-//             data_item_value = JS_GetPropertyUint32(ctx, argv[0], i);
-//             JS_ToInt32(ctx, &data_item, data_item_value);
-//             data.push_back(data_item);
-//             JS_FreeValue(ctx, data_item_value);
-//         }
-//         JS_FreeValue(ctx, len_value);
-        
-//         ((Chart*)(ref->comp))->setTopAxisData(data);
-//         LV_LOG_USER("Chart %s setTopAxisData", ref->getUid());
-//     }
-//     return JS_UNDEFINED;
-// };
+        for (int j=0; j<len2; j++) {
+            data_item_value = JS_GetPropertyUint32(ctx, data_value, j);
+            JS_ToInt32(ctx, &data_item, data_item_value);
+            item.data.push_back(data_item);
+            JS_FreeValue(ctx, data_item_value);
+        }
+
+        data.push_back(item);
+
+        JS_FreeValue(ctx, color_value);
+        JS_FreeValue(ctx, data_value);
+        JS_FreeValue(ctx, len2_value);
+        JS_FreeValue(ctx, item_value);
+    }
+    JS_FreeValue(ctx, len1_value);
+    return data;
+};
+
+static JSValue NativeCompSetBottomAxisData(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    if (argc >= 1 && JS_IsArray(argv[0])) {
+        COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ChartClassID);
+        std::vector<axis_data> data = ParseAxisDataArg(ctx, argv[0]);
+        ((Chart*)(ref->comp))->setBottomAxisData(data);
+        LV_LOG_USER("Chart %s setBottomAxisData", ref->getUid());
+    }
+    return JS_UNDEFINED;
+};
+
+static JSValue NativeCompSetTopAxisData(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    if (argc >= 1 && JS_IsArray(argv[0])) {
+        COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, ChartClassID);
+        std::vector<axis_data> data = ParseAxisDataArg(ctx, argv[0]);
+        ((Chart*)(ref->comp))->setTopAxisData(data);
+        LV_LOG_USER("Chart %s setTopAxisData", ref->getUid());
+    }
+    return JS_UNDEFINED;
+};
 
 static JSValue NativeCompSetLeftAxisData(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
     if (argc >= 1 && JS_IsArray(argv[0])) {
@@ -597,8 +611,8 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("setLeftAxisData", 0, NativeCompSetLeftAxisData),
     TJS_CFUNC_DEF("setRightAxisData", 0, NativeCompSetRightAxisData),
     TJS_CFUNC_DEF("setScatterData", 0, NativeCompSetScatterData),
-    // TJS_CFUNC_DEF("setTopAxisData", 0, NativeCompSetTopAxisData),
-    // TJS_CFUNC_DEF("setBottomAxisData", 0, NativeCompSetBottomAxisData),
+    TJS_CFUNC_DEF("setTopAxisData", 0, NativeCompSetTopAxisData),
+    TJS_CFUNC_DEF("setBottomAxisData", 0, NativeCompSetBottomAxisData),
     TJS_CFUNC_DEF("setType", 0, NativeCompSetType),
     TJS_CFUNC_DEF("setPointNum", 0, NativeCompSetPointNum),
     TJS_CFUNC_DEF("refresh", 0, NativeCompRefreshComponent),
