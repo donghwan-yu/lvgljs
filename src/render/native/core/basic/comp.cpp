@@ -154,7 +154,7 @@ void BasicComponent::setStyle(JSContext* ctx, JSValue& nativeStyle, int32_t type
 
     JSValue batch = JS_GetPropertyStr(ctx, nativeStyle, "batch");
     if (JS_IsObject(batch)) {
-        apply_style_props_batch(ctx, this->instance, style, batch, type);
+        apply_style_props_batch(ctx, styleTarget(type), style, batch, type);
     }
     JS_FreeValue(ctx, batch);
 
@@ -165,10 +165,10 @@ void BasicComponent::setStyle(JSContext* ctx, JSValue& nativeStyle, int32_t type
     JS_FreeValue(ctx, transition);
 
     if (is_new) {
-        lv_obj_add_style(this->instance, style, type);
+        lv_obj_add_style(styleTarget(type), style, type);
     }
 
-    lv_obj_refresh_style(this->instance, LV_PART_ANY, LV_STYLE_PROP_ANY);
+    lv_obj_refresh_style(styleTarget(type), LV_PART_ANY, LV_STYLE_PROP_ANY);
 };
 
 void BasicComponent::setBackgroundImage (uint8_t* buf, size_t buf_len, int32_t style_type, std::string& symbol) {

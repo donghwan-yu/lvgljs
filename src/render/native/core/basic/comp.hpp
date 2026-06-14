@@ -73,6 +73,7 @@ class BasicComponent {
   
     void initStyle (int32_t type);
     virtual void initCompStyle (int32_t type);
+    virtual lv_obj_t* styleTarget(int32_t type) { return this->instance; }
     void setStyle(JSContext* ctx, JSValue& nativeStyle, int32_t type, bool isinit = true);
     bool ensureStyle (int32_t type);
 
