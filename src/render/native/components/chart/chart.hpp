@@ -10,9 +10,21 @@ typedef struct axis_data {
   std::vector<int32_t> data;
 } axis_data;
 
+/** Chart plot padding; matches lv_chart draw area vs widget bounds. */
+struct ChartPlotInsets {
+  lv_coord_t left = 0;
+  lv_coord_t right = 0;
+  lv_coord_t top = 0;
+  lv_coord_t bottom = 0;
+  lv_coord_t plot_w = 0;
+  lv_coord_t plot_h = 0;
+};
+
 class Chart final : public BasicComponent {
  public:
   Chart(std::string uid, lv_obj_t* parent = nullptr);
+
+  static ChartPlotInsets getPlotInsets (lv_obj_t* chart);
 
   lv_obj_t* chart_obj = nullptr;
 

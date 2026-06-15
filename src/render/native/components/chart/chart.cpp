@@ -133,20 +133,17 @@ void Chart::syncScrollZoom() {
 
     lv_coord_t content_w = viewport_w;
     lv_coord_t content_h = viewport_h;
+    const ChartPlotInsets ins = Chart::getPlotInsets(chart);
     if (zoom_x) {
         // 8.2: virtual plot w = (lv_obj_get_content_width(chart) * zoom_x) >> 8
-        const lv_coord_t inset_w = static_cast<lv_coord_t>(
-            lv_obj_get_style_space_left(chart, LV_PART_MAIN)
-            + lv_obj_get_style_space_right(chart, LV_PART_MAIN));
+        const lv_coord_t inset_w = static_cast<lv_coord_t>(ins.left + ins.right);
         const lv_coord_t base_cw = static_cast<lv_coord_t>(viewport_w - inset_w);
         content_w = static_cast<lv_coord_t>(
             (((int32_t)base_cw * this->scale_x_value) >> 8) + inset_w);
     }
     if (zoom_y) {
         // 8.2: virtual plot h = (lv_obj_get_content_height(chart) * zoom_y) >> 8
-        const lv_coord_t inset_h = static_cast<lv_coord_t>(
-            lv_obj_get_style_space_top(chart, LV_PART_MAIN)
-            + lv_obj_get_style_space_bottom(chart, LV_PART_MAIN));
+        const lv_coord_t inset_h = static_cast<lv_coord_t>(ins.top + ins.bottom);
         const lv_coord_t base_ch = static_cast<lv_coord_t>(viewport_h - inset_h);
         content_h = static_cast<lv_coord_t>(
             (((int32_t)base_ch * this->scale_y_value) >> 8) + inset_h);
@@ -155,6 +152,18 @@ void Chart::syncScrollZoom() {
     lv_obj_set_size(chart, content_w, content_h);
 
     lv_obj_update_layout(main);
+}
+
+ChartPlotInsets Chart::getPlotInsets (lv_obj_t* chart) {
+    ChartPlotInsets ins;
+
+    ins.left = static_cast<lv_coord_t>(lv_obj_get_style_space_left(chart, LV_PART_MAIN));
+    ins.right = static_cast<lv_coord_t>(lv_obj_get_style_space_right(chart, LV_PART_MAIN));
+    ins.top = static_cast<lv_coord_t>(lv_obj_get_style_space_top(chart, LV_PART_MAIN));
+    ins.bottom = static_cast<lv_coord_t>(lv_obj_get_style_space_bottom(chart, LV_PART_MAIN));
+    ins.plot_w = lv_obj_get_content_width(chart);
+    ins.plot_h = lv_obj_get_content_height(chart);
+    return ins;
 }
 
 void Chart::setScaleX (int32_t value) {
