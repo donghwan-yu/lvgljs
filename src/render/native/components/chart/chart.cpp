@@ -47,14 +47,20 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     lv_obj_set_style_pad_all(this->instance, 0, LV_PART_MAIN);
     lv_obj_set_user_data(this->instance, this);
 
-    this->ensureScrollContent();
-    this->chart_obj = lv_chart_create(this->scroll_content);
+    this->virtual_box = lv_obj_create(this->instance);
+    LV_ASSERT_NULL(this->virtual_box);
+    lv_obj_remove_style_all(this->virtual_box);
+    lv_obj_set_flex_flow(this->virtual_box, LV_FLEX_FLOW_COLUMN);
+    lv_obj_clear_flag(this->virtual_box, LV_OBJ_FLAG_SCROLLABLE);
+
+    this->chart_obj = lv_chart_create(this->virtual_box);
     LV_ASSERT_NULL(this->chart_obj);
     lv_obj_set_style_radius(this->chart_obj, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(this->chart_obj, 0, LV_PART_MAIN);
     // Plot inset: default theme pad_small from lv_chart_create(); border on instance only.
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SIZE_CHANGED, this);
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_STYLE_CHANGED, this);
+    lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SCROLL, this);
 
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
@@ -132,20 +138,7 @@ void Chart::LayoutEventCallback(lv_event_t* event) {
     }
 }
 
-void Chart::ensureScrollContent() {
-    if (this->scroll_content != nullptr) {
-        return;
-    }
-
-    this->scroll_content = lv_obj_create(this->instance);
-    lv_obj_remove_style_all(this->scroll_content);
-    lv_obj_set_flex_flow(this->scroll_content, LV_FLEX_FLOW_COLUMN);
-    lv_obj_clear_flag(this->scroll_content, LV_OBJ_FLAG_SCROLLABLE);
-}
-
 void Chart::syncScrollZoom() {
-    this->ensureScrollContent();
-
     lv_obj_t* main = this->styleTargetMain();
     lv_obj_t* chart = this->styleTargetChart();
 
@@ -183,7 +176,7 @@ void Chart::syncScrollZoom() {
         content_h = static_cast<lv_coord_t>(
             (((int32_t)base_ch * this->scale_y_value) >> 8) + inset_h);
     }
-    lv_obj_set_size(this->scroll_content, content_w, content_h);
+    lv_obj_set_size(this->virtual_box, content_w, content_h);
     lv_obj_set_size(chart, content_w, content_h);
 
     lv_obj_update_layout(main);
@@ -191,7 +184,7 @@ void Chart::syncScrollZoom() {
 }
 
 lv_obj_t* Chart::scaleAnchor() const {
-    return this->styleTargetMain();
+    return this->virtual_box;
 }
 
 void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
@@ -201,11 +194,13 @@ void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
 
     lv_obj_t* wrapper = this->scaleAnchor();
     lv_obj_t* chart = this->styleTargetChart();
+    lv_obj_t* main = this->styleTargetMain();
 
-    lv_obj_t* outer = lv_obj_get_parent(wrapper);
-    if (outer != nullptr && lv_obj_get_parent(scale) != outer) {
-        lv_obj_set_parent(scale, outer);
+    if (lv_obj_get_parent(scale) != main) {
+        lv_obj_set_parent(scale, main);
     }
+    lv_obj_add_flag(scale, LV_OBJ_FLAG_FLOATING);
+    lv_obj_add_flag(scale, LV_OBJ_FLAG_IGNORE_LAYOUT);
 
     const PlotLayout plot = plotLayoutFromWrapperAndChart(wrapper, chart);
 
@@ -242,10 +237,10 @@ lv_obj_t* Chart::ensureScale (lv_obj_t** scale, lv_scale_mode_t mode) {
         return *scale;
     }
 
-    lv_obj_t* anchor = this->scaleAnchor();
-    lv_obj_t* outer = lv_obj_get_parent(anchor);
-    *scale = lv_scale_create(outer != nullptr ? outer : anchor);
+    lv_obj_t* main = this->styleTargetMain();
+    *scale = lv_scale_create(main);
     lv_obj_clear_flag(*scale, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(*scale, LV_OBJ_FLAG_FLOATING);
     lv_obj_add_flag(*scale, LV_OBJ_FLAG_IGNORE_LAYOUT);
     lv_scale_set_mode(*scale, mode);
     this->layoutScales();

@@ -36,10 +36,10 @@ class Chart final : public BasicComponent {
     LV_ASSERT_NULL(this->chart_obj);
     return this->chart_obj;
   }
-  /** Inner flex column (lv_example_chart_2 `wrapper`); scales/chart live here. */
+  /** Zoom/scroll content wrapper (lv_example_chart_2 `wrapper`); chart lives here. */
   lv_obj_t* styleTargetScrollContent() const {
-    LV_ASSERT_NULL(this->scroll_content);
-    return this->scroll_content;
+    LV_ASSERT_NULL(this->virtual_box);
+    return this->virtual_box;
   }
 
   std::vector<lv_chart_series_t*> left_axis;
@@ -117,7 +117,8 @@ class Chart final : public BasicComponent {
   lv_obj_t* styleTarget(int32_t type) override;
 
  private:
-  lv_obj_t* scroll_content = nullptr;
+  /** Transparent wrapper between targetMain and chart; sized for scaleX/scaleY zoom. */
+  lv_obj_t* virtual_box = nullptr;
 
   lv_obj_t* scale_left = nullptr;
   lv_obj_t* scale_right = nullptr;
@@ -147,7 +148,6 @@ class Chart final : public BasicComponent {
 
   bool chart_obj_events_attached = false;
 
-  void ensureScrollContent();
   void syncScrollZoom();
 
   lv_obj_t* scaleAnchor() const;
