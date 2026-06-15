@@ -170,7 +170,7 @@ void Chart::LayoutEventCallback(lv_event_t* event) {
 
     const lv_event_code_t code = lv_event_get_code(event);
     if (code == LV_EVENT_SCROLL) {
-        chart->layoutScales();
+        chart->syncAxisViewportScroll();
         return;
     }
 
@@ -370,8 +370,31 @@ lv_obj_t* Chart::scaleAnchor() const {
     return this->virtual_box;
 }
 
-void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
-    if (scale == nullptr) {
+void Chart::syncAxisViewportScroll() {
+    this->layoutScales();
+}
+
+lv_obj_t* Chart::ensureScaleViewport (lv_obj_t** viewport) {
+    if (*viewport != nullptr) {
+        return *viewport;
+    }
+
+    lv_obj_t* parent = this->scaleDrawParent();
+    *viewport = lv_obj_create(parent);
+    LV_ASSERT_NULL(*viewport);
+    lv_obj_set_style_pad_all(*viewport, 0, LV_PART_MAIN);
+    lv_obj_set_style_radius(*viewport, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(*viewport, 0, LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(*viewport, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_clear_flag(*viewport, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_scrollbar_mode(*viewport, LV_SCROLLBAR_MODE_OFF);
+    lv_obj_add_flag(*viewport, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_obj_set_user_data(*viewport, this);
+    return *viewport;
+}
+
+void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mode) {
+    if (scale == nullptr || viewport == nullptr) {
         return;
     }
 
@@ -379,58 +402,99 @@ void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
     lv_obj_t* chart = this->styleTargetChart();
     lv_obj_t* draw_parent = this->scaleDrawParent();
 
-    if (lv_obj_get_parent(scale) != draw_parent) {
-        lv_obj_set_parent(scale, draw_parent);
+    if (lv_obj_get_parent(viewport) != draw_parent) {
+        lv_obj_set_parent(viewport, draw_parent);
     }
-    lv_obj_add_flag(scale, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    if (lv_obj_get_parent(scale) != viewport) {
+        lv_obj_set_parent(scale, viewport);
+    }
 
     const PlotLayout plot = plotLayoutFromWrapperAndChart(wrapper, chart);
     const lv_coord_t scroll_x = lv_obj_get_scroll_left(wrapper);
     const lv_coord_t scroll_y = lv_obj_get_scroll_top(wrapper);
+    const lv_coord_t viewport_w = lv_obj_get_content_width(wrapper);
+    const lv_coord_t viewport_h = lv_obj_get_content_height(wrapper);
+    const bool zoom_x = this->scale_x_value > 256;
+    const bool zoom_y = this->scale_y_value > 256;
 
-    // Scales are children of targetMain; pad_* reserves gutters. Align outside virtual_box
-    // so ticks/labels sit in the pad bands (like 8.2 draw_size), not over the plot.
     switch (mode) {
         case LV_SCALE_MODE_VERTICAL_LEFT:
+            lv_obj_set_size(viewport, this->draw_left, viewport_h);
+            lv_obj_align_to(viewport, wrapper, LV_ALIGN_OUT_LEFT_TOP, 0, 0);
+            if (zoom_y) {
+                lv_obj_add_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            } else {
+                lv_obj_clear_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            }
+            lv_obj_set_width(scale, this->draw_left);
             lv_obj_set_height(scale, plot.h);
-            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_LEFT_TOP, 0, plot.rel_y - scroll_y);
+            lv_obj_set_pos(scale, 0, plot.rel_y);
+            lv_obj_scroll_to_y(viewport, scroll_y, LV_ANIM_OFF);
             break;
         case LV_SCALE_MODE_VERTICAL_RIGHT:
+            lv_obj_set_size(viewport, this->draw_right, viewport_h);
+            lv_obj_align_to(viewport, wrapper, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
+            if (zoom_y) {
+                lv_obj_add_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            } else {
+                lv_obj_clear_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            }
+            lv_obj_set_width(scale, this->draw_right);
             lv_obj_set_height(scale, plot.h);
-            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_RIGHT_TOP, 0, plot.rel_y - scroll_y);
+            lv_obj_set_pos(scale, 0, plot.rel_y);
+            lv_obj_scroll_to_y(viewport, scroll_y, LV_ANIM_OFF);
             break;
         case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
+            lv_obj_set_size(viewport, viewport_w, this->draw_bottom);
+            lv_obj_align_to(viewport, wrapper, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+            if (zoom_x) {
+                lv_obj_add_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            } else {
+                lv_obj_clear_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            }
             lv_obj_set_width(scale, plot.w);
-            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_BOTTOM_LEFT, plot.rel_x - scroll_x, 0);
+            lv_obj_set_height(scale, this->draw_bottom);
+            lv_obj_set_pos(scale, plot.rel_x, 0);
+            lv_obj_scroll_to_x(viewport, scroll_x, LV_ANIM_OFF);
             break;
         case LV_SCALE_MODE_HORIZONTAL_TOP:
+            lv_obj_set_size(viewport, viewport_w, this->draw_bottom);
+            lv_obj_align_to(viewport, wrapper, LV_ALIGN_OUT_TOP_LEFT, 0, 0);
+            if (zoom_x) {
+                lv_obj_add_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            } else {
+                lv_obj_clear_flag(viewport, LV_OBJ_FLAG_SCROLLABLE);
+            }
             lv_obj_set_width(scale, plot.w);
-            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_TOP_LEFT, plot.rel_x - scroll_x, 0);
+            lv_obj_set_height(scale, this->draw_bottom);
+            lv_obj_set_pos(scale, plot.rel_x, 0);
+            lv_obj_scroll_to_x(viewport, scroll_x, LV_ANIM_OFF);
             break;
         default:
             break;
     }
 
+    lv_obj_move_foreground(viewport);
     lv_obj_move_foreground(scale);
 }
 
 void Chart::layoutScales() {
     lv_obj_t* main = this->styleTargetMain();
 
-    this->layoutScale(this->scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
-    this->layoutScale(this->scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
-    this->layoutScale(this->scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+    this->layoutScale(this->scale_left, this->virtual_box_scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
+    this->layoutScale(this->scale_right, this->virtual_box_scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
+    this->layoutScale(this->scale_bottom, this->virtual_box_scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
 
     lv_obj_refresh_ext_draw_size(main);
 }
 
-lv_obj_t* Chart::ensureScale (lv_obj_t** scale, lv_scale_mode_t mode) {
+lv_obj_t* Chart::ensureScale (lv_obj_t** scale, lv_obj_t** viewport, lv_scale_mode_t mode) {
     if (*scale != nullptr) {
         return *scale;
     }
 
-    lv_obj_t* draw_parent = this->scaleDrawParent();
-    *scale = lv_scale_create(draw_parent);
+    this->ensureScaleViewport(viewport);
+    *scale = lv_scale_create(*viewport);
     lv_obj_clear_flag(*scale, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(*scale, LV_OBJ_FLAG_IGNORE_LAYOUT);
     lv_scale_set_mode(*scale, mode);
@@ -584,7 +648,7 @@ void Chart::setLeftAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    lv_obj_t* scale = this->ensureScale(&this->scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
+    lv_obj_t* scale = this->ensureScale(&this->scale_left, &this->virtual_box_scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
     if (!this->left_axis_labels.empty()) {
         this->configureCategoryScale(
             scale, LV_SCALE_MODE_VERTICAL_LEFT, major_len, minor_len, draw_size,
@@ -606,7 +670,7 @@ void Chart::setRightAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    lv_obj_t* scale = this->ensureScale(&this->scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
+    lv_obj_t* scale = this->ensureScale(&this->scale_right, &this->virtual_box_scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
     if (!this->right_axis_labels.empty()) {
         this->configureCategoryScale(
             scale, LV_SCALE_MODE_VERTICAL_RIGHT, major_len, minor_len, draw_size,
@@ -642,7 +706,7 @@ void Chart::setBottomAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    lv_obj_t* scale = this->ensureScale(&this->scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+    lv_obj_t* scale = this->ensureScale(&this->scale_bottom, &this->virtual_box_scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
     if (!this->bottom_axis_labels.empty()) {
         this->configureCategoryScale(
             scale, LV_SCALE_MODE_HORIZONTAL_BOTTOM, major_len, minor_len, draw_size,

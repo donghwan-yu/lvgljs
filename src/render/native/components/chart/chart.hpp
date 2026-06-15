@@ -124,8 +124,13 @@ class Chart final : public BasicComponent {
   lv_obj_t* styleTarget(int32_t type) override;
 
  private:
-  /** Transparent wrapper between targetMain and chart; sized for scaleX/scaleY zoom. */
+  /** Plot scroll viewport; chart_obj lives here. */
   lv_obj_t* virtual_box = nullptr;
+  /** Axis scroll viewports: clip gutter layout; scale inside matches zoomed plot extent. */
+  lv_obj_t* virtual_box_scale_left = nullptr;
+  lv_obj_t* virtual_box_scale_right = nullptr;
+  lv_obj_t* virtual_box_scale_bottom = nullptr;
+  lv_obj_t* virtual_box_scale_top = nullptr;
 
   lv_obj_t* scale_left = nullptr;
   lv_obj_t* scale_right = nullptr;
@@ -164,12 +169,14 @@ class Chart final : public BasicComponent {
 
   void syncScrollZoom();
   void syncChartBarSpacing();
+  void syncAxisViewportScroll();
   void applyMainLayoutFromStyle (int32_t type);
   void syncPlotFrameClip();
 
   lv_obj_t* scaleDrawParent() const;
   lv_obj_t* scaleAnchor() const;
-  lv_obj_t* ensureScale (lv_obj_t** scale, lv_scale_mode_t mode);
+  lv_obj_t* ensureScaleViewport (lv_obj_t** viewport);
+  lv_obj_t* ensureScale (lv_obj_t** scale, lv_obj_t** viewport, lv_scale_mode_t mode);
   void configureNumericScale (
     lv_obj_t* scale,
     lv_scale_mode_t mode,
@@ -192,7 +199,7 @@ class Chart final : public BasicComponent {
     std::vector<std::string>& labels,
     std::vector<const char*>& ptrs
   );
-  void layoutScale (lv_obj_t* scale, lv_scale_mode_t mode);
+  void layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mode);
   void layoutScales ();
 
   static void ChartEventCallback(lv_event_t* event);
