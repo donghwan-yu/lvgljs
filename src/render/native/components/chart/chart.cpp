@@ -1,5 +1,6 @@
 #include "./chart.hpp"
 
+#include "component.hpp"
 #include "native/core/event/event.hpp"
 #include <lvgl.h>
 
@@ -67,7 +68,7 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     LV_ASSERT_NULL(this->chart_obj);
     lv_obj_set_style_radius(this->chart_obj, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(this->chart_obj, 0, LV_PART_MAIN);
-    // Plot inset: theme pad_small on chart_obj; border/radius on virtual_box (plot frame).
+    // Plot inset: theme pad_small on chart_obj; bar spacing in syncChartBarSpacing().
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SIZE_CHANGED, this);
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_STYLE_CHANGED, this);
 
@@ -338,10 +339,27 @@ void Chart::syncScrollZoom() {
 
     // virtual_box fills instance; chart is the zoomed scroll content inside it.
     lv_obj_set_size(chart, content_w, content_h);
+    this->syncChartBarSpacing();
 
     lv_obj_update_layout(main);
     this->layoutScales();
     this->syncing_scroll_zoom = false;
+}
+
+void Chart::syncChartBarSpacing() {
+    lv_obj_t* chart = this->styleTargetChart();
+    // 8.2 theme: chart_bg MAIN pad_column=10, chart_series ITEMS pad_column=2 (DPX).
+    const lv_coord_t base_block_gap = lv_dpx(10);
+    const lv_coord_t base_ser_gap = lv_dpx(2);
+    lv_coord_t block_gap = base_block_gap;
+    lv_coord_t ser_gap = base_ser_gap;
+    // 8.2 scaled gaps in draw: (pad_column * zoom_x) >> 8. Chart width is already zoomed here.
+    if (this->scale_x_value > 256) {
+        block_gap = static_cast<lv_coord_t>(((int32_t)base_block_gap * this->scale_x_value) >> 8);
+        ser_gap = static_cast<lv_coord_t>(((int32_t)base_ser_gap * this->scale_x_value) >> 8);
+    }
+    lv_obj_set_style_pad_column(chart, block_gap, LV_PART_MAIN);
+    lv_obj_set_style_pad_column(chart, ser_gap, LV_PART_ITEMS);
 }
 
 lv_obj_t* Chart::scaleDrawParent() const {

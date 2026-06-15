@@ -163,6 +163,7 @@ class Chart final : public BasicComponent {
   bool syncing_scroll_zoom = false;
 
   void syncScrollZoom();
+  void syncChartBarSpacing();
   void applyMainLayoutFromStyle (int32_t type);
   void syncPlotFrameClip();
 
