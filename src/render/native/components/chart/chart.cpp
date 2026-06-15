@@ -1,5 +1,7 @@
 #include "./chart.hpp"
 
+#include "native/core/event/event.hpp"
+
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_CHART;
 
@@ -39,6 +41,51 @@ lv_obj_t* Chart::styleTarget(int32_t type) {
         return this->styleTargetChart();
     }
     return this->styleTargetMain();
+}
+
+void Chart::ChartEventCallback(lv_event_t* event) {
+    Chart* chart = static_cast<Chart*>(lv_event_get_user_data(event));
+    if (chart == nullptr || lv_event_get_code(event) != LV_EVENT_VALUE_CHANGED) {
+        return;
+    }
+
+    lv_obj_t* chart_obj = chart->styleTargetChart();
+    if (chart_obj == nullptr || !chart->isEventRegist(LV_EVENT_PRESSED)) {
+        return;
+    }
+
+    if (lv_chart_get_pressed_point(chart_obj) == LV_CHART_POINT_NONE) {
+        return;
+    }
+
+    FireEventToJS(event, chart->uid, LV_EVENT_PRESSED);
+}
+
+void Chart::syncChartObjEventListener() {
+    lv_obj_t* chart_obj = this->styleTargetChart();
+    if (chart_obj == nullptr) {
+        return;
+    }
+
+    bool need_chart_cb = this->isEventRegist(LV_EVENT_PRESSED);
+
+    if (need_chart_cb && !this->chart_obj_events_attached) {
+        lv_obj_add_event_cb(chart_obj, &Chart::ChartEventCallback, LV_EVENT_VALUE_CHANGED, this);
+        this->chart_obj_events_attached = true;
+    } else if (!need_chart_cb && this->chart_obj_events_attached) {
+        lv_obj_remove_event_cb(chart_obj, &Chart::ChartEventCallback);
+        this->chart_obj_events_attached = false;
+    }
+}
+
+void Chart::addEventListener(int eventType) {
+    BasicComponent::addEventListener(eventType);
+    this->syncChartObjEventListener();
+}
+
+void Chart::removeEventListener(int eventType) {
+    BasicComponent::removeEventListener(eventType);
+    this->syncChartObjEventListener();
 }
 
 void Chart::setScaleX (int32_t value) {

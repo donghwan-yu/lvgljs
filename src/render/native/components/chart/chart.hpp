@@ -93,5 +93,14 @@ class Chart final : public BasicComponent {
   void setScaleX (int32_t value);
   void setScaleY (int32_t value);
 
+  void addEventListener(int eventType);
+  void removeEventListener(int eventType);
+
   lv_obj_t* styleTarget(int32_t type) override;
+
+ private:
+  bool chart_obj_events_attached = false;
+
+  static void ChartEventCallback(lv_event_t* event);
+  void syncChartObjEventListener();
 };
