@@ -2,40 +2,6 @@
 
 #include "native/core/event/event.hpp"
 
-namespace {
-
-uint32_t maxLinePointCount(const std::vector<axis_data>& data) {
-    uint32_t max_count = 0;
-    for (const auto& item : data) {
-        if (item.data.size() > max_count) {
-            max_count = static_cast<uint32_t>(item.data.size());
-        }
-    }
-    return max_count;
-}
-
-uint32_t maxScatterPointCount(const std::vector<axis_data>& data) {
-    uint32_t max_count = 0;
-    for (const auto& item : data) {
-        uint32_t pair_count = static_cast<uint32_t>(item.data.size() / 2);
-        if (pair_count > max_count) {
-            max_count = pair_count;
-        }
-    }
-    return max_count;
-}
-
-void ensurePointCount(lv_obj_t* chart, uint32_t count) {
-    if (count == 0) {
-        return;
-    }
-    if (lv_chart_get_point_count(chart) != count) {
-        lv_chart_set_point_count(chart, count);
-    }
-}
-
-}  // namespace
-
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_CHART;
 
@@ -260,7 +226,6 @@ void Chart::setBottomAxisOption (
 void Chart::setLeftAxisData (std::vector<axis_data>& data) {
     lv_obj_t* chart = this->styleTargetChart();
 
-    ensurePointCount(chart, maxLinePointCount(data));
     uint32_t point_count = lv_chart_get_point_count(chart);
 
     for (size_t i = 0; i < this->left_axis.size(); i++) {
@@ -295,7 +260,6 @@ void Chart::setLeftAxisData (std::vector<axis_data>& data) {
 void Chart::setRightAxisData (std::vector<axis_data>& data) {
     lv_obj_t* chart = this->styleTargetChart();
 
-    ensurePointCount(chart, maxLinePointCount(data));
     uint32_t point_count = lv_chart_get_point_count(chart);
 
     for (size_t i = 0; i < this->right_axis.size(); i++) {
@@ -389,7 +353,6 @@ void Chart::setBottomAxisRange (int32_t min, int32_t max) {
 void Chart::setScatterData (std::vector<axis_data>& data) {
     lv_obj_t* chart = this->styleTargetChart();
 
-    ensurePointCount(chart, maxScatterPointCount(data));
     uint32_t point_count = lv_chart_get_point_count(chart);
 
     for (size_t i = 0; i < this->scatter_series.size(); i++) {
