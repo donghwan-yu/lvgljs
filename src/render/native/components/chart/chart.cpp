@@ -44,23 +44,28 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
 
     this->instance = lv_obj_create(parent_obj);
     LV_ASSERT_NULL(this->instance);
-    lv_obj_remove_style_all(this->instance);
-    lv_obj_set_flex_flow(this->instance, LV_FLEX_FLOW_COLUMN);
+    // main_cont: default theme border/scroll; zero pad so inner content fills the frame.
+    lv_obj_set_style_pad_all(this->instance, 0, LV_PART_MAIN);
     lv_obj_set_user_data(this->instance, this);
 
-    this->chart_obj = lv_chart_create(this->instance);
+    this->ensureScrollContent();
+    this->chart_obj = lv_chart_create(this->scroll_content);
     LV_ASSERT_NULL(this->chart_obj);
-    lv_obj_set_width(this->chart_obj, lv_pct(100));
-    lv_obj_set_flex_grow(this->chart_obj, 1);
+    lv_obj_set_style_radius(this->chart_obj, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(this->chart_obj, 0, LV_PART_MAIN);
+    // Plot inset: default theme pad_small from lv_chart_create(); border on instance only.
+    lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SIZE_CHANGED, this);
 
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
     lv_obj_add_flag(this->chart_obj, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_add_flag(this->chart_obj, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+    lv_obj_clear_flag(this->chart_obj, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_clear_flag(this->chart_obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
     lv_obj_set_user_data(this->chart_obj, this);
 
     this->initStyle(LV_PART_MAIN);
+    this->syncScrollZoom();
 };
 
 lv_obj_t* Chart::styleTarget(int32_t type) {
@@ -119,50 +124,73 @@ void Chart::removeEventListener(int eventType) {
     this->syncChartObjEventListener();
 }
 
-void Chart::setScaleX (int32_t value) {
-    lv_obj_t* wrapper = this->styleTargetMain();
-    lv_obj_t* chart = this->styleTargetChart();
-
-    // value is chart-scaleX from NormalizeScale (256 = 1.0, e.g. scaleX(3) -> 768).
-    float factor = value / 256.0f;
-
-    if (factor > 1.0f) {
-        lv_obj_add_flag(wrapper, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_set_scroll_dir(wrapper, (lv_dir_t)(lv_obj_get_scroll_dir(wrapper) | LV_DIR_HOR));
-        lv_obj_set_flex_grow(chart, 1);
-        lv_obj_set_width(chart, lv_pct((int32_t)(factor * 100.0f)));
-    } else {
-        lv_obj_set_width(chart, lv_pct(100));
-        lv_obj_set_flex_grow(chart, 1);
-        lv_dir_t dir = (lv_dir_t)(lv_obj_get_scroll_dir(wrapper) & ~LV_DIR_HOR);
-        lv_obj_set_scroll_dir(wrapper, dir);
-        if (dir == LV_DIR_NONE) {
-            lv_obj_clear_flag(wrapper, LV_OBJ_FLAG_SCROLLABLE);
-        }
+void Chart::LayoutEventCallback(lv_event_t* event) {
+    Chart* chart = static_cast<Chart*>(lv_event_get_user_data(event));
+    if (chart != nullptr) {
+        chart->syncScrollZoom();
     }
 }
 
-void Chart::setScaleY (int32_t value) {
-    lv_obj_t* wrapper = this->styleTargetMain();
+void Chart::ensureScrollContent() {
+    if (this->scroll_content != nullptr) {
+        return;
+    }
+
+    this->scroll_content = lv_obj_create(this->instance);
+    lv_obj_remove_style_all(this->scroll_content);
+    lv_obj_set_flex_flow(this->scroll_content, LV_FLEX_FLOW_COLUMN);
+    lv_obj_clear_flag(this->scroll_content, LV_OBJ_FLAG_SCROLLABLE);
+}
+
+void Chart::syncScrollZoom() {
+    this->ensureScrollContent();
+
+    lv_obj_t* main = this->styleTargetMain();
     lv_obj_t* chart = this->styleTargetChart();
 
-    // value is chart-scaleY from NormalizeScale (256 = 1.0, e.g. scaleY(2) -> 512).
-    float factor = value / 256.0f;
+    lv_obj_update_layout(main);
 
-    if (factor > 1.0f) {
-        lv_obj_add_flag(wrapper, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_set_scroll_dir(wrapper, (lv_dir_t)(lv_obj_get_scroll_dir(wrapper) | LV_DIR_VER));
-        lv_obj_set_flex_grow(chart, 1);
-        lv_obj_set_height(chart, lv_pct((int32_t)(factor * 100.0f)));
-    } else {
-        lv_obj_set_height(chart, lv_pct(100));
-        lv_obj_set_flex_grow(chart, 1);
-        lv_dir_t dir = (lv_dir_t)(lv_obj_get_scroll_dir(wrapper) & ~LV_DIR_VER);
-        lv_obj_set_scroll_dir(wrapper, dir);
-        if (dir == LV_DIR_NONE) {
-            lv_obj_clear_flag(wrapper, LV_OBJ_FLAG_SCROLLABLE);
-        }
+    lv_coord_t viewport_w = lv_obj_get_content_width(main);
+    lv_coord_t viewport_h = lv_obj_get_content_height(main);
+    if (viewport_w <= 0 || viewport_h <= 0) {
+        return;
     }
+
+    const bool zoom_x = this->scale_x_factor > 1.0f;
+    const bool zoom_y = this->scale_y_factor > 1.0f;
+
+    if (zoom_x || zoom_y) {
+        lv_obj_add_flag(main, LV_OBJ_FLAG_SCROLLABLE);
+    } else {
+        lv_obj_clear_flag(main, LV_OBJ_FLAG_SCROLLABLE);
+    }
+
+    lv_coord_t content_w = viewport_w;
+    lv_coord_t content_h = viewport_h;
+    if (zoom_x) {
+        content_w = static_cast<lv_coord_t>(viewport_w * this->scale_x_factor);
+    }
+    if (zoom_y) {
+        content_h = static_cast<lv_coord_t>(viewport_h * this->scale_y_factor);
+    }
+
+    lv_obj_set_size(this->scroll_content, content_w, content_h);
+
+    lv_obj_set_size(chart, content_w, content_h);
+
+    lv_obj_update_layout(main);
+}
+
+void Chart::setScaleX (int32_t value) {
+    // value is chart-scaleX from NormalizeScale (256 = 1.0, e.g. scaleX(3) -> 768).
+    this->scale_x_factor = value / 256.0f;
+    this->syncScrollZoom();
+}
+
+void Chart::setScaleY (int32_t value) {
+    // value is chart-scaleY from NormalizeScale (256 = 1.0, e.g. scaleY(2) -> 512).
+    this->scale_y_factor = value / 256.0f;
+    this->syncScrollZoom();
 }
 
 void Chart::setType (int32_t type) {
