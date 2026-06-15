@@ -1,6 +1,7 @@
 #include "./select.hpp"
 
 #include "engine.hpp"
+#include "native/components/chart/chart.hpp"
 
 WRAPPED_STOPPROPAGATION
 
@@ -22,11 +23,13 @@ static JSValue GetValue (JSContext* ctx, JSValueConst this_val) {
 
     switch (comp_type)
     {
-        case COMP_TYPE_CHART:
-            value_num = lv_chart_get_pressed_point(comp->instance);
+        case COMP_TYPE_CHART: {
+            Chart* chart = static_cast<Chart*>(comp);
+            lv_obj_t* chart_obj = chart->styleTargetChart();
+            value_num = lv_chart_get_pressed_point(chart_obj);
             if(value_num == LV_CHART_POINT_NONE) break;
             return JS_NewInt32(ctx, value_num);
-            break;
+        }
     }
 
     return JS_UNDEFINED;

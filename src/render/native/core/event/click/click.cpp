@@ -1,6 +1,7 @@
 #include "./click.hpp"
 
 #include "engine.hpp"
+#include "native/components/chart/chart.hpp"
 
 static JSClassID WrapClickEventID;
 
@@ -22,11 +23,13 @@ static JSValue GetPressedPoint (JSContext* ctx, JSValueConst this_val) {
 
     switch (comp_type)
     {
-        case COMP_TYPE_CHART:
-            value_num = lv_chart_get_pressed_point(comp->instance);
+        case COMP_TYPE_CHART: {
+            Chart* chart = static_cast<Chart*>(comp);
+            lv_obj_t* chart_obj = chart->styleTargetChart();
+            value_num = lv_chart_get_pressed_point(chart_obj);
             if(value_num == LV_CHART_POINT_NONE) break;
             return JS_NewInt32(ctx, value_num);
-            break;
+        }
     }
 
     return JS_UNDEFINED;
@@ -40,29 +43,33 @@ static JSValue GetPressedPointPos (JSContext* ctx, JSValueConst this_val) {
 
     switch (comp_type)
     {
-        case COMP_TYPE_CHART:
-            id = lv_chart_get_pressed_point(comp->instance);
+        case COMP_TYPE_CHART: {
+            Chart* chart = static_cast<Chart*>(comp);
+            lv_obj_t* chart_obj = chart->styleTargetChart();
+            id = lv_chart_get_pressed_point(chart_obj);
             if(id == LV_CHART_POINT_NONE) break;
             JSValue result = JS_NewArray(ctx);
             uint32_t i = 0;
+            lv_coord_t scroll_x = lv_obj_get_scroll_x(chart->styleTargetMain());
+            lv_coord_t scroll_y = lv_obj_get_scroll_y(chart->styleTargetMain());
 
-            lv_chart_series_t* ser = lv_chart_get_series_next(comp->instance, NULL);
+            lv_chart_series_t* ser = lv_chart_get_series_next(chart_obj, NULL);
 
             while (ser) {
                 lv_point_t p;
                 JSValue obj = JS_NewObject(ctx);
-                lv_chart_get_point_pos_by_id(comp->instance, ser, id, &p);
-                
-                JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, p.x));
-                JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, p.y));
+                lv_chart_get_point_pos_by_id(chart_obj, ser, id, &p);
+
+                JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, p.x - scroll_x));
+                JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, p.y - scroll_y));
 
                 JS_SetPropertyUint32(ctx, result, i, obj);
                 i++;
-                ser = lv_chart_get_series_next(comp->instance, ser);
+                ser = lv_chart_get_series_next(chart_obj, ser);
             }
 
             return result;
-            break;
+        }
     }
 
     return JS_UNDEFINED;

@@ -21,7 +21,9 @@ void FireEventToJS(lv_event_t* event, std::string uid, lv_event_code_t eventType
     if (target_instance) {
         target_uid = target_instance->uid;
     }
-    current_target_uid = current_target_instance->uid;
+    if (current_target_instance) {
+        current_target_uid = current_target_instance->uid;
+    }
 
     if (iter != WrapEventDict.end()) {
         EventWrapFunc func = iter->second;
@@ -31,7 +33,11 @@ void FireEventToJS(lv_event_t* event, std::string uid, lv_event_code_t eventType
         } else {
             argv[0] = JS_UNDEFINED;
         }
-        argv[1] = JS_NewString(ctx, current_target_uid.c_str());
+        if (current_target_instance) {
+            argv[1] = JS_NewString(ctx, current_target_uid.c_str());
+        } else {
+            argv[1] = JS_UNDEFINED;
+        }
         argv[2] = JS_NewInt32(ctx, eventType);
         if (func != nullptr) {
             argv[3] = func(event, uid);

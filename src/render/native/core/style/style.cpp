@@ -6,6 +6,7 @@
 #include "native/core/lv_conf/lv_style_prop_extend.h"
 #include "native/core/style/font/font.hpp"
 #include "native/core/basic/comp.hpp"
+#include "native/components/chart/chart.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -274,17 +275,31 @@ static void CompSetTransformOrigin (lv_obj_t* comp, lv_style_t* style, JSContext
 };
 
 static void CompSetChartScaleX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    (void)comp;
     (void)style;
-    (void)ctx;
-    (void)obj;
+    // chart-scaleX from trans.ts NormalizeScale: 256 = scale 1.0 (same as LVGL image zoom).
+    // Default before JS_ToInt32 so a parse failure leaves zoom at 1.0.
+    int value = 256;
+    JS_ToInt32(ctx, &value, obj);
+
+    Chart* chart = static_cast<Chart*>(lv_obj_get_user_data(comp));
+    if (chart == nullptr || chart->type != COMP_TYPE_CHART) {
+        return;
+    }
+    chart->setScaleX(value);
 };
 
 static void CompSetChartScaleY (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
-    (void)comp;
     (void)style;
-    (void)ctx;
-    (void)obj;
+    // chart-scaleY from trans.ts NormalizeScale: 256 = scale 1.0 (same as LVGL image zoom).
+    // Default before JS_ToInt32 so a parse failure leaves zoom at 1.0.
+    int value = 256;
+    JS_ToInt32(ctx, &value, obj);
+
+    Chart* chart = static_cast<Chart*>(lv_obj_get_user_data(comp));
+    if (chart == nullptr || chart->type != COMP_TYPE_CHART) {
+        return;
+    }
+    chart->setScaleY(value);
 };
 
 void CompSetTransition (

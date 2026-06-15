@@ -14,6 +14,17 @@ class Chart final : public BasicComponent {
  public:
   Chart(std::string uid, lv_obj_t* parent = nullptr);
 
+  lv_obj_t* chart_obj = nullptr;
+
+  lv_obj_t* styleTargetMain() const {
+    LV_ASSERT_NULL(this->instance);
+    return this->instance;
+  }
+  lv_obj_t* styleTargetChart() const {
+    LV_ASSERT_NULL(this->chart_obj);
+    return this->chart_obj;
+  }
+
   std::vector<lv_chart_series_t*> left_axis;
   std::vector<lv_chart_series_t*> bottom_axis;
   std::vector<lv_chart_series_t*> right_axis;
@@ -78,4 +89,9 @@ class Chart final : public BasicComponent {
   void setPointNum (int32_t num);
 
   void setDivLineCount (int32_t hdiv, int32_t vdiv);
+
+  void setScaleX (int32_t value);
+  void setScaleY (int32_t value);
+
+  lv_obj_t* styleTarget(int32_t type) override;
 };
