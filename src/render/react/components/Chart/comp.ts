@@ -66,7 +66,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
         styleSheet,
         compName: "Chart",
         styleType: STYLE_TYPE.PART_INDICATOR,
-        oldStyleSheet: oldProps.pointStyle,
+        oldStyleSheet: oldProps.indicatorStyle,
       });
     },
     itemStyle(styleSheet) {
@@ -75,7 +75,7 @@ function setChartProps(comp, newProps: ChartProps, oldProps: ChartProps) {
         styleSheet,
         compName: "Chart",
         styleType: STYLE_TYPE.PART_ITEMS,
-        oldStyleSheet: oldProps.pointStyle,
+        oldStyleSheet: oldProps.itemStyle,
       });
     },
     type(type) {
