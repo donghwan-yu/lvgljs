@@ -34,6 +34,12 @@ PlotLayout plotLayoutFromWrapperAndChart (lv_obj_t* wrapper, lv_obj_t* chart) {
     return plot;
 }
 
+/** Place zoomed scale in axis viewport: plot origin tracks wrapper scroll via rel_x/rel_y. */
+void placeScaleInAxisViewport (lv_obj_t* scale, lv_obj_t* viewport, lv_coord_t x, lv_coord_t y) {
+    lv_obj_set_pos(scale, x, y);
+    lv_obj_scroll_to(viewport, 0, 0, LV_ANIM_OFF);
+}
+
 } // namespace
 
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
@@ -170,7 +176,7 @@ void Chart::LayoutEventCallback(lv_event_t* event) {
 
     const lv_event_code_t code = lv_event_get_code(event);
     if (code == LV_EVENT_SCROLL) {
-        chart->syncAxisViewportScroll();
+        chart->syncAxisScaleLayout();
         return;
     }
 
@@ -370,7 +376,7 @@ lv_obj_t* Chart::scaleAnchor() const {
     return this->virtual_box;
 }
 
-void Chart::syncAxisViewportScroll() {
+void Chart::syncAxisScaleLayout() {
     this->layoutScales();
 }
 
@@ -410,8 +416,6 @@ void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mo
     }
 
     const PlotLayout plot = plotLayoutFromWrapperAndChart(wrapper, chart);
-    const lv_coord_t scroll_x = lv_obj_get_scroll_left(wrapper);
-    const lv_coord_t scroll_y = lv_obj_get_scroll_top(wrapper);
     const lv_coord_t viewport_w = lv_obj_get_content_width(wrapper);
     const lv_coord_t viewport_h = lv_obj_get_content_height(wrapper);
     const bool zoom_x = this->scale_x_value > 256;
@@ -428,8 +432,7 @@ void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mo
             }
             lv_obj_set_width(scale, this->draw_left);
             lv_obj_set_height(scale, plot.h);
-            lv_obj_set_pos(scale, 0, plot.rel_y);
-            lv_obj_scroll_to_y(viewport, scroll_y, LV_ANIM_OFF);
+            placeScaleInAxisViewport(scale, viewport, 0, plot.rel_y);
             break;
         case LV_SCALE_MODE_VERTICAL_RIGHT:
             lv_obj_set_size(viewport, this->draw_right, viewport_h);
@@ -441,8 +444,7 @@ void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mo
             }
             lv_obj_set_width(scale, this->draw_right);
             lv_obj_set_height(scale, plot.h);
-            lv_obj_set_pos(scale, 0, plot.rel_y);
-            lv_obj_scroll_to_y(viewport, scroll_y, LV_ANIM_OFF);
+            placeScaleInAxisViewport(scale, viewport, 0, plot.rel_y);
             break;
         case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
             lv_obj_set_size(viewport, viewport_w, this->draw_bottom);
@@ -454,8 +456,7 @@ void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mo
             }
             lv_obj_set_width(scale, plot.w);
             lv_obj_set_height(scale, this->draw_bottom);
-            lv_obj_set_pos(scale, plot.rel_x, 0);
-            lv_obj_scroll_to_x(viewport, scroll_x, LV_ANIM_OFF);
+            placeScaleInAxisViewport(scale, viewport, plot.rel_x, 0);
             break;
         case LV_SCALE_MODE_HORIZONTAL_TOP:
             lv_obj_set_size(viewport, viewport_w, this->draw_bottom);
@@ -467,8 +468,7 @@ void Chart::layoutScale (lv_obj_t* scale, lv_obj_t* viewport, lv_scale_mode_t mo
             }
             lv_obj_set_width(scale, plot.w);
             lv_obj_set_height(scale, this->draw_bottom);
-            lv_obj_set_pos(scale, plot.rel_x, 0);
-            lv_obj_scroll_to_x(viewport, scroll_x, LV_ANIM_OFF);
+            placeScaleInAxisViewport(scale, viewport, plot.rel_x, 0);
             break;
         default:
             break;

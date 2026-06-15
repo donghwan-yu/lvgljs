@@ -126,7 +126,7 @@ class Chart final : public BasicComponent {
  private:
   /** Plot scroll viewport; chart_obj lives here. */
   lv_obj_t* virtual_box = nullptr;
-  /** Axis scroll viewports: clip gutter layout; scale inside matches zoomed plot extent. */
+  /** Axis clip viewports in gutter layout; scale inside matches zoomed plot extent. */
   lv_obj_t* virtual_box_scale_left = nullptr;
   lv_obj_t* virtual_box_scale_right = nullptr;
   lv_obj_t* virtual_box_scale_bottom = nullptr;
@@ -169,7 +169,7 @@ class Chart final : public BasicComponent {
 
   void syncScrollZoom();
   void syncChartBarSpacing();
-  void syncAxisViewportScroll();
+  void syncAxisScaleLayout();
   void applyMainLayoutFromStyle (int32_t type);
   void syncPlotFrameClip();
 
