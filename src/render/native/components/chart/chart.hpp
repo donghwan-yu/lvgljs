@@ -41,6 +41,13 @@ class Chart final : public BasicComponent {
     LV_ASSERT_NULL(this->virtual_box);
     return this->virtual_box;
   }
+  /** Plot frame: MAIN styles (radius, border, bg) target here; not targetMain. */
+  lv_obj_t* styleTargetVirtual() const {
+    return this->styleTargetScrollContent();
+  }
+
+  void initStyle (int32_t type);
+  void setStyle (JSContext* ctx, JSValue& nativeStyle, int32_t type, bool isinit = true) override;
 
   std::vector<lv_chart_series_t*> left_axis;
   std::vector<lv_chart_series_t*> bottom_axis;
@@ -156,6 +163,8 @@ class Chart final : public BasicComponent {
   bool syncing_scroll_zoom = false;
 
   void syncScrollZoom();
+  void applyMainLayoutFromStyle (int32_t type);
+  void syncPlotFrameClip();
 
   lv_obj_t* scaleDrawParent() const;
   lv_obj_t* scaleAnchor() const;

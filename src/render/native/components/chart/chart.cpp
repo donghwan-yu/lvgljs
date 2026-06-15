@@ -43,8 +43,11 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
 
     this->instance = lv_obj_create(parent_obj);
     LV_ASSERT_NULL(this->instance);
-    // main_cont: fixed viewport frame; scroll lives on virtual_box, not here.
+    // main_cont: outer axis shell only; no theme frame (border/bg/radius on virtual_box).
     lv_obj_set_style_pad_all(this->instance, 0, LV_PART_MAIN);
+    lv_obj_set_style_radius(this->instance, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(this->instance, 0, LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(this->instance, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_clear_flag(this->instance, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_flag(this->instance, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
     lv_obj_set_style_clip_corner(this->instance, false, LV_PART_MAIN);
@@ -52,17 +55,19 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
 
     this->virtual_box = lv_obj_create(this->instance);
     LV_ASSERT_NULL(this->virtual_box);
-    lv_obj_remove_style_all(this->virtual_box);
+    // Theme card (border, bg, radius) applies on create; pad 0 so lv_pct(100) fills plot area.
+    lv_obj_set_style_pad_all(this->virtual_box, 0, LV_PART_MAIN);
     lv_obj_set_width(this->virtual_box, lv_pct(100));
     lv_obj_set_height(this->virtual_box, lv_pct(100));
     lv_obj_clear_flag(this->virtual_box, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_user_data(this->virtual_box, this);
     lv_obj_add_event_cb(this->virtual_box, &Chart::LayoutEventCallback, LV_EVENT_SCROLL, this);
 
     this->chart_obj = lv_chart_create(this->virtual_box);
     LV_ASSERT_NULL(this->chart_obj);
     lv_obj_set_style_radius(this->chart_obj, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(this->chart_obj, 0, LV_PART_MAIN);
-    // Plot inset: default theme pad_small from lv_chart_create(); border on instance only.
+    // Plot inset: theme pad_small on chart_obj; border/radius on virtual_box (plot frame).
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SIZE_CHANGED, this);
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_STYLE_CHANGED, this);
 
@@ -78,6 +83,28 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->syncScrollZoom();
 };
 
+void Chart::initStyle (int32_t type) {
+    bool is_new = this->ensureStyle(type);
+    lv_style_t* style = this->style_map.at(type);
+    lv_style_init(style);
+    lv_style_reset(style);
+
+    this->initCompStyle(type);
+
+    if (is_new) {
+        lv_obj_add_style(this->styleTargetVirtual(), style, type);
+    }
+}
+
+void Chart::setStyle (JSContext* ctx, JSValue& nativeStyle, int32_t type, bool isinit) {
+    BasicComponent::setStyle(ctx, nativeStyle, type, isinit);
+    if (type == static_cast<int32_t>(LV_PART_MAIN)) {
+        this->applyMainLayoutFromStyle(type);
+        this->syncPlotFrameClip();
+        this->syncScrollZoom();
+    }
+}
+
 lv_obj_t* Chart::styleTarget(int32_t type) {
     lv_style_selector_t selector = static_cast<lv_style_selector_t>(type);
     lv_part_t part = lv_obj_style_get_selector_part(selector);
@@ -89,7 +116,7 @@ lv_obj_t* Chart::styleTarget(int32_t type) {
     if (state & LV_STATE_PRESSED) {
         return this->styleTargetChart();
     }
-    return this->styleTargetMain();
+    return this->styleTargetVirtual();
 }
 
 void Chart::ChartEventCallback(lv_event_t* event) {
@@ -149,11 +176,63 @@ void Chart::LayoutEventCallback(lv_event_t* event) {
     chart->syncScrollZoom();
 }
 
+void Chart::applyMainLayoutFromStyle (int32_t type) {
+    if (type != static_cast<int32_t>(LV_PART_MAIN)) {
+        return;
+    }
+
+    const auto it = this->style_map.find(type);
+    if (it == this->style_map.end()) {
+        return;
+    }
+
+    lv_style_t* style = it->second;
+    lv_obj_t* main = this->styleTargetMain();
+    lv_obj_t* frame = this->styleTargetVirtual();
+    const lv_part_t part = LV_PART_MAIN;
+    const lv_style_selector_t selector = static_cast<lv_style_selector_t>(type);
+
+    static const lv_style_prop_t layout_props[] = {
+        LV_STYLE_WIDTH,
+        LV_STYLE_HEIGHT,
+        LV_STYLE_MIN_WIDTH,
+        LV_STYLE_MAX_WIDTH,
+        LV_STYLE_MIN_HEIGHT,
+        LV_STYLE_MAX_HEIGHT,
+        LV_STYLE_MARGIN_TOP,
+        LV_STYLE_MARGIN_BOTTOM,
+        LV_STYLE_MARGIN_LEFT,
+        LV_STYLE_MARGIN_RIGHT,
+    };
+
+    for (lv_style_prop_t prop : layout_props) {
+        lv_style_value_t v;
+        if (lv_style_get_prop(style, prop, &v) != LV_STYLE_RES_FOUND) {
+            continue;
+        }
+        lv_obj_set_local_style_prop(main, prop, v, selector);
+        lv_style_remove_prop(style, prop);
+    }
+
+    lv_obj_refresh_style(main, part, LV_STYLE_PROP_ANY);
+    lv_obj_refresh_style(frame, part, LV_STYLE_PROP_ANY);
+}
+
+void Chart::syncPlotFrameClip() {
+    lv_obj_t* frame = this->styleTargetVirtual();
+    const lv_coord_t radius = lv_obj_get_style_radius(frame, LV_PART_MAIN);
+    lv_obj_set_style_clip_corner(frame, radius > 0, LV_PART_MAIN);
+    lv_obj_set_style_clip_corner(this->styleTargetMain(), false, LV_PART_MAIN);
+}
+
 void Chart::syncScrollZoom() {
     if (this->syncing_scroll_zoom) {
         return;
     }
     this->syncing_scroll_zoom = true;
+
+    this->applyMainLayoutFromStyle(static_cast<int32_t>(LV_PART_MAIN));
+    this->syncPlotFrameClip();
 
     lv_obj_t* main = this->styleTargetMain();
     lv_obj_t* wrapper = this->virtual_box;

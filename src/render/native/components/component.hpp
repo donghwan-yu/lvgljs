@@ -175,7 +175,7 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
             JS_ToInt32(ctx, &type, argv[1]);                                                                                \
             isinit = JS_ToBool(ctx, argv[2]);                                                                               \
                                                                                                                             \
-            static_cast<COMPONENT*>(ref->comp)->BasicComponent::setStyle(ctx, argv[0], type, isinit);                       \
+            static_cast<COMPONENT*>(ref->comp)->setStyle(ctx, argv[0], type, isinit);                                     \
             LV_LOG_USER("%s %s setStyle type %d", COMPONENT_NAME, ref->getUid(), type);                                     \
         }                                                                                                                   \
         return JS_UNDEFINED;                                                                                                \
