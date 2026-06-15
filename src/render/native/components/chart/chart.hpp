@@ -132,6 +132,12 @@ class Chart final : public BasicComponent {
   int32_t draw_right = 0;
   int32_t draw_bottom = 0;
 
+  /** Plot viewport from styled width/height before axis gutter inflation. */
+  lv_coord_t plot_frame_w = 0;
+  lv_coord_t plot_frame_h = 0;
+  lv_coord_t inflated_gutter_w = 0;
+  lv_coord_t inflated_gutter_h = 0;
+
   int32_t left_range_min = 0;
   int32_t left_range_max = 100;
   int32_t right_range_min = 0;

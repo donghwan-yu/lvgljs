@@ -161,6 +161,63 @@ void Chart::syncScrollZoom() {
 
     lv_obj_update_layout(main);
 
+    const lv_coord_t gutter_w = static_cast<lv_coord_t>(this->draw_left + this->draw_right);
+    const lv_coord_t gutter_h = static_cast<lv_coord_t>(this->draw_bottom);
+
+    // Styled width/height is the plot viewport; outer targetMain grows by axis draw_size (8.2).
+    const lv_coord_t cur_w = lv_obj_get_width(main);
+    const lv_coord_t cur_h = lv_obj_get_height(main);
+    const lv_coord_t expected_outer_w =
+        static_cast<lv_coord_t>(this->plot_frame_w + this->inflated_gutter_w);
+    const lv_coord_t expected_outer_h =
+        static_cast<lv_coord_t>(this->plot_frame_h + this->inflated_gutter_h);
+
+    if (cur_w == expected_outer_w && cur_h == expected_outer_h) {
+        // Already inflated; keep plot_frame.
+    } else if (cur_w == this->plot_frame_w && cur_h == this->plot_frame_h) {
+        // Style re-applied plot frame size without gutters.
+    } else {
+        this->plot_frame_w = static_cast<lv_coord_t>(cur_w - gutter_w);
+        this->plot_frame_h = static_cast<lv_coord_t>(cur_h - gutter_h);
+        if (this->plot_frame_w < 1) {
+            this->plot_frame_w = cur_w;
+        }
+        if (this->plot_frame_h < 1) {
+            this->plot_frame_h = cur_h;
+        }
+    }
+
+    const lv_coord_t outer_w = static_cast<lv_coord_t>(this->plot_frame_w + gutter_w);
+    const lv_coord_t outer_h = static_cast<lv_coord_t>(this->plot_frame_h + gutter_h);
+    bool outer_changed = false;
+    if (lv_obj_get_width(main) != outer_w || lv_obj_get_height(main) != outer_h) {
+        lv_obj_set_size(main, outer_w, outer_h);
+        outer_changed = true;
+    }
+    this->inflated_gutter_w = gutter_w;
+    this->inflated_gutter_h = gutter_h;
+    if (outer_changed) {
+        lv_obj_update_layout(main);
+    }
+
+    // 8.2 draw_size equivalent: axis gutters shrink the virtual_box viewport via targetMain pad.
+    bool pad_changed = false;
+    if (lv_obj_get_style_pad_left(main, LV_PART_MAIN) != this->draw_left) {
+        lv_obj_set_style_pad_left(main, this->draw_left, LV_PART_MAIN);
+        pad_changed = true;
+    }
+    if (lv_obj_get_style_pad_right(main, LV_PART_MAIN) != this->draw_right) {
+        lv_obj_set_style_pad_right(main, this->draw_right, LV_PART_MAIN);
+        pad_changed = true;
+    }
+    if (lv_obj_get_style_pad_bottom(main, LV_PART_MAIN) != this->draw_bottom) {
+        lv_obj_set_style_pad_bottom(main, this->draw_bottom, LV_PART_MAIN);
+        pad_changed = true;
+    }
+    if (pad_changed) {
+        lv_obj_update_layout(main);
+    }
+
     lv_obj_set_width(wrapper, lv_pct(100));
     lv_obj_set_height(wrapper, lv_pct(100));
     lv_obj_update_layout(main);
@@ -209,9 +266,7 @@ void Chart::syncScrollZoom() {
 }
 
 lv_obj_t* Chart::scaleDrawParent() const {
-    lv_obj_t* target = this->styleTargetMain();
-    lv_obj_t* outer = lv_obj_get_parent(target);
-    return outer != nullptr ? outer : target;
+    return this->styleTargetMain();
 }
 
 lv_obj_t* Chart::scaleAnchor() const {
@@ -236,6 +291,8 @@ void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
     const lv_coord_t scroll_x = lv_obj_get_scroll_left(wrapper);
     const lv_coord_t scroll_y = lv_obj_get_scroll_top(wrapper);
 
+    // Scales are children of targetMain; pad_* reserves gutters. Align outside virtual_box
+    // so ticks/labels sit in the pad bands (like 8.2 draw_size), not over the plot.
     switch (mode) {
         case LV_SCALE_MODE_VERTICAL_LEFT:
             lv_obj_set_height(scale, plot.h);
@@ -261,14 +318,13 @@ void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
 }
 
 void Chart::layoutScales() {
-    lv_obj_t* draw_parent = this->scaleDrawParent();
+    lv_obj_t* main = this->styleTargetMain();
 
     this->layoutScale(this->scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
     this->layoutScale(this->scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
     this->layoutScale(this->scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
 
-    lv_obj_refresh_ext_draw_size(this->styleTargetMain());
-    lv_obj_refresh_ext_draw_size(draw_parent);
+    lv_obj_refresh_ext_draw_size(main);
 }
 
 lv_obj_t* Chart::ensureScale (lv_obj_t** scale, lv_scale_mode_t mode) {
