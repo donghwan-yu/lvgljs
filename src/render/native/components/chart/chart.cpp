@@ -3,6 +3,38 @@
 #include "native/core/event/event.hpp"
 #include <lvgl.h>
 
+namespace {
+
+struct PlotLayout {
+    lv_coord_t rel_x = 0;
+    lv_coord_t rel_y = 0;
+    lv_coord_t w = 0;
+    lv_coord_t h = 0;
+};
+
+PlotLayout plotLayoutFromWrapperAndChart (lv_obj_t* wrapper, lv_obj_t* chart) {
+    PlotLayout plot;
+
+    lv_obj_update_layout(wrapper);
+    lv_obj_update_layout(chart);
+
+    lv_area_t wrapper_box;
+    lv_obj_get_coords(wrapper, &wrapper_box);
+
+    lv_area_t chart_box;
+    lv_obj_get_coords(chart, &chart_box);
+
+    const ChartPlotInsets ins = Chart::getPlotInsets(chart);
+
+    plot.rel_x = static_cast<lv_coord_t>(chart_box.x1 - wrapper_box.x1 + ins.left);
+    plot.rel_y = static_cast<lv_coord_t>(chart_box.y1 - wrapper_box.y1 + ins.top);
+    plot.w = ins.plot_w;
+    plot.h = ins.plot_h;
+    return plot;
+}
+
+} // namespace
+
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_CHART;
 
@@ -162,12 +194,6 @@ lv_obj_t* Chart::scaleAnchor() const {
     return this->styleTargetMain();
 }
 
-bool Chart::scaleScrollsWithChart (lv_scale_mode_t mode) const {
-    const bool horizontal = mode == LV_SCALE_MODE_HORIZONTAL_BOTTOM
-        || mode == LV_SCALE_MODE_HORIZONTAL_TOP;
-    return horizontal ? this->scale_x_value > 256 : this->scale_y_value > 256;
-}
-
 void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
     if (scale == nullptr) {
         return;
@@ -175,40 +201,30 @@ void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
 
     lv_obj_t* wrapper = this->scaleAnchor();
     lv_obj_t* chart = this->styleTargetChart();
-    lv_obj_t* anchor = wrapper;
-    const bool inside = this->scaleScrollsWithChart(mode);
 
-    if (inside) {
-        if (lv_obj_get_parent(scale) != this->scroll_content) {
-            lv_obj_set_parent(scale, this->scroll_content);
-        }
-        anchor = chart;
-    } else {
-        lv_obj_t* outer = lv_obj_get_parent(wrapper);
-        if (outer != nullptr && lv_obj_get_parent(scale) != outer) {
-            lv_obj_set_parent(scale, outer);
-        }
+    lv_obj_t* outer = lv_obj_get_parent(wrapper);
+    if (outer != nullptr && lv_obj_get_parent(scale) != outer) {
+        lv_obj_set_parent(scale, outer);
     }
 
-    const lv_coord_t span_w = lv_obj_get_width(anchor);
-    const lv_coord_t span_h = lv_obj_get_height(anchor);
+    const PlotLayout plot = plotLayoutFromWrapperAndChart(wrapper, chart);
 
     switch (mode) {
         case LV_SCALE_MODE_VERTICAL_LEFT:
-            lv_obj_set_height(scale, span_h);
-            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_LEFT_TOP, 0, 0);
+            lv_obj_set_height(scale, plot.h);
+            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_LEFT_TOP, 0, plot.rel_y);
             break;
         case LV_SCALE_MODE_VERTICAL_RIGHT:
-            lv_obj_set_height(scale, span_h);
-            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
+            lv_obj_set_height(scale, plot.h);
+            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_RIGHT_TOP, 0, plot.rel_y);
             break;
         case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
-            lv_obj_set_width(scale, span_w);
-            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+            lv_obj_set_width(scale, plot.w);
+            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_BOTTOM_LEFT, plot.rel_x, 0);
             break;
         case LV_SCALE_MODE_HORIZONTAL_TOP:
-            lv_obj_set_width(scale, span_w);
-            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_TOP_LEFT, 0, 0);
+            lv_obj_set_width(scale, plot.w);
+            lv_obj_align_to(scale, wrapper, LV_ALIGN_OUT_TOP_LEFT, plot.rel_x, 0);
             break;
         default:
             break;

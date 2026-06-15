@@ -174,7 +174,6 @@ class Chart final : public BasicComponent {
     std::vector<std::string>& labels,
     std::vector<const char*>& ptrs
   );
-  bool scaleScrollsWithChart (lv_scale_mode_t mode) const;
   void layoutScale (lv_obj_t* scale, lv_scale_mode_t mode);
   void layoutScales ();
 
