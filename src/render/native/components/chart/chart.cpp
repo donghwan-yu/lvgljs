@@ -156,8 +156,8 @@ void Chart::syncScrollZoom() {
         return;
     }
 
-    const bool zoom_x = this->scale_x_factor > 1.0f;
-    const bool zoom_y = this->scale_y_factor > 1.0f;
+    const bool zoom_x = this->scale_x_value > 256;
+    const bool zoom_y = this->scale_y_value > 256;
 
     if (zoom_x || zoom_y) {
         lv_obj_add_flag(main, LV_OBJ_FLAG_SCROLLABLE);
@@ -168,10 +168,10 @@ void Chart::syncScrollZoom() {
     lv_coord_t content_w = viewport_w;
     lv_coord_t content_h = viewport_h;
     if (zoom_x) {
-        content_w = static_cast<lv_coord_t>(viewport_w * this->scale_x_factor);
+        content_w = static_cast<lv_coord_t>(((int32_t)viewport_w * this->scale_x_value) >> 8);
     }
     if (zoom_y) {
-        content_h = static_cast<lv_coord_t>(viewport_h * this->scale_y_factor);
+        content_h = static_cast<lv_coord_t>(((int32_t)viewport_h * this->scale_y_value) >> 8);
     }
 
     lv_obj_set_size(this->scroll_content, content_w, content_h);
@@ -183,13 +183,13 @@ void Chart::syncScrollZoom() {
 
 void Chart::setScaleX (int32_t value) {
     // value is chart-scaleX from NormalizeScale (256 = 1.0, e.g. scaleX(3) -> 768).
-    this->scale_x_factor = value / 256.0f;
+    this->scale_x_value = value;
     this->syncScrollZoom();
 }
 
 void Chart::setScaleY (int32_t value) {
     // value is chart-scaleY from NormalizeScale (256 = 1.0, e.g. scaleY(2) -> 512).
-    this->scale_y_factor = value / 256.0f;
+    this->scale_y_value = value;
     this->syncScrollZoom();
 }
 

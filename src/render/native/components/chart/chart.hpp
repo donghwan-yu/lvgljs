@@ -106,8 +106,9 @@ class Chart final : public BasicComponent {
 
  private:
   lv_obj_t* scroll_content = nullptr;
-  float scale_x_factor = 1.0f;
-  float scale_y_factor = 1.0f;
+  /** LVGL 8.2 zoom scale: 256 = 1.0 (e.g. scaleX(3) -> 768). */
+  int32_t scale_x_value = 256;
+  int32_t scale_y_value = 256;
 
   bool chart_obj_events_attached = false;
 
