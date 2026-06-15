@@ -147,9 +147,11 @@ class Chart final : public BasicComponent {
   int32_t scale_y_value = 256;
 
   bool chart_obj_events_attached = false;
+  bool syncing_scroll_zoom = false;
 
   void syncScrollZoom();
 
+  lv_obj_t* scaleDrawParent() const;
   lv_obj_t* scaleAnchor() const;
   lv_obj_t* ensureScale (lv_obj_t** scale, lv_scale_mode_t mode);
   void configureNumericScale (
