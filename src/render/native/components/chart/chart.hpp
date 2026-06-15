@@ -118,6 +118,29 @@ class Chart final : public BasicComponent {
 
  private:
   lv_obj_t* scroll_content = nullptr;
+
+  lv_obj_t* scale_left = nullptr;
+  lv_obj_t* scale_right = nullptr;
+  lv_obj_t* scale_bottom = nullptr;
+
+  std::vector<const char*> left_label_ptrs;
+  std::vector<const char*> right_label_ptrs;
+  std::vector<const char*> bottom_label_ptrs;
+
+  int32_t draw_left = 0;
+  int32_t draw_right = 0;
+  int32_t draw_bottom = 0;
+
+  int32_t left_range_min = 0;
+  int32_t left_range_max = 100;
+  int32_t right_range_min = 0;
+  int32_t right_range_max = 100;
+  int32_t bottom_range_min = 0;
+  int32_t bottom_range_max = 100;
+  bool left_range_set = false;
+  bool right_range_set = false;
+  bool bottom_range_set = false;
+
   /** LVGL 8.2 zoom scale: 256 = 1.0 (e.g. scaleX(3) -> 768). */
   int32_t scale_x_value = 256;
   int32_t scale_y_value = 256;
@@ -126,6 +149,34 @@ class Chart final : public BasicComponent {
 
   void ensureScrollContent();
   void syncScrollZoom();
+
+  lv_obj_t* scaleAnchor() const;
+  lv_obj_t* ensureScale (lv_obj_t** scale, lv_scale_mode_t mode);
+  void configureNumericScale (
+    lv_obj_t* scale,
+    lv_scale_mode_t mode,
+    int32_t major_len,
+    int32_t minor_len,
+    int32_t major_num,
+    int32_t minor_num,
+    int32_t draw_size
+  );
+  void configureCategoryScale (
+    lv_obj_t* scale,
+    lv_scale_mode_t mode,
+    int32_t major_len,
+    int32_t minor_len,
+    int32_t draw_size,
+    uint32_t label_count
+  );
+  void applyScaleLabels (
+    lv_obj_t* scale,
+    std::vector<std::string>& labels,
+    std::vector<const char*>& ptrs
+  );
+  bool scaleScrollsWithChart (lv_scale_mode_t mode) const;
+  void layoutScale (lv_obj_t* scale, lv_scale_mode_t mode);
+  void layoutScales ();
 
   static void ChartEventCallback(lv_event_t* event);
   static void LayoutEventCallback(lv_event_t* event);

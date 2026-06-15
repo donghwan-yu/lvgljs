@@ -1,6 +1,7 @@
 #include "./chart.hpp"
 
 #include "native/core/event/event.hpp"
+#include <lvgl.h>
 
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_CHART;
@@ -21,6 +22,7 @@ Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     lv_obj_set_style_border_width(this->chart_obj, 0, LV_PART_MAIN);
     // Plot inset: default theme pad_small from lv_chart_create(); border on instance only.
     lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_SIZE_CHANGED, this);
+    lv_obj_add_event_cb(this->instance, &Chart::LayoutEventCallback, LV_EVENT_STYLE_CHANGED, this);
 
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
@@ -94,6 +96,7 @@ void Chart::LayoutEventCallback(lv_event_t* event) {
     Chart* chart = static_cast<Chart*>(lv_event_get_user_data(event));
     if (chart != nullptr) {
         chart->syncScrollZoom();
+        chart->layoutScales();
     }
 }
 
@@ -152,6 +155,192 @@ void Chart::syncScrollZoom() {
     lv_obj_set_size(chart, content_w, content_h);
 
     lv_obj_update_layout(main);
+    this->layoutScales();
+}
+
+lv_obj_t* Chart::scaleAnchor() const {
+    return this->styleTargetMain();
+}
+
+bool Chart::scaleScrollsWithChart (lv_scale_mode_t mode) const {
+    const bool horizontal = mode == LV_SCALE_MODE_HORIZONTAL_BOTTOM
+        || mode == LV_SCALE_MODE_HORIZONTAL_TOP;
+    return horizontal ? this->scale_x_value > 256 : this->scale_y_value > 256;
+}
+
+void Chart::layoutScale (lv_obj_t* scale, lv_scale_mode_t mode) {
+    if (scale == nullptr) {
+        return;
+    }
+
+    lv_obj_t* wrapper = this->scaleAnchor();
+    lv_obj_t* chart = this->styleTargetChart();
+    lv_obj_t* anchor = wrapper;
+    const bool inside = this->scaleScrollsWithChart(mode);
+
+    if (inside) {
+        if (lv_obj_get_parent(scale) != this->scroll_content) {
+            lv_obj_set_parent(scale, this->scroll_content);
+        }
+        anchor = chart;
+    } else {
+        lv_obj_t* outer = lv_obj_get_parent(wrapper);
+        if (outer != nullptr && lv_obj_get_parent(scale) != outer) {
+            lv_obj_set_parent(scale, outer);
+        }
+    }
+
+    const lv_coord_t span_w = lv_obj_get_width(anchor);
+    const lv_coord_t span_h = lv_obj_get_height(anchor);
+
+    switch (mode) {
+        case LV_SCALE_MODE_VERTICAL_LEFT:
+            lv_obj_set_height(scale, span_h);
+            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_LEFT_TOP, 0, 0);
+            break;
+        case LV_SCALE_MODE_VERTICAL_RIGHT:
+            lv_obj_set_height(scale, span_h);
+            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
+            break;
+        case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
+            lv_obj_set_width(scale, span_w);
+            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+            break;
+        case LV_SCALE_MODE_HORIZONTAL_TOP:
+            lv_obj_set_width(scale, span_w);
+            lv_obj_align_to(scale, anchor, LV_ALIGN_OUT_TOP_LEFT, 0, 0);
+            break;
+        default:
+            break;
+    }
+}
+
+void Chart::layoutScales() {
+    this->layoutScale(this->scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
+    this->layoutScale(this->scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
+    this->layoutScale(this->scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+}
+
+lv_obj_t* Chart::ensureScale (lv_obj_t** scale, lv_scale_mode_t mode) {
+    if (*scale != nullptr) {
+        return *scale;
+    }
+
+    lv_obj_t* anchor = this->scaleAnchor();
+    lv_obj_t* outer = lv_obj_get_parent(anchor);
+    *scale = lv_scale_create(outer != nullptr ? outer : anchor);
+    lv_obj_clear_flag(*scale, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(*scale, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_scale_set_mode(*scale, mode);
+    this->layoutScales();
+    return *scale;
+}
+
+void Chart::configureNumericScale (
+    lv_obj_t* scale,
+    lv_scale_mode_t mode,
+    int32_t major_len,
+    int32_t minor_len,
+    int32_t major_num,
+    int32_t minor_num,
+    int32_t draw_size
+) {
+    if (scale == nullptr) {
+        return;
+    }
+
+    const uint32_t every = static_cast<uint32_t>(minor_num > 0 ? minor_num + 1 : 1);
+    const uint32_t total = major_num > 1
+        ? static_cast<uint32_t>((major_num - 1) * static_cast<int32_t>(every) + 1)
+        : 1U;
+
+    lv_scale_set_mode(scale, mode);
+    lv_scale_set_total_tick_count(scale, total);
+    lv_scale_set_major_tick_every(scale, every);
+    lv_scale_set_label_show(scale, true);
+    lv_obj_set_style_length(scale, major_len, LV_PART_INDICATOR);
+    lv_obj_set_style_length(scale, minor_len, LV_PART_ITEMS);
+
+    if (draw_size > 0) {
+        switch (mode) {
+            case LV_SCALE_MODE_VERTICAL_LEFT:
+                this->draw_left = draw_size;
+                lv_obj_set_width(scale, draw_size);
+                break;
+            case LV_SCALE_MODE_VERTICAL_RIGHT:
+                this->draw_right = draw_size;
+                lv_obj_set_width(scale, draw_size);
+                break;
+            case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
+                this->draw_bottom = draw_size;
+                lv_obj_set_height(scale, draw_size);
+                break;
+            default:
+                break;
+        }
+    }
+
+    this->layoutScales();
+}
+
+void Chart::configureCategoryScale (
+    lv_obj_t* scale,
+    lv_scale_mode_t mode,
+    int32_t major_len,
+    int32_t minor_len,
+    int32_t draw_size,
+    uint32_t label_count
+) {
+    if (scale == nullptr || label_count == 0) {
+        return;
+    }
+
+    lv_scale_set_mode(scale, mode);
+    lv_scale_set_total_tick_count(scale, label_count);
+    lv_scale_set_major_tick_every(scale, 1);
+    lv_scale_set_label_show(scale, true);
+    lv_obj_set_style_length(scale, major_len, LV_PART_INDICATOR);
+    lv_obj_set_style_length(scale, minor_len, LV_PART_ITEMS);
+
+    if (draw_size > 0) {
+        switch (mode) {
+            case LV_SCALE_MODE_VERTICAL_LEFT:
+                this->draw_left = draw_size;
+                lv_obj_set_width(scale, draw_size);
+                break;
+            case LV_SCALE_MODE_VERTICAL_RIGHT:
+                this->draw_right = draw_size;
+                lv_obj_set_width(scale, draw_size);
+                break;
+            case LV_SCALE_MODE_HORIZONTAL_BOTTOM:
+                this->draw_bottom = draw_size;
+                lv_obj_set_height(scale, draw_size);
+                break;
+            default:
+                break;
+        }
+    }
+
+    this->layoutScales();
+}
+
+void Chart::applyScaleLabels (
+    lv_obj_t* scale,
+    std::vector<std::string>& labels,
+    std::vector<const char*>& ptrs
+) {
+    if (scale == nullptr || labels.empty()) {
+        return;
+    }
+
+    ptrs.clear();
+    ptrs.reserve(labels.size() + 1);
+    for (const auto& label : labels) {
+        ptrs.push_back(label.c_str());
+    }
+    ptrs.push_back(nullptr);
+    lv_scale_set_text_src(scale, ptrs.data());
+    lv_obj_invalidate(scale);
 }
 
 ChartPlotInsets Chart::getPlotInsets (lv_obj_t* chart) {
@@ -193,11 +382,19 @@ void Chart::setLeftAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    (void)major_len;
-    (void)minor_len;
-    (void)major_num;
-    (void)minor_num;
-    (void)draw_size;
+    lv_obj_t* scale = this->ensureScale(&this->scale_left, LV_SCALE_MODE_VERTICAL_LEFT);
+    if (!this->left_axis_labels.empty()) {
+        this->configureCategoryScale(
+            scale, LV_SCALE_MODE_VERTICAL_LEFT, major_len, minor_len, draw_size,
+            static_cast<uint32_t>(this->left_axis_labels.size()));
+        this->applyScaleLabels(scale, this->left_axis_labels, this->left_label_ptrs);
+    } else {
+        this->configureNumericScale(
+            scale, LV_SCALE_MODE_VERTICAL_LEFT, major_len, minor_len, major_num, minor_num, draw_size);
+        if (this->left_range_set) {
+            lv_scale_set_range(scale, this->left_range_min, this->left_range_max);
+        }
+    }
 };
 
 void Chart::setRightAxisOption (
@@ -207,11 +404,19 @@ void Chart::setRightAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    (void)major_len;
-    (void)minor_len;
-    (void)major_num;
-    (void)minor_num;
-    (void)draw_size;
+    lv_obj_t* scale = this->ensureScale(&this->scale_right, LV_SCALE_MODE_VERTICAL_RIGHT);
+    if (!this->right_axis_labels.empty()) {
+        this->configureCategoryScale(
+            scale, LV_SCALE_MODE_VERTICAL_RIGHT, major_len, minor_len, draw_size,
+            static_cast<uint32_t>(this->right_axis_labels.size()));
+        this->applyScaleLabels(scale, this->right_axis_labels, this->right_label_ptrs);
+    } else {
+        this->configureNumericScale(
+            scale, LV_SCALE_MODE_VERTICAL_RIGHT, major_len, minor_len, major_num, minor_num, draw_size);
+        if (this->right_range_set) {
+            lv_scale_set_range(scale, this->right_range_min, this->right_range_max);
+        }
+    }
 };
 
 void Chart::setTopAxisOption (
@@ -235,11 +440,19 @@ void Chart::setBottomAxisOption (
     int32_t minor_num,
     int32_t draw_size
   ) {
-    (void)major_len;
-    (void)minor_len;
-    (void)major_num;
-    (void)minor_num;
-    (void)draw_size;
+    lv_obj_t* scale = this->ensureScale(&this->scale_bottom, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+    if (!this->bottom_axis_labels.empty()) {
+        this->configureCategoryScale(
+            scale, LV_SCALE_MODE_HORIZONTAL_BOTTOM, major_len, minor_len, draw_size,
+            static_cast<uint32_t>(this->bottom_axis_labels.size()));
+        this->applyScaleLabels(scale, this->bottom_axis_labels, this->bottom_label_ptrs);
+    } else {
+        this->configureNumericScale(
+            scale, LV_SCALE_MODE_HORIZONTAL_BOTTOM, major_len, minor_len, major_num, minor_num, draw_size);
+        if (this->bottom_range_set) {
+            lv_scale_set_range(scale, this->bottom_range_min, this->bottom_range_max);
+        }
+    }
 };
 
 void Chart::setLeftAxisData (std::vector<axis_data>& data) {
@@ -339,10 +552,16 @@ void Chart::setPointNum (int32_t num) {
 
 void Chart::setLeftAxisLabels (std::vector<std::string>& labels) {
     this->left_axis_labels = labels;
+    if (this->scale_left != nullptr && !this->left_axis_labels.empty()) {
+        this->applyScaleLabels(this->scale_left, this->left_axis_labels, this->left_label_ptrs);
+    }
 };
 
 void Chart::setRightAxisLabels (std::vector<std::string>& labels) {
     this->right_axis_labels = labels;
+    if (this->scale_right != nullptr && !this->right_axis_labels.empty()) {
+        this->applyScaleLabels(this->scale_right, this->right_axis_labels, this->right_label_ptrs);
+    }
 };
 
 void Chart::setTopAxisLabels (std::vector<std::string>& labels) {
@@ -351,14 +570,29 @@ void Chart::setTopAxisLabels (std::vector<std::string>& labels) {
 
 void Chart::setBottomAxisLabels (std::vector<std::string>& labels) {
     this->bottom_axis_labels = labels;
+    if (this->scale_bottom != nullptr && !this->bottom_axis_labels.empty()) {
+        this->applyScaleLabels(this->scale_bottom, this->bottom_axis_labels, this->bottom_label_ptrs);
+    }
 };
 
 void Chart::setLeftAxisRange (int32_t min, int32_t max) {
     lv_chart_set_axis_range(this->styleTargetChart(), LV_CHART_AXIS_PRIMARY_Y, min, max);
+    this->left_range_min = min;
+    this->left_range_max = max;
+    this->left_range_set = true;
+    if (this->scale_left != nullptr && this->left_axis_labels.empty()) {
+        lv_scale_set_range(this->scale_left, min, max);
+    }
 };
 
 void Chart::setRightAxisRange (int32_t min, int32_t max) {
     lv_chart_set_axis_range(this->styleTargetChart(), LV_CHART_AXIS_SECONDARY_Y, min, max);
+    this->right_range_min = min;
+    this->right_range_max = max;
+    this->right_range_set = true;
+    if (this->scale_right != nullptr && this->right_axis_labels.empty()) {
+        lv_scale_set_range(this->scale_right, min, max);
+    }
 };
 
 void Chart::setTopAxisRange (int32_t min, int32_t max) {
@@ -367,6 +601,12 @@ void Chart::setTopAxisRange (int32_t min, int32_t max) {
 
 void Chart::setBottomAxisRange (int32_t min, int32_t max) {
     lv_chart_set_axis_range(this->styleTargetChart(), LV_CHART_AXIS_PRIMARY_X, min, max);
+    this->bottom_range_min = min;
+    this->bottom_range_max = max;
+    this->bottom_range_set = true;
+    if (this->scale_bottom != nullptr && this->bottom_axis_labels.empty()) {
+        lv_scale_set_range(this->scale_bottom, min, max);
+    }
 };
 
 void Chart::setScatterData (std::vector<axis_data>& data) {
