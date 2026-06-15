@@ -2,6 +2,40 @@
 
 #include "native/core/event/event.hpp"
 
+namespace {
+
+uint32_t maxLinePointCount(const std::vector<axis_data>& data) {
+    uint32_t max_count = 0;
+    for (const auto& item : data) {
+        if (item.data.size() > max_count) {
+            max_count = static_cast<uint32_t>(item.data.size());
+        }
+    }
+    return max_count;
+}
+
+uint32_t maxScatterPointCount(const std::vector<axis_data>& data) {
+    uint32_t max_count = 0;
+    for (const auto& item : data) {
+        uint32_t pair_count = static_cast<uint32_t>(item.data.size() / 2);
+        if (pair_count > max_count) {
+            max_count = pair_count;
+        }
+    }
+    return max_count;
+}
+
+void ensurePointCount(lv_obj_t* chart, uint32_t count) {
+    if (count == 0) {
+        return;
+    }
+    if (lv_chart_get_point_count(chart) != count) {
+        lv_chart_set_point_count(chart, count);
+    }
+}
+
+}  // namespace
+
 Chart::Chart(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_CHART;
 
@@ -50,7 +84,7 @@ void Chart::ChartEventCallback(lv_event_t* event) {
     }
 
     lv_obj_t* chart_obj = chart->styleTargetChart();
-    if (chart_obj == nullptr || !chart->isEventRegist(LV_EVENT_PRESSED)) {
+    if (!chart->isEventRegist(LV_EVENT_PRESSED)) {
         return;
     }
 
@@ -63,9 +97,6 @@ void Chart::ChartEventCallback(lv_event_t* event) {
 
 void Chart::syncChartObjEventListener() {
     lv_obj_t* chart_obj = this->styleTargetChart();
-    if (chart_obj == nullptr) {
-        return;
-    }
 
     bool need_chart_cb = this->isEventRegist(LV_EVENT_PRESSED);
 
@@ -91,9 +122,6 @@ void Chart::removeEventListener(int eventType) {
 void Chart::setScaleX (int32_t value) {
     lv_obj_t* wrapper = this->styleTargetMain();
     lv_obj_t* chart = this->styleTargetChart();
-    if (chart == nullptr) {
-        return;
-    }
 
     // value is chart-scaleX from NormalizeScale (256 = 1.0, e.g. scaleX(3) -> 768).
     float factor = value / 256.0f;
@@ -117,9 +145,6 @@ void Chart::setScaleX (int32_t value) {
 void Chart::setScaleY (int32_t value) {
     lv_obj_t* wrapper = this->styleTargetMain();
     lv_obj_t* chart = this->styleTargetChart();
-    if (chart == nullptr) {
-        return;
-    }
 
     // value is chart-scaleY from NormalizeScale (256 = 1.0, e.g. scaleY(2) -> 512).
     float factor = value / 256.0f;
@@ -205,18 +230,18 @@ void Chart::setBottomAxisOption (
 };
 
 void Chart::setLeftAxisData (std::vector<axis_data>& data) {
-    int32_t i, j, color;
-    axis_data item;
-    int32_t* y_points;
     lv_obj_t* chart = this->styleTargetChart();
 
-    for (i=0; i<this->left_axis.size(); i++) {
+    ensurePointCount(chart, maxLinePointCount(data));
+    uint32_t point_count = lv_chart_get_point_count(chart);
+
+    for (size_t i = 0; i < this->left_axis.size(); i++) {
         lv_chart_remove_series(chart, this->left_axis[i]);
     }
     this->left_axis.clear();
 
-    for (i=0; i<data.size(); i++) {
-        color = data[i].color;
+    for (size_t i = 0; i < data.size(); i++) {
+        int32_t color = data[i].color;
         if (color == -1) {
             this->left_axis.push_back(lv_chart_add_series(chart, lv_theme_get_color_primary(chart), LV_CHART_AXIS_PRIMARY_Y));
         } else {
@@ -224,42 +249,54 @@ void Chart::setLeftAxisData (std::vector<axis_data>& data) {
         }
     }
 
-    for (i=0; i<data.size(); i++) {
-        item = data[i];
-        y_points = lv_chart_get_series_y_array(chart, this->left_axis[i]);
-        for (j=0; j<item.data.size(); j++) {
+    for (size_t i = 0; i < data.size(); i++) {
+        const axis_data& item = data[i];
+        int32_t* y_points = lv_chart_get_series_y_array(chart, this->left_axis[i]);
+        uint32_t n = static_cast<uint32_t>(item.data.size());
+        if (n > point_count) {
+            n = point_count;
+        }
+        for (uint32_t j = 0; j < n; j++) {
             y_points[j] = item.data[j];
         }
     }
+
+    lv_chart_refresh(chart);
 };
 
 void Chart::setRightAxisData (std::vector<axis_data>& data) {
-    int32_t i, j, color;
-    axis_data item;
-    int32_t* y_points;
     lv_obj_t* chart = this->styleTargetChart();
 
-    for (i=0; i<this->right_axis.size(); i++) {
+    ensurePointCount(chart, maxLinePointCount(data));
+    uint32_t point_count = lv_chart_get_point_count(chart);
+
+    for (size_t i = 0; i < this->right_axis.size(); i++) {
         lv_chart_remove_series(chart, this->right_axis[i]);
     }
     this->right_axis.clear();
 
-    for (i=0; i<data.size(); i++) {
-        color = data[i].color;
+    for (size_t i = 0; i < data.size(); i++) {
+        int32_t color = data[i].color;
         if (color == -1) {
-            this->right_axis.push_back(lv_chart_add_series(chart, lv_theme_get_color_primary(chart), LV_CHART_AXIS_PRIMARY_Y));
+            this->right_axis.push_back(lv_chart_add_series(chart, lv_theme_get_color_primary(chart), LV_CHART_AXIS_SECONDARY_Y));
         } else {
             this->right_axis.push_back(lv_chart_add_series(chart, lv_color_hex(color), LV_CHART_AXIS_SECONDARY_Y));
         }
     }
 
-    for (i=0; i<data.size(); i++) {
-        item = data[i];
-        y_points = lv_chart_get_series_y_array(chart, this->right_axis[i]);
-        for (j=0; j<item.data.size(); j++) {
+    for (size_t i = 0; i < data.size(); i++) {
+        const axis_data& item = data[i];
+        int32_t* y_points = lv_chart_get_series_y_array(chart, this->right_axis[i]);
+        uint32_t n = static_cast<uint32_t>(item.data.size());
+        if (n > point_count) {
+            n = point_count;
+        }
+        for (uint32_t j = 0; j < n; j++) {
             y_points[j] = item.data[j];
         }
     }
+
+    lv_chart_refresh(chart);
 };
 
 // void Chart::setTopAxisData (std::vector<axis_data>& data) {
@@ -283,7 +320,10 @@ void Chart::setRightAxisData (std::vector<axis_data>& data) {
 // };
 
 void Chart::setPointNum (int32_t num) {
-    lv_chart_set_point_count(this->styleTargetChart(), (uint16_t)num);
+    if (num < 0) {
+        return;
+    }
+    lv_chart_set_point_count(this->styleTargetChart(), static_cast<uint32_t>(num));
 };
 
 void Chart::setLeftAxisLabels (std::vector<std::string>& labels) {
@@ -319,36 +359,38 @@ void Chart::setBottomAxisRange (int32_t min, int32_t max) {
 };
 
 void Chart::setScatterData (std::vector<axis_data>& data) {
-    int32_t i, j, color;
-    axis_data item;
-    int32_t* x_points;
-    int32_t* y_points;
     lv_obj_t* chart = this->styleTargetChart();
 
-    for (i=0; i<this->left_axis.size(); i++) {
-        lv_chart_remove_series(chart, this->left_axis[i]);
-    }
-    this->left_axis.clear();
+    ensurePointCount(chart, maxScatterPointCount(data));
+    uint32_t point_count = lv_chart_get_point_count(chart);
 
-    for (i=0; i<data.size(); i++) {
-        color = data[i].color;
+    for (size_t i = 0; i < this->scatter_series.size(); i++) {
+        lv_chart_remove_series(chart, this->scatter_series[i]);
+    }
+    this->scatter_series.clear();
+
+    for (size_t i = 0; i < data.size(); i++) {
+        int32_t color = data[i].color;
         if (color == -1) {
-            this->left_axis.push_back(lv_chart_add_series(chart, lv_theme_get_color_primary(chart), LV_CHART_AXIS_PRIMARY_Y));
+            this->scatter_series.push_back(lv_chart_add_series(chart, lv_theme_get_color_primary(chart), LV_CHART_AXIS_PRIMARY_Y));
         } else {
-            this->left_axis.push_back(lv_chart_add_series(chart, lv_color_hex(color), LV_CHART_AXIS_PRIMARY_Y));
+            this->scatter_series.push_back(lv_chart_add_series(chart, lv_color_hex(color), LV_CHART_AXIS_PRIMARY_Y));
         }
     }
 
-    for (i=0; i<data.size(); i++) {
-        item = data[i];
-        x_points = lv_chart_get_series_x_array(chart, this->left_axis[i]);
-        y_points = lv_chart_get_series_y_array(chart, this->left_axis[i]);
-        for (j=0; j<item.data.size(); j++) {
-            if (j % 2 == 0) {
-                x_points[j / 2] = item.data[j];
-            } else {
-                y_points[(j - 1) / 2] = item.data[j];
-            }
+    for (size_t i = 0; i < data.size(); i++) {
+        const axis_data& item = data[i];
+        int32_t* x_points = lv_chart_get_series_x_array(chart, this->scatter_series[i]);
+        int32_t* y_points = lv_chart_get_series_y_array(chart, this->scatter_series[i]);
+        uint32_t pair_count = static_cast<uint32_t>(item.data.size() / 2);
+        if (pair_count > point_count) {
+            pair_count = point_count;
+        }
+        for (uint32_t p = 0; p < pair_count; p++) {
+            x_points[p] = item.data[p * 2];
+            y_points[p] = item.data[p * 2 + 1];
         }
     }
+
+    lv_chart_refresh(chart);
 };

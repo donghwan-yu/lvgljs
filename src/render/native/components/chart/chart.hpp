@@ -29,6 +29,7 @@ class Chart final : public BasicComponent {
   std::vector<lv_chart_series_t*> bottom_axis;
   std::vector<lv_chart_series_t*> right_axis;
   std::vector<lv_chart_series_t*> top_axis;
+  std::vector<lv_chart_series_t*> scatter_series;
 
   std::vector<std::string> left_axis_labels;
   std::vector<std::string> right_axis_labels;
